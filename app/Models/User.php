@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Enums\UserVerification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -14,7 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'status', 'verification'])]
+#[Fillable(['name', 'email', 'password', 'is_admin', 'status', 'verification'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -29,7 +28,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
-            'role'              => UserRole::class,
+            'is_admin'          => 'boolean', // Cast the 0/1 from DB to true/false
             'status'            => UserStatus::class,
             'verification'      => UserVerification::class,
         ];
@@ -49,26 +48,28 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * Get the clubs the user belongs to.
+     * Use withPivot to access 'role' (President, Member, etc.) from the membership table.
      */
     public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class, 'memberships')
-                    ->withPivot('role', 'created_at')
-                    ->withTimestamps(); // Good practice if your pivot table has timestamps
+            ->withPivot('role', 'status') // Added 'status' so you can see if their membership is pending
+            ->withTimestamps();
     }
 
+    /**
+     * Clubs this user specifically created/owns.
+     */
     public function ownedClubs(): HasMany
     {
         return $this->hasMany(Club::class, 'owner_id');
     }
+
     /**
      * Get all events for all clubs the user is in.
-     * * Note: This returns a Collection. For larger projects, 
-     * consider a "HasManyDeep" package.
      */
     public function getEventsAttribute()
     {
         return $this->clubs()->with('events')->get()->pluck('events')->flatten();
     }
 }
-

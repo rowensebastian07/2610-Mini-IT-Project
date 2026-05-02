@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Club;
 use App\Notifications\ClubNotification;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -22,7 +23,7 @@ class PostController extends Controller
 
         // AUTHORIZATION
         // Checks if the logged-in user is a committee member of THIS specific club
-        if (!$club->members()->where('user_id', auth()->id())->where('role', 'committee')->exists()) {
+        if (!$club->members()->where('user_id', Auth::id())->where('role', 'committee')->exists()) {
             abort(403, 'Unauthorized: Only committee members can post updates.');
         }
 
@@ -31,14 +32,14 @@ class PostController extends Controller
             'title' => $request->title,
             'body' => $request->body,
             'club_id' => $club->id,
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
         ]);
 
         // NOTIFICATION
         // Fetch only members of this club to notify them
         $members = $club->members;
         foreach ($members as $member) {
-            if ($member->id !== auth()->id()) {
+            if ($member->id !== Auth::id()) {
                 $member->notify(new ClubNotification($club, "New Post: " . $post->title));
             }
         }

@@ -45,14 +45,6 @@ return new class extends Migration
         });
     }
 
-    public function role() {
-        return $this->belongsTo(UserRole::class);
-    }
-
-    public function hasRole(string $roleName): bool {
-        return $this->role?->name === $roleName;
-    }
-
     /**
      * Reverse the migrations.
      */
