@@ -1,65 +1,74 @@
 <?php
 
-namespace App\Http\Controllers;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ClubController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\EventController;
+use App\Models\Event;
+use Illuminate\Support\Facades\Route;
 
-use App\Models\Club;
-use App\Enums\ClubRole;
-use App\Notifications\ClubNotification;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 
-class ClubController extends Controller
-{
-    /**
-     * Show the form to send a notification.
-     */
-    public function showNotifyForm(Club $club)
-    {
-        // Security check
-        $membership = $club->users()->where('user_id', Auth::id())->first();
-        if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-            abort(403, 'Unauthorized.');
-        }
+// Homepage - Lists clubs and posts
+Route::get('/', [ClubController::class, 'index'])->name('home');
 
-        return view('clubs.notify', compact('club'));
-    }
+// Navigation and Public Calendar
+Route::get('/navigation', function () {
+    return view('navigation');
+})->name('navigation');
+
+Route::get('/calendar', function () {
+    $events = Event::all();
+    return view('calendar.index', compact('events'));
+})->name('calendar.index');
+
+// Club Details and Listing
+Route::get('/clubs', [ClubController::class, 'list'])->name('clubs.index');
+Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show');
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'verified'])->group(function () {
     
-    /**
-     * Process and send the notification.
-     */
-    public function sendUpdate(Request $request, Club $club) // Fixed: Use Club $club for consistency
-    {
-        // 1. SECURITY CHECK: Don't forget this!
-        $membership = $club->users()->where('user_id', Auth::id())->first();
-        if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-            abort(403, 'Unauthorized.');
-        }
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-        // 2. VALIDATION: Ensure the message isn't empty
-        $request->validate([
-            'message' => 'required|string|min:5',
-        ]);
+    // Profile Management
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-        $messageContent = $request->input('message');
+    // Notifications Feed (JSON or View)
+    Route::get('/notifications', function () {
+        return auth()->user()->notifications;
+    })->name('notifications.index');
 
-        // 3. GET MEMBERS: Use the relationship defined in your Club model
-        // Note: Make sure your Club model has a 'users' or 'members' relationship
-        $members = $club->users; 
+    // Committee Club Management (Notifications)
+    // FIXED: Changed {id} to {club} to match EventController pattern
+    Route::get('/clubs/{club}/notify', [ClubController::class, 'showNotifyForm'])->name('clubs.notify.form');
+    Route::post('/clubs/{club}/notify', [ClubController::class, 'sendUpdate'])->name('clubs.notify.send');
 
-        // 4. SEND NOTIFICATION: Exclude the sender so they don't notify themselves
-        foreach ($members as $member) {
-            if ($member->id !== Auth::id()) {
-                $member->notify(new ClubNotification($club, $messageContent));
-            }
-        }
+    // Posts Management
+    // We use resource for edit/update/destroy, and manual routes for creation linked to a club
+    Route::resource('posts', PostController::class)->except(['create', 'store']);
+    Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
+    Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
 
-        return redirect()->route('clubs.show', $club->id)
-                         ->with('status', 'Notification sent to ' . ($members->count() - 1) . ' members!');
-    }
+    // Events Management
+    Route::get('/clubs/{club}/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('/clubs/{club}/events', [EventController::class, 'store'])->name('events.store');
+    Route::get('/clubs/{club}/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+});
 
-    public function index()
-    {
-        $clubs = Club::all(); // Better than empty logic
-        return view('welcome', compact('clubs'));
-    }
-}
+require __DIR__ . '/auth.php';
