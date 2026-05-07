@@ -6,7 +6,7 @@ enum ClubCategory: string
 {
     case ART = 'Arts Clubs';
     case COMMUNITY = 'Community Clubs';
-    case RELIGIOUS = 'Religious Clubs';
+    case RELIGION = 'Religious Clubs';
     case ENTERTAINMENT = 'Games / Entertainment Clubs';
     case CULTURAL = 'Cultural Clubs';
     case TECH = 'Tech Clubs';
@@ -17,7 +17,7 @@ enum ClubCategory: string
         return match($this) {
             self::ART => 'Arts Clubs',
             self::COMMUNITY => 'Community Clubs',
-            self::RELIGIOUS => 'Religious Clubs',
+            self::RELIGION => 'Religious Clubs',
             self::ENTERTAINMENT => 'Games / Entertainment Clubs',
             self::CULTURAL => 'Cultural Clubs',
             self::TECH => 'Tech Clubs',
