@@ -13,7 +13,7 @@ enum ClubRole: string
     {
         return match ($this) {
             self::PRESIDENT => 'President',
-            self::HICOM => 'Hight Committee',
+            self::HICOM => 'High Committee',
             self::SUBCOM => 'Sub Committee',
             self::MEMBER => 'Member',
         };
