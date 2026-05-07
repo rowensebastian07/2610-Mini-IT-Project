@@ -33,4 +33,3 @@
 </script>
 <script src="{{ asset('js/calendar.js') }}"></script>
 @endpush
-

@@ -75,3 +75,4 @@ class EventController extends Controller
                          ->with('success', 'Event deleted successfully!');
     }
 }
+

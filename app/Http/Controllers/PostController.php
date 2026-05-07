@@ -76,3 +76,4 @@ class PostController extends Controller
                          ->with('success', 'Post deleted successfully!');
     }
 }
+
