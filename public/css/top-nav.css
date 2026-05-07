@@ -2,6 +2,7 @@
     width: 100%;
     height: 10vh;
     position: absolute;
+    display: flex;
     top: 0;
     left: 0;
     z-index: 999;
@@ -15,19 +16,22 @@
 }
 
 #drop-down {
-    transform: scale(25%);
-    position: relative;
-    top:-115;
-    left: -90;
+    transform: scale(100%);
     display: inline-block;
+    justify-content: flex-start;
 
+}
+
+#drop-down:hover{
+    cursor: pointer;
 }
 
 .drop-down-list{
     display: none;
     position: absolute;
     top:40;
-    left: -1;
+    left: -28;
+
     
 }
 
@@ -52,12 +56,10 @@
 }
 
 li {
-    
     list-style: none;
     padding: 20px;
     width: 100px;
     text-align: center;
-    color: black;
 }
 
 a {
@@ -65,13 +67,14 @@ a {
 }
 
 .right-side-nav {
-    float: right;
+    width: 100%;
     display: flex;
+    justify-content: flex-end;
     color: white;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-family: Arial, Helvetica, sans-serif;
     position: relative;
-    top: -20;
+    top: -1rem;
 
 }
 

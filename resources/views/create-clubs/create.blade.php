@@ -1,30 +1,33 @@
 @extends('layouts.app')
 
-@section('content')
-<div class="form-container">
-    <h2 class="form-title">Create Club</h2>
-    <p class="form-subtitle">Fill in the details below</p>
+<link rel="stylesheet" href="{{ asset('css/create-clubs.css') }}">
 
-    <form action="{{ route('create-clubs.store') }}" method="POST" enctype="multipart/form-data" class="styled-form">
+@section('content')
+<div >
+    <h2 id = "create-club-h2">Create Club</h2>
+    <p>Fill in the details below</p>
+
+<div class="create-club-form">
+    <form action="{{ route('create-clubs.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group">
-            <label for="name">Name</label>
+            <label for="name">Name</label><br>
             <input type="text" name="name" id="name">
         </div>
 
         <div class="form-group">
-            <label for="description">Description</label>
-            <textarea name="description" id="description"></textarea>
+            <label for="description">Description</label><br>
+            <input name="description" id="description"></input>
         </div>
 
         <div class="form-group">
-            <label for="profile_picture">Profile_Picture</label>
+            <label for="profile_picture">Profile_Picture</label><br>
             <input type="file" name="profile_picture" id="profile_picture">
         </div>
 
         <div class="form-group">
-            <label for="category">Category</label>
+            <label for="category">Category</label><br>
             <select name="category" id="category">
                 <option value="Arts Clubs">Art Clubs</option>
                 <option value="Community Clubs">Community Clubs</option>
@@ -38,6 +41,8 @@
 
         <button type="submit" class="btn-submit">Create Club</button>
     </form>
+
+</div>
 </div>
 @endsection
 

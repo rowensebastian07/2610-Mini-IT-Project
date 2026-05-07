@@ -1,0 +1,56 @@
+body {
+    margin: 0;
+    max-width: 100%;
+}
+
+h2, p {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+#create-club-h2 {
+    font-size: 2.5em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+}
+
+.create-club-form {
+    margin: 3em auto;
+    max-width: 500px;
+    background-color: rgb(245, 245, 245);
+    padding: 2em;
+    border-radius: 1em;
+    box-shadow: 0px 3px 5px grey;
+}
+
+.form-group{
+    padding: 0.5em 0;
+}
+
+.form-group input{
+    width: 400px;
+    margin-top: 10px;
+}
+
+.form-group select{
+    width: 400px;
+    margin-top: 10px;
+}
+
+.form-group select:hover{
+    cursor: pointer;
+}
+
+.btn-submit{
+    margin-top: 1.5em;
+    background-image: linear-gradient(to right, rgb(92, 48, 113), rgb(197, 86, 177));
+    border-radius: 2em;
+    color: white;
+    height: 50px;
+    width: 150px;
+
+}
+

@@ -7,19 +7,19 @@ use App\Http\Controllers\EventController;
 use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------
 */
 
-// Homepage - Lists clubs and posts
-Route::get('/', [ClubController::class, 'index'])->name('home');
 
-// Navigation and Public Calendar
-Route::get('/navigation', function () {
-    return view('navigation');
-})->name('navigation');
+// Homepage - Lists clubs and posts
+Route::get('/', function () {
+    return view('welcome');
+});
+
 
 Route::get('/calendar', function () {
     $events = Event::all();
@@ -70,5 +70,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 });
+
+
+
+// Routes for creating club
+Route::resource('clubs', ClubController::class)->except(['create', 'store']);
+
+// Nested post routes under clubs (create + store)
+Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
+Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
+
+Route::get('/logout', function () {
+    Auth::logout();
+    return redirect('/login');
+});
+
 
 require __DIR__ . '/auth.php';

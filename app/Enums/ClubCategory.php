@@ -4,22 +4,24 @@ namespace App\Enums;
 
 enum ClubCategory: string
 {
-    case STUDENT = 'student';
-    case SPORTS = 'sports';
-    case PERFORM = 'perform';
-    case CULTURE = 'culture';
-    case INTERNATIONAL = 'international';
-    case TECHNOLOGY = 'technology';
+    case ART = 'Arts Clubs';
+    case STUDENT = 'Community Clubs';
+    case SPORTS = 'Recreational / Physical Activities Clubs';
+    case RELIGION = 'Religious Clubs';
+    case CULTURE = 'Cultural Clubs';
+    case GAMES = 'Games / Entertainment Clubs';
+    case TECH = 'Tech Clubs';
 
     public function label(): string
     {
         return match($this) {
-            self::STUDENT => 'Student Bodies',
-            self::SPORTS => 'Sports',
-            self::PERFORM => 'Performing Arts',
-            self::CULTURE => 'Culture',
-            self::INTERNATIONAL => 'International Clubs',
-            self::TECHNOLOGY => 'Technology & Engineering',
+            self::ART => 'Arts Clubs',
+            self::STUDENT => 'Community Clubs',
+            self::SPORTS => 'Recreational / Physical Activities Clubs',
+            self::RELIGION => 'Religious Clubs',
+            self::CULTURE => 'Cultural Clubs',
+            self::GAMES => 'Games / Entertainment Clubs',
+            self::TECH => 'Tech Clubs'
         };
     }
 }

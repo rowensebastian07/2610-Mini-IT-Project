@@ -59,8 +59,9 @@ class DatabaseSeeder extends Seeder
 
         //Create the Club
         $club = Club::create([
-            'name' => 'Tech & Coding Society',
-            'description' => 'A club for developers.',
+            'name' => 'IT Society',
+            'category' => 'Arts Clubs',
+            'profile_picture' => 'images/1.png'
         ]);
 
         //use $committee and $member because they were defined above

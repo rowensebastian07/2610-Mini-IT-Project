@@ -18,11 +18,11 @@
         <h2>Art Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Arts Clubs")
+        @if ($club->category == "Arts Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{ $club->name}}">
+            <p>{{ $club->name }}</p>
+            <img src="{{ $club->profile_picture }}" alt="{{ $club->name }}">
         </a>  
         
         @endif
@@ -32,11 +32,11 @@
         <h2>Community Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Community Clubs")
+        @if ($club->category== "Community Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{ $club->name}}">
+            <p>{{$club->name }}</p>
+            <img src="{{ $club->profile_picture }}" alt="{{ $club->name }}">
         </a>  
         
         @endif
@@ -46,11 +46,11 @@
         <h2>Religious Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Religious Clubs")
+        @if ($club->category == "Religious Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{ $club->name}}">
+            <p>{{$club->name }}</p>
+            <img src="{{ $club->profile_picture }}" alt="{{ $club->name}}">
         </a>  
         
         @endif
@@ -60,11 +60,11 @@
         <h2>Games / Entertainment Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Games / Entertainment Clubs")
+        @if ($club->category == "Games / Entertainment Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{ $club->name}}">
+            <p>{{ $club->name }}</p>
+            <img src="{{$club->profile_picture }}" alt="{{ $club->name }}">
         </a>  
         
         @endif
@@ -74,11 +74,11 @@
         <h2>Cultural Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Cultural Clubs")
+        @if ($club->category == "Cultural Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{$club->name}}">
+            <p>{{$club->name }}</p>
+            <img src="{{ $club->profile_picture }}" alt="{{ $club->name }}">
         </a>  
         
         @endif
@@ -88,11 +88,11 @@
         <h2>Tech Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Tech Clubs")
+        @if ($club->category == "Tech Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{$club->name}}">
+            <p>{{ $club->name }}</p>
+            <img src="{{ $club->profile_picture }}" alt="{{ $club->name }}">
         </a>  
         
         @endif
@@ -101,11 +101,11 @@
         <h2>Recreational / Physical Activities Clubs</h2>
         <div class="container">
         @foreach ($clubs as $club)
-        @if ($club["category"] == "Recreational / Physical Activities Clubs")
+        @if ($club->category == "Recreational / Physical Activities Clubs")
         
-          <a href="clubs/{{ $club["name"]}}">
-            <p>{{ $club["name"] }}</p>
-            <img src="{{ $club["profile_picture"] }}" alt="{{ $club["name"] }}">
+          <a href="clubs/{{ $club->name}}">
+            <p>{{ $club->name }}</p>
+            <img src="{{ $club->profile_picture }}" alt="{{ $club->name }}">
         </a>  
         
         @endif
