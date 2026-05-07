@@ -2,6 +2,8 @@
 
 @section('content')
 <div class="calendar-container">
+
+
     <!-- Calendar header -->
     <div class="calendar-header">
         <button id="prevMonth" class="calendar-arrow">◀</button>

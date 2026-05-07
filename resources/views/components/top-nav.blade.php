@@ -1,7 +1,10 @@
 <link rel="stylesheet" href="{{ asset('css/top-nav.css') }}">
 
 <div class="top-nav">
-    <img src="images/drop down.png" id="drop-down">
+    <!-- Hamburger icon -->
+    <img src="{{ asset('images/drop down.png') }}" id="drop-down" alt="Menu">
+
+    <!-- Dropdown list -->
     <ul class="drop-down-list">
         <a href="{{ url('/') }}"><li>Home</li></a>
         <a href="{{ url('/clubs') }}"><li>Clubs</li></a>
@@ -15,6 +18,8 @@
     @endif
     
     </ul>
+
+    <!-- Right side links -->
     <ul class="right-side-nav">
         <div class="underline"></div>
         @if (Route::has('login'))

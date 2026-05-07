@@ -5,45 +5,74 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Club;
-use App\Notifications\ClubNotification;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function store(Request $request)
+   public function index()
+{
+    $posts = Post::with('club')->latest()->get();
+    return view('welcome', compact('posts'));
+}
+
+
+    public function create(Club $club)
     {
-        // Validate the input
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'body' => 'required',
-            'club_id' => 'required|exists:clubs,id',
+        return view('posts.create', compact('club'));
+    }
+
+    public function store(Request $request, Club $club)
+    {
+        $validated = $request->validate([
+            'title'   => 'required|string|max:255',
+            'content' => 'required|string',
+            'image'   => 'nullable|image|max:2048',
         ]);
 
-        $club = Club::findOrFail($request->club_id);
-
-        // AUTHORIZATION
-        // Checks if the logged-in user is a committee member of THIS specific club
-        if (!$club->members()->where('user_id', Auth::id())->where('role', 'committee')->exists()) {
-            abort(403, 'Unauthorized: Only committee members can post updates.');
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('posts', 'public');
         }
 
-        // Create the Post
-        $post = Post::create([
-            'title' => $request->title,
-            'body' => $request->body,
-            'club_id' => $club->id,
-            'user_id' => Auth::id(),
+        $validated['user_id'] = Auth::id();
+
+        $club->posts()->create($validated);
+
+        return redirect()->route('clubs.show', $club->id)
+                         ->with('success', 'Post created successfully!');
+    }
+
+    public function show(Post $post)
+    {
+        return view('posts.show', compact('post'));
+    }
+
+    public function edit(Post $post)
+    {
+        return view('posts.edit', compact('post'));
+    }
+
+    public function update(Request $request, Post $post)
+    {
+        $validated = $request->validate([
+            'title'   => 'required|string|max:255',
+            'content' => 'required|string',
+            'image'   => 'nullable|image|max:2048',
         ]);
 
-        // NOTIFICATION
-        // Fetch only members of this club to notify them
-        $members = $club->members;
-        foreach ($members as $member) {
-            if ($member->id !== Auth::id()) {
-                $member->notify(new ClubNotification($club, "New Post: " . $post->title));
-            }
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('posts', 'public');
         }
 
-        return redirect()->back()->with('success', 'Post created and members notified!');
+        $post->update($validated);
+
+        return redirect()->route('clubs.show', $post->club->id)
+                         ->with('success', 'Post updated successfully!');
+    }
+
+    public function destroy(Post $post)
+    {
+        $post->delete();
+        return redirect()->route('clubs.show', $post->club->id)
+                         ->with('success', 'Post deleted successfully!');
     }
 }

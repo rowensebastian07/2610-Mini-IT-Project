@@ -13,14 +13,17 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->enum('category', array_column(ClubCategory::cases(), 'value'))
-                  ->default(ClubCategory::STUDENT->value);
-             $table->foreignId('owner_id')
-                    ->nullable() // 1. Must be nullable to allow the user to disappear
-                    ->constrained('users')
-                    ->nullOnDelete(); // 2. Sets owner_id to NULL instead of deleting the club // nullOnDelete() make sure the club doesn't die if the owner delete his account
-            $table->softDeletes();  // softDeletes also in Models\Club to avoid club owner accidentally delete the 
-                                    // club including the post and member
+
+            $table->string('category') ->default(ClubCategory::ART->value); 
+
+            $table->string('profile_picture')->nullable();
+
+            $table->foreignId('owner_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
+
+            $table->softDeletes();
             $table->timestamps();
             $table->string('profile_picture')->default('images/1.png');
         });
@@ -31,4 +34,3 @@ return new class extends Migration
         Schema::dropIfExists('clubs');
     }
 };
-

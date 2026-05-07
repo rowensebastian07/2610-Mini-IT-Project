@@ -4,19 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes; 
-
-// app/Models/Event.php
-
-use App\Models\Club;
 
 class Event extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'date',
+        'time',
+        'description',
+        'club_id',
+    ];
 
     public function club()
     {
-        return $this->belongsTo(Club::class, 'club_id');  // Each Event belongs to one Club (via club_id)
+        return $this->belongsTo(Club::class);
     }
 }
-
