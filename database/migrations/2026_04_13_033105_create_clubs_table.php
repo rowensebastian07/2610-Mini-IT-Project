@@ -9,24 +9,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-       Schema::create('clubs', function (Blueprint $table) {
-    $table->id();
-    $table->string('name');
-    $table->text('description')->nullable();
-    $table->enum('category', array_column(ClubCategory::cases(), 'value'))
-          ->default(ClubCategory::ART->value);
+        Schema::create('clubs', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->text('description')->nullable();
 
-    $table->string('profile_picture')->nullable(); // <-- add this line
+            $table->enum('category', array_column(ClubCategory::cases(), 'value'))
+                  ->default(ClubCategory::ARTS->value); // ✅ fixed
 
-    $table->foreignId('owner_id')
-          ->nullable()
-          ->constrained('users')
-          ->nullOnDelete();
+            $table->string('profile_picture')->nullable();
 
-    $table->softDeletes();
-    $table->timestamps();
-});
+            $table->foreignId('owner_id')
+                  ->nullable()
+                  ->constrained('users')
+                  ->nullOnDelete();
 
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     public function down(): void
@@ -34,4 +34,3 @@ return new class extends Migration
         Schema::dropIfExists('clubs');
     }
 };
-

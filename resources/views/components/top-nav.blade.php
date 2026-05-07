@@ -8,7 +8,7 @@
     <ul class="drop-down-list">
         <li><a href="{{ route('home') }}">Home</a></li>
         <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
-        <li><a href="{{ route('profile.show') }}">Profile</a></li>
+       
 
         @guest
             <li><a href="{{ route('login') }}">Log in</a></li>

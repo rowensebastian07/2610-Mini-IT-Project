@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             'club_id' => $club->id,
             'user_id' => $committee->id,
             'title' => 'Welcome to the Club!',
-            'body' => 'This is our first official post.',
+            'content' => 'This is our first official post.',
         ]);
     }
 }

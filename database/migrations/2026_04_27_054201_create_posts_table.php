@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('club_id')->constrained()->onDelete('cascade'); // Link to club
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Link to committee member
             $table->string('title');
-            $table->text('body');
+            $table->text('content');
             $table->timestamps();
         });
     }

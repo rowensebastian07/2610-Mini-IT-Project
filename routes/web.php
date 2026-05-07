@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
 use App\Models\Event;
-use App\Models\Club;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,11 +13,14 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Route::get('/clubs/search', [ClubController::class, 'apiSearch'])->name('clubs.api-search'); // global search bar
+
 // Homepage – lists posts (and clubs if you want)
 Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/clubs/search', [ClubController::class, 'search'])->name('clubs.search');
 
 // Navigation and Public Calendar
-Route::get('/navigation', [ClubController::class, 'list'])->name('navigation');
+Route::get('/navigation', [ClubController::class, 'index'])->name('navigation');
 Route::get('/calendar', function () {
     $events = Event::all();
     return view('calendar.index', compact('events'));
@@ -40,39 +41,10 @@ Route::delete('/clubs/{club}/unfollow', [UserController::class, 'unfollowClub'])
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard – only followed clubs/events
+    // Dashboard – shows profile + followed clubs/events
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+    Route::patch('/dashboard', [UserController::class, 'updateProfile'])->name('dashboard.update');
 
-    // Profile Management
-    Route::get('/profile', fn() => view('profile.profile'))->name('profile.show');
-    Route::get('/profile/edit', fn() => view('profile.edit'))->name('profile.edit');
-
-    Route::patch('/profile', function (\Illuminate\Http\Request $request) {
-        $user = Auth::user();
-
-        $request->validate([
-            'name'             => 'required|string|max:255',
-            'email'            => 'required|email|max:255',
-            'profile_picture'  => 'nullable|image|max:2048',
-        ]);
-
-        $user->name  = $request->name;
-        $user->email = $request->email;
-
-        if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = $path;
-        }
-
-        $user->save();
-
-        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
-    })->name('profile.update');
-
-    Route::delete('/profile', function () {
-        Auth::user()->delete();
-        return redirect('/')->with('success', 'Profile deleted successfully!');
-    })->name('profile.destroy');
 
     // Notifications Feed
     Route::get('/notifications', fn() => auth()->user()->notifications)->name('notifications.index');
