@@ -15,25 +15,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('users', function (Blueprint $table) {
-    $table->id();
-    $table->string('name');
-    $table->string('email')->unique();
-    $table->timestamp('email_verified_at')->nullable();
-    $table->string('password');
-    $table->boolean('is_admin')->default(false);
-    $table->string('status')->default(UserStatus::ACTIVE->value);
-    $table->string('verification')->default(UserVerification::UNVERIFIED->value);
-
-    // ✅ Add profile picture column
-    $table->string('profile_picture')->nullable();
-
-    $table->json('followed_clubs')->nullable(); // store array of club IDs
-
-
-    $table->rememberToken();
-    $table->timestamps();
-});
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            // System-level roles
+            $table->boolean('is_admin')->default(false); // true = Super Admin, false = Regular User
+            $table->string('status')->default(UserStatus::ACTIVE->value);      // 'active', 'pending', 'banned'
+            $table->string('verification')->default(UserVerification::UNVERIFIED->value);;  //'verified', 'pending', 'unverified'
+            $table->rememberToken();
+            $table->timestamps();
+        });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

@@ -14,8 +14,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
 
-            $table->enum('category', array_column(ClubCategory::cases(), 'value'))
-                  ->default(ClubCategory::ARTS->value); // ✅ fixed
+            $table->string('category') ->default(ClubCategory::ART->value); 
 
             $table->string('profile_picture')->nullable();
 
