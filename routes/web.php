@@ -18,8 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Navigation and Public Calendar
-Route::get('/navigation', [ClubController::class, 'index'])->name('navigation');
 
 Route::get('/calendar', function () {
     $events = Event::all();
