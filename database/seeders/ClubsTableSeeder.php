@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -30,7 +29,7 @@ class ClubsTableSeeder extends Seeder
             ],
             [
                 'name' => 'Buddhist Society',
-                'category' => ClubCategory::RELIGIOUS->value,
+                'category' => ClubCategory::RELIGION->value,
                 'profile_picture' => 'images/3.png',
                 'created_at' => $now,
                 'updated_at' => $now,

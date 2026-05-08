@@ -40,7 +40,7 @@ function renderCalendar(dateObj) {
                 // Inject events
                 if (window.calendarEvents) {
                     window.calendarEvents.forEach(ev => {
-                        const evDate = new Date(ev.date); // only for matching the day
+                        const evDate = new Date(ev.date);
 
                         if (evDate.getDate() === date &&
                             evDate.getMonth() === month &&
@@ -49,6 +49,15 @@ function renderCalendar(dateObj) {
                             let evSticker = document.createElement("div");
                             evSticker.classList.add("event-sticker");
 
+                            // Compare event date with today
+                        const today = new Date();
+                        if (evDate < today) {
+                            evSticker.classList.add("event-passed"); // green for past events
+                        } else {
+                            evSticker.classList.add("event-upcoming"); // yellow for upcoming events
+                        }
+
+
                             // Convert DB time (HH:MM:SS) into AM/PM format
                             const [hourStr, minuteStr] = ev.time.split(':');
                             const hour = parseInt(hourStr, 10);
@@ -56,7 +65,6 @@ function renderCalendar(dateObj) {
                             const formattedTime = new Date(0, 0, 0, hour, minute)
                                 .toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
-                            // Show name + formatted time
                             evSticker.innerHTML = `
                                 <strong>${ev.title}</strong><br>
                                 ${formattedTime}
@@ -87,4 +95,3 @@ document.getElementById("nextMonth").addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     renderCalendar(currentDate);
 });
-

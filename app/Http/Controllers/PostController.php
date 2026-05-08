@@ -13,6 +13,7 @@ class PostController extends Controller
 {
     /**
      * Helper method to verify if the user is a Committee Member of the specific club.
+     * This prevents regular members from accessing create/edit/delete actions.
      */
     private function authorizeCommittee(Club $club)
     {
@@ -23,18 +24,27 @@ class PostController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the posts on the homepage.
+     */
     public function index()
     {
         $posts = Post::with('club')->latest()->get();
         return view('welcome', compact('posts'));
     }
 
+    /**
+     * Show the form for creating a new post.
+     */
     public function create(Club $club)
     {
         $this->authorizeCommittee($club);
         return view('posts.create', compact('club'));
     }
 
+    /**
+     * Store a newly created post in storage and notify members.
+     */
     public function store(Request $request, Club $club)
     {
         $this->authorizeCommittee($club);
@@ -51,10 +61,10 @@ class PostController extends Controller
 
         $validated['user_id'] = Auth::id();
 
-        // 1. Create the post using the relationship
+        // Create the post via relationship
         $post = $club->posts()->create($validated);
 
-        // 2. Notify members (Email + Database)
+        // Notify all club members except the author
         foreach ($club->users as $member) {
             if ($member->id !== Auth::id()) {
                 $member->notify(new ClubNotification(
@@ -68,19 +78,26 @@ class PostController extends Controller
                          ->with('success', 'Post created and members notified!');
     }
 
+    /**
+     * Display the specified post.
+     */
     public function show(Post $post)
     {
         return view('posts.show', compact('post'));
     }
 
+    /**
+     * Show the form for editing the specified post.
+     */
     public function edit(Post $post)
     {
-        // To edit, we check authorization against the club the post belongs to
         $this->authorizeCommittee($post->club);
-        
         return view('posts.edit', compact('post'));
     }
 
+    /**
+     * Update the specified post in storage.
+     */
     public function update(Request $request, Post $post)
     {
         $this->authorizeCommittee($post->club);
@@ -101,6 +118,9 @@ class PostController extends Controller
                          ->with('success', 'Post updated successfully!');
     }
 
+    /**
+     * Remove the specified post from storage.
+     */
     public function destroy(Post $post)
     {
         $this->authorizeCommittee($post->club);

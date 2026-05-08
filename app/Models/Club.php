@@ -29,6 +29,12 @@ class Club extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function followersCount()
+{
+    return \App\Models\User::whereJsonContains('followed_clubs', $this->id)->count();
+}
+
+
     protected $casts = [
         'category' => ClubCategory::class,
     ];
@@ -89,4 +95,3 @@ class Club extends Model
         return !is_null($this->owner_id);
     }
 }
-

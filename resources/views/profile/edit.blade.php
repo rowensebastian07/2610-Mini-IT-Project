@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <style>
     .edit-profile-container {
         display: flex;
@@ -22,42 +21,54 @@
     }
 
     .form-group {
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
     }
 
     .form-group label {
         display: block;
         font-weight: bold;
         margin-bottom: 0.5rem;
+        color: #374151;
     }
 
     .form-group input {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.6rem;
         border: 1px solid #ccc;
         border-radius: 6px;
+        font-size: 1rem;
+    }
+
+    .error-msg {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
     }
 
     .profile-picture-preview img {
-        margin-top: 0.5rem;
-        width: 100px;
-        height: 100px;
+        margin-top: 0.75rem;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         object-fit: cover;
-        border: 1px solid #ddd;
+        border: 2px solid #e5e7eb;
     }
 
     .form-actions {
         display: flex;
         justify-content: space-between;
-        margin-top: 1.5rem;
+        align-items: center;
+        margin-top: 2rem;
     }
 
     .btn {
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1.2rem;
         border-radius: 6px;
         text-decoration: none;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.2s;
+        border: none;
     }
 
     .btn.save {
@@ -70,58 +81,60 @@
     }
 
     .btn.cancel {
-        background: #999;
-        color: #fff;
+        background: #f3f4f6;
+        color: #374151;
     }
 
     .btn.cancel:hover {
-        background: #666;
+        background: #e5e7eb;
     }
 </style>
 
 <div class="edit-profile-container">
     <div class="edit-profile-card">
-        <h2>Edit Profile</h2>
+        <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: bold;">Edit Profile</h2>
 
         <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
 
-            <!-- Name -->
             <div class="form-group">
                 <label for="name">Name</label>
-                <input id="name" type="text" name="name"
-                       value="{{ old('name', Auth::user()->name) }}">
+                <input id="name" type="text" name="name" 
+                       value="{{ old('name', Auth::user()->name) }}" required>
+                @error('name')
+                    <p class="error-msg">{{ $message }}</p>
+                @enderror
             </div>
 
-            <!-- Email -->
             <div class="form-group">
                 <label for="email">Email</label>
-                <input id="email" type="email" name="email"
-                       value="{{ old('email', Auth::user()->email) }}">
+                <input id="email" type="email" name="email" 
+                       value="{{ old('email', Auth::user()->email) }}" required>
+                @error('email')
+                    <p class="error-msg">{{ $message }}</p>
+                @enderror
             </div>
 
-            <!-- Profile Picture -->
             <div class="form-group">
                 <label for="profile_picture">Profile Picture</label>
-                <input id="profile_picture" type="file" name="profile_picture">
-
+                <input id="profile_picture" type="file" name="profile_picture" accept="image/*">
+                
                 <div class="profile-picture-preview">
-                    @if(Auth::user()->profile_picture)
-                        <img id="preview-image"
-                             src="{{ asset('storage/' . Auth::user()->profile_picture) }}"
-                             alt="Current Profile Picture">
-                    @else
-                        <img id="preview-image"
-                             src="{{ asset('images/default.png') }}"
-                             alt="Default Profile Picture">
-                    @endif
+                    @php
+                        $imagePath = Auth::user()->profile_picture 
+                                     ? asset('storage/' . Auth::user()->profile_picture) 
+                                     : asset('images/default.png');
+                    @endphp
+                    <img id="preview-image" src="{{ $imagePath }}" alt="Profile Preview">
                 </div>
+                @error('profile_picture')
+                    <p class="error-msg">{{ $message }}</p>
+                @enderror
             </div>
 
-            <!-- Buttons -->
             <div class="form-actions">
-                <a href="{{ route('profile.show') }}" class="btn cancel">Cancel</a>
+                <a href="{{ route('dashboard') }}" class="btn cancel">Cancel</a>
                 <button type="submit" class="btn save">Save Changes</button>
             </div>
         </form>
@@ -129,6 +142,7 @@
 </div>
 
 <script>
+    // Real-time image preview logic
     document.getElementById('profile_picture').addEventListener('change', function(event) {
         const [file] = event.target.files;
         if (file) {
