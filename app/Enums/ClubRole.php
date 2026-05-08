@@ -8,6 +8,7 @@ enum ClubRole: string
     case HICOM = 'high committee';
     case SUBCOM = 'sub committee';
     case MEMBER = 'member';
+    case COMMITTEE = 'committee'; // for testing 
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum ClubRole: string
             self::HICOM => 'High Committee',
             self::SUBCOM => 'Sub Committee',
             self::MEMBER => 'Member',
+            self::COMMITTEE => 'Committee',
         };
     }
 }
