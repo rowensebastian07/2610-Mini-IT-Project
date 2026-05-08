@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Link to committee member
             $table->string('title');
             $table->text('content');
+            $table->string('image')->nullable(); 
             $table->timestamps();
         });
     }
