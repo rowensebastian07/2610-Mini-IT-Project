@@ -36,6 +36,8 @@
 
         <a href="{{ route('posts.create', $club->id) }}" class="btn btn-blue">Create Post</a>
         <a href="{{ route('events.create', ['club' => $club->id]) }}" class="btn btn-green">Add Event</a>
+         <a href="{{ route('clubs.edit', $club->id) }}" class="btn btn-yellow">Edit Club</a>
+
     </div>
 
     <!-- Posts Section -->
