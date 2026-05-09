@@ -1,7 +1,16 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
-    </div>
+<x-top-nav>
+  
+</x-top-nav>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/navigation-page.css') }}">
+    <title>Email Verification</title>
+</head>
+
+<body>
 
     @if (session('status') == 'verification-link-sent')
         <div class="mb-4 font-medium text-sm text-green-600">
@@ -28,4 +37,5 @@
             </button>
         </form>
     </div>
-</x-guest-layout>
+</body>
+</html>

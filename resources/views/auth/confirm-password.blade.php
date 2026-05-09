@@ -1,7 +1,17 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('This is a secure area of the application. Please confirm your password before continuing.') }}
-    </div>
+<x-top-nav>
+  
+</x-top-nav>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('css/navigation-page.css') }}">
+    <title>Confirm Password</title>
+</head>
+
+
+<body>
 
     <form method="POST" action="{{ route('password.confirm') }}">
         @csrf
@@ -24,4 +34,5 @@
             </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</body>
+</html>
