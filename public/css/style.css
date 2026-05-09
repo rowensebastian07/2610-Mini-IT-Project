@@ -679,4 +679,15 @@ footer {
     cursor: pointer;          
 }
 
+.btn-yellow {
+    background-color: #FFD700; /* bright gold-yellow */
+    color: #000; /* black text for contrast */
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
 

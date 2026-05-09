@@ -35,36 +35,31 @@ class ClubController extends Controller
         return view('clubs.show', compact('club'));
     }
 
-    public function edit($id)
+    public function edit(Club $club)
     {
-        $club = Club::findOrFail($id);
-        return view('clubs.edit', compact('club'));
+        return view('create-clubs.edit', compact('club'));
     }
 
-    public function update(Request $request, $id)
+        public function update(Request $request, Club $club)
     {
-        $club = Club::findOrFail($id);
-
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'nullable|string',
+            'profile_picture' => 'nullable|image',
+            'category' => 'required|string',
         ]);
 
         if ($request->hasFile('profile_picture')) {
-            $filename = time() . '.' . $request->profile_picture->extension();
-            $request->profile_picture->storeAs('public/images', $filename);
-            $club->profile_picture = $filename;
+            $data['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
         }
 
-        $club->name = $request->name;
-        $club->description = $request->description;
-        $club->save();
+        $club->update($data);
 
         return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Club updated successfully!');
+                        ->with('success', 'Club updated successfully!');
     }
 
+    
     public function destroy($id)
     {
         $club = Club::findOrFail($id);
@@ -160,6 +155,7 @@ class ClubController extends Controller
     {
       return view('create-clubs.create', compact('club'));
     }
+    
 
     
 }

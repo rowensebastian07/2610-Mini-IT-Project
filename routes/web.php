@@ -75,9 +75,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/clubs/{club}/events/{event}/passed', [EventController::class, 'markPassed'])
     ->name('events.markPassed');
 
-
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 
 
 // Routes for creating club
@@ -86,6 +87,10 @@ Route::resource('clubs', ClubController::class)->except(['create', 'store']);
 // Nested post routes under clubs (create + store)
 Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
 Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
+
+// Route for edit club 
+Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
+
 
 Route::get('/logout', function () {
     Auth::logout();
