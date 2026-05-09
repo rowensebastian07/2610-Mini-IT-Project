@@ -1,12 +1,15 @@
 body {
     margin: 0;
     max-width: 100%;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 h2, p {
     width: 100%;
     text-align: center;
     font-size: 1.2em;
+    font-family: Arial, Helvetica, sans-serif;
+    
 }
 
 #create-club-h2 {
@@ -14,6 +17,7 @@ h2, p {
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-family: Arial, Helvetica, sans-serif;
 
 }
 
@@ -26,31 +30,40 @@ h2, p {
     box-shadow: 0px 3px 5px grey;
 }
 
-.form-group{
+.form-group-clubs{
     padding: 0.5em 0;
 }
 
-.form-group input{
+.form-group-clubs input{
+    width: 400px;
+    margin-top: 10px;
+    height: 40px;
+}
+
+.form-group-clubs select{
     width: 400px;
     margin-top: 10px;
 }
 
-.form-group select{
-    width: 400px;
-    margin-top: 10px;
-}
-
-.form-group select:hover{
+.form-group-clubs select:hover{
     cursor: pointer;
 }
 
-.btn-submit{
+
+.btn-submit-clubs{
     margin-top: 1.5em;
     background-image: linear-gradient(to right, rgb(92, 48, 113), rgb(197, 86, 177));
     border-radius: 2em;
     color: white;
     height: 50px;
     width: 150px;
+    border-color: black;
 
 }
+
+.btn-submit-clubs:hover{
+    cursor: pointer;
+
+}
+
 

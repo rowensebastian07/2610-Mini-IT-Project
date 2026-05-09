@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="{{ asset('css/create-clubs.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/create-clubs.css') }}">
 </head>
 
 <body>
@@ -13,22 +13,22 @@
     <form action="{{ route('create-clubs.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <div class="form-group">
+        <div class="form-group-clubs">
             <label for="name">Name</label><br>
             <input type="text" name="name" id="name">
         </div>
 
-        <div class="form-group">
+        <div class="form-group-clubs">
             <label for="description">Description</label><br>
             <input name="description" id="description"></input>
         </div>
 
-        <div class="form-group">
-            <label for="profile_picture">Profile_Picture</label><br>
+        <div class="form-group-clubs">
+            <label for="profile_picture">Profile Picture</label><br>
             <input type="file" name="profile_picture" id="profile_picture">
         </div>
 
-        <div class="form-group">
+        <div class="form-group-clubs">
             <label for="category">Category</label><br>
             <select name="category" id="category">
                 <option value="Arts Clubs">Art Clubs</option>
@@ -41,7 +41,7 @@
             </select>
         </div>
 
-        <button type="submit" class="btn-submit">Create Club</button>
+        <button type="submit" class="btn-submit-clubs">Create Club</button>
     </form>
 
 </div>
