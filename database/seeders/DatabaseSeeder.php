@@ -3,10 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Models\Club;
-use App\Models\Membership;
-use App\Models\Post;
-use App\Modles\Events;
 use App\Enums\ClubRole;
 use App\Enums\UserStatus;
 use App\Enums\UserVerification;
@@ -24,7 +20,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Verified Admin',
                 'password' => Hash::make('password'),
                 'is_admin' => true,
-                'email_verified_at' => now(), // This is what Laravel checks
+                'email_verified_at' => now(),
                 'status' => UserStatus::ACTIVE->value,
                 'verification' => UserVerification::VERIFIED->value,
             ]
@@ -37,43 +33,39 @@ class DatabaseSeeder extends Seeder
                 'name' => 'New Student',
                 'password' => Hash::make('password'),
                 'is_admin' => false,
-                'email_verified_at' => null, // Empty means they aren't verified yet
+                'email_verified_at' => null,
                 'status' => UserStatus::ACTIVE->value,
                 'verification' => UserVerification::UNVERIFIED->value,
             ]
         );
-        
-        //Create the Committee User
+
+        // 3. Create Committee and Member users
         $committee = User::create([
             'name' => 'Committee Lead',
             'email' => 'admin@club.com',
             'password' => Hash::make('password'),
         ]);
 
-        //Create the Regular Member
         $member = User::create([
             'name' => 'Regular Student',
             'email' => 'student@club.com',
             'password' => Hash::make('password'),
         ]);
 
-        //Create the Club
-        $club = Club::create([
-            'name' => 'IT Society',
-            'category' => 'Arts Clubs',
-            'profile_picture' => 'images/1.png'
-        ]);
+        // 4. Seed clubs via ClubsTableSeeder
+        $this->call(ClubsTableSeeder::class);
 
-        //use $committee and $member because they were defined above
+        // 5. Attach committee/member roles to one of the seeded clubs
+        $club = \App\Models\Club::first(); // pick the first seeded club
         $club->users()->attach($committee->id, ['role' => ClubRole::COMMITTEE->value]);
         $club->users()->attach($member->id, ['role' => ClubRole::MEMBER->value]);
 
-        //Create a Post
-        Post::create([
+        // 6. Create a Post for that club
+        \App\Models\Post::create([
             'club_id' => $club->id,
-            'user_id' => $committee->id, // Uses the $committee variable from step 1
+            'user_id' => $committee->id,
             'title' => 'Welcome to the Club!',
-            'body' => 'This is our first official post.',
+            'content' => 'This is our first official post.',
         ]);
     }
 }

@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
-    /**
-     * Helper method to verify if the user is a Committee Member.
-     * This keeps the code DRY.
-     */
+    // Helper method to verify if the user is a Committee Member.
     private function authorizeCommittee(Club $club)
     {
         $membership = $club->users()->where('user_id', Auth::id())->first();
@@ -22,6 +19,20 @@ class EventController extends Controller
         if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
             abort(403, 'Unauthorized action. Only committee members can manage events.');
         }
+    }
+
+    public function index() {
+    $events = Event::all(); // or your query
+    return view('calendar.index', compact('events'));
+}
+
+    /**
+     * Display a specific event.
+     * Authorization not required (any member/visitor can view).
+     */
+    public function show(Club $club, Event $event)
+    {
+        return view('events.show', compact('club', 'event'));
     }
 
     public function create(Club $club)
@@ -35,9 +46,11 @@ class EventController extends Controller
         $this->authorizeCommittee($club);
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'date'  => 'required|date',
-            'time'  => 'required',
+            'title'       => 'required|string|max:255',
+            'date'        => 'required|date',
+            'time'        => 'required',
+            'description' => 'nullable|string',
+            'location'    => 'nullable|string|max:255',
         ]);
 
         // 1. Create the event using the relationship
@@ -67,10 +80,14 @@ class EventController extends Controller
     {
         $this->authorizeCommittee($club);
 
+        // Validating the extended fields from your second snippet
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'date'  => 'required|date',
-            'time'  => 'required',
+            'title'       => 'required|string|max:255',
+            'date'        => 'required|date',
+            'time'        => 'required',
+            'description' => 'nullable|string',
+            'location'    => 'nullable|string|max:255',
+            'is_passed'   => 'nullable|boolean',
         ]);
 
         $event->update($validated);

@@ -15,8 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->dateTime('date');
+            $table->date('date');      // separate date
+            $table->string('time');    // separate time
+            $table->string('location')->nullable();
+
             $table->foreignId('club_id')->constrained()->cascadeOnDelete();
+
             $table->softDeletes();
             $table->timestamps();
         });
@@ -30,3 +34,4 @@ return new class extends Migration
         Schema::dropIfExists('events');
     }
 };
+

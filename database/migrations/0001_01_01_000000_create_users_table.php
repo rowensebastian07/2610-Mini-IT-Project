@@ -4,7 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use App\Enums\UserVerification;
 
@@ -21,10 +20,16 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
             // System-level roles
             $table->boolean('is_admin')->default(false); // true = Super Admin, false = Regular User
             $table->string('status')->default(UserStatus::ACTIVE->value);      // 'active', 'pending', 'banned'
-            $table->string('verification')->default(UserVerification::UNVERIFIED->value);;  //'verified', 'pending', 'unverified'
+            $table->string('verification')->default(UserVerification::UNVERIFIED->value); // 'verified', 'pending', 'unverified'
+
+            // Extra fields
+            $table->string('profile_picture')->nullable();   // store avatar path
+            $table->json('followed_clubs')->nullable();      // store club IDs user follows
+
             $table->rememberToken();
             $table->timestamps();
         });

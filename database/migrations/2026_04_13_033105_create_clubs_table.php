@@ -7,28 +7,39 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::create('clubs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->enum('category', array_column(ClubCategory::cases(), 'value'))
-                  ->default(ClubCategory::STUDENT->value);
-             $table->foreignId('owner_id')
-                    ->nullable() // 1. Must be nullable to allow the user to disappear
-                    ->constrained('users')
-                    ->nullOnDelete(); // 2. Sets owner_id to NULL instead of deleting the club // nullOnDelete() make sure the club doesn't die if the owner delete his account
-            $table->softDeletes();  // softDeletes also in Models\Club to avoid club owner accidentally delete the 
-                                    // club including the post and member
-            $table->timestamps();
-            $table->string('profile_picture')->default('images/1.png');
+
+            /** * Category: Using string instead of enum for flexibility.
+             * This allows us to add new Enum cases in PHP without needing to 
+             * run a database migration every time.
+             */
+            $table->string('category')->default(ClubCategory::ART->value); 
+            $table->string('profile_picture')->nullable();
+
+            // Ownership Logic:
+            $table->foreignId('owner_id')
+                  ->nullable() // nullable(): Allows the club to exist even if the owner is gone.
+                  ->constrained('users') // constrained('users'): Links this to the 'id' on the 'users' table.
+                  ->nullOnDelete(); // nullOnDelete(): If the student deletes their account, the club 
+            $table->softDeletes(); // Allows "restoring" a club if deleted by mistake
+            $table->timestamps();  // Automatically creates created_at and updated_at
+            // remains active but the owner_id becomes NULL.
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('clubs');
     }
 };
-

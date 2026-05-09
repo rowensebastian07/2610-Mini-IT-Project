@@ -534,15 +534,15 @@ footer {
     margin-top: 2px;
 }
 
+/* Base style for all event cards */
 .event-sticker {
-    background-color: #ffe066;  
-    color: #333;
     font-size: 11px;
     padding: 4px 6px;
     margin-top: 4px;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     text-align: left;
+    font-weight: bold;
 }
 
 .event-sticker strong {
@@ -644,6 +644,18 @@ footer {
     color: #fff;
 }
 
+
+.event-upcoming {
+    background-color: #ffe066;  /* yellow */
+    color: #333;
+}
+
+/* Past events (dates before today) */
+.event-passed {
+    background-color: green;  /* green */
+    color: #fff;
+}
+
 .btn-edit {
     background-color: #2563eb; 
     color: #fff;
@@ -663,7 +675,8 @@ footer {
 }
 
 .events-table tr:hover {
-    background-color: #f0f8ff; 
+    background-color: hotpink; 
     cursor: pointer;          
 }
+
 
