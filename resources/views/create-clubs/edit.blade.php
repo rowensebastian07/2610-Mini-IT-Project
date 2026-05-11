@@ -32,6 +32,15 @@
             </div>
 
             <div class="form-group">
+                <label for="banner_image">Banner Image</label><br>
+                <input type="file" name="banner_image" id="banner_image">
+                @if($club->banner_image)
+                    <p>Current banner:</p>
+                    <img src="{{ asset('storage/' . $club->banner_image) }}" alt="Banner" width="300">
+                @endif
+            </div>
+
+            <div class="form-group">
                 <label for="email">Email</label><br>
                 <input type="text" name="email" id="email" value="{{ old('description', $club->email) }}">
             </div>
