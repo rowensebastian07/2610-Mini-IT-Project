@@ -19,7 +19,15 @@ class Club extends Model
         'description',
         'category', // need this, otherwise can't mass-assign categories.
         'profile_picture',
-        'owner_id'
+        'email',
+        'banner',
+        'registration_link',
+        'registration_open'
+    ];
+
+    protected $casts = [
+        'registration_open' => 'boolean',
+        'category' => ClubCategory::class
     ];
 
     // app/Models/Club.php
@@ -30,14 +38,9 @@ class Club extends Model
     }
 
     public function followersCount()
-{
-    return \App\Models\User::whereJsonContains('followed_clubs', $this->id)->count();
-}
-
-
-    protected $casts = [
-        'category' => ClubCategory::class,
-    ];
+    {
+        return \App\Models\User::whereJsonContains('followed_clubs', $this->id)->count();
+    }
 
     public function posts()
     {
@@ -94,4 +97,10 @@ class Club extends Model
     {
         return !is_null($this->owner_id);
     }
+
+    public function committee()
+    {
+        return $this->hasMany(\DB::table('committee')->getModel()); 
+    }
+
 }
