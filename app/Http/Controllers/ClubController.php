@@ -40,13 +40,18 @@ class ClubController extends Controller
         return view('create-clubs.edit', compact('club'));
     }
 
-        public function update(Request $request, Club $club)
+    public function update(Request $request, Club $club)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'profile_picture' => 'nullable|image',
             'category' => 'required|string',
+            'email' => 'nullable|string',
+            'banner' => 'nullable|image',
+            'registration_link' => 'nullable|url',
+            'registration_open' => 'sometimes'
+
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -113,9 +118,6 @@ class ClubController extends Controller
 
     public function store(Request $request,  \App\Models\Club $clubs)
     {
-
-        
-
         $validated = $request->validate([
         'name'   => 'required|string|max:255',
         'category' => 'required',
@@ -139,56 +141,21 @@ class ClubController extends Controller
         return redirect()->route('navigation')
                         ->with('success', 'Club created successfully!');
 
+    }
+
+   public function search(Request $request) 
+   {
+        $query = $request->input('query');
+        $clubs = Club::where('name','like',"%{$query}%")
+                    ->orWhere('description','like',"%{$query}%")
+                    ->with('events')
+                    ->paginate(10);
+        return view('clubs.search', compact('clubs','query'));
+    }   
+
+    public function create(Club $club)
+    {
+        return view('create-clubs.create', compact('club'));
+    }
         
-    }
-
-   public function search(Request $request) {
-    $query = $request->input('query');
-    $clubs = Club::where('name','like',"%{$query}%")
-                 ->orWhere('description','like',"%{$query}%")
-                 ->with('events')
-                 ->paginate(10);
-    return view('clubs.search', compact('clubs','query'));
-}   
-
-public function committee(Club $club)
-{
-    $committee = \DB::table('committee_members')->where('club_id', $club->id)->get();
-    return view('clubs.committee', compact('club', 'committee'));
-}
-
-public function addCommitteeMember(Request $request, Club $club)
-{
-    $data = $request->validate([
-        'name' => 'required|string|max:255',
-        'role' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'profile_picture' => 'nullable|image'
-    ]);
-
-    if ($request->hasFile('profile_picture')) {
-        $data['profile_picture'] = $request->file('profile_picture')->store('committee', 'public');
-    }
-
-    $data['club_id'] = $club->id;
-
-    \DB::table('committee_members')->insert($data);
-
-    return redirect()->route('clubs.committee', $club->id);
-}
-
-public function removeCommitteeMember(Club $club, $id)
-{
-    \DB::table('committee_members')->where('id', $id)->delete();
-    return redirect()->route('clubs.committee', $club->id);
-}
-
-
-
-
-
-
-    
-
-    
 }
