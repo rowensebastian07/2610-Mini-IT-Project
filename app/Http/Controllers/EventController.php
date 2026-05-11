@@ -49,7 +49,7 @@ class EventController extends Controller
             'title'       => 'required|string|max:255',
             'date'        => 'required|date',
             'time'        => 'required',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:255',
             'location'    => 'nullable|string|max:255',
         ]);
 

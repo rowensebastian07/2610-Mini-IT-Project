@@ -12,6 +12,11 @@
             <input type="text" id="title" name="title" placeholder="Chess Club AGM" required>
         </div>
 
+        <div class="form-group"> <!-- may need this for clubs/{club}/events -->
+            <label for="title">Description</label>
+            <input type="description" id="description" name="description" nullable>
+        </div>
+
         <div class="form-group">
             <label for="date">Date</label>
             <input type="date" id="date" name="date" required>
@@ -20,6 +25,11 @@
         <div class="form-group">
             <label for="time">Time</label>
             <input type="time" id="time" name="time" required>
+        </div>
+
+        <div class="form-group">
+            <label for="time">Location</label>
+            <input type="location" id="location" name="location" nullable>
         </div>
 
         <button type="submit" class="btn-event">Save Event</button>

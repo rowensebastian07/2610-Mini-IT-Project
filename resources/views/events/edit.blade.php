@@ -15,6 +15,13 @@
                    value="{{ old('title', $event->title) }}" required>
         </div>
 
+        <!-- Event Description -->
+        <div class="form-group">
+            <label for="title">Description</label>
+            <input type="text" name="description" id="description"
+                   value="{{ old('description', $event->description) }}" nullable>
+        </div>
+
         <!-- Event Date -->
         <div class="form-group">
             <label for="date">Date</label>
@@ -27,6 +34,13 @@
             <label for="time">Time</label>
             <input type="time" name="time" id="time"
                    value="{{ old('time', $event->time) }}" required>
+        </div>
+
+        <!-- Event Location -->
+        <div class="form-group">
+            <label for="title">Location</label>
+            <input type="text" name="location" id="location"
+                   value="{{ old('location', $event->location) }}" nullable>
         </div>
 
         <!-- Buttons -->
