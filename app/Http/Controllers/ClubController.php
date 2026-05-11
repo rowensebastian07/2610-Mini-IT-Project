@@ -47,8 +47,12 @@ class ClubController extends Controller
             'description' => 'nullable|string',
             'profile_picture' => 'nullable|image',
             'category' => 'required|string',
+            'email' => 'nullable|string',
+            'banner' => 'nullable|image',
+            'registration_link' => 'nullable|url',
+            'registration_open' => 'sometimes'
         ]);
-
+        
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
         }
