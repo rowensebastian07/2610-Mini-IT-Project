@@ -117,32 +117,12 @@
                 <input type="file" name="profile_picture" id="profile_picture">
                 @if($club->profile_picture)
                     <p>Current:</p>
-                    <img src="{{ asset('storage/' . $club->profile_picture) }}" alt="Club Picture" width="100">
+                    <img src="{{ asset('storage/' . $club->profile_picture) }}" alt="Club Picture">
                 @endif
             </div>
 
             <div class="form-group">
-                <label for="banner_image">Banner Image</label><br>
-                <input type="file" name="banner_image" id="banner_image">
-                @if($club->banner_image)
-                    <p>Current banner:</p>
-                    <img src="{{ asset('storage/' . $club->banner_image) }}" alt="Banner" width="300">
-                @endif
-            </div>
-
-            <div class="form-group">
-                <label for="email">Email</label><br>
-                <input type="text" name="email" id="email" value="{{ old('description', $club->email) }}">
-            </div>
-
-            <div class="form-group">
-                <label for="registration_link">Registration Form URL</label><br>
-                <input type="url" name="registration_link" id="registration_link"
-                    value="{{ old('registration_link', $club->registration_link) }}">
-            </div>
-
-            <div class="form-group">
-                <label for="category">Category</label><br>
+                <label for="category">Category</label>
                 <select name="category" id="category">
                     <option value="Arts Clubs" {{ $club->category == 'Arts Clubs' ? 'selected' : '' }}>Art Clubs</option>
                     <option value="Community Clubs" {{ $club->category == 'Community Clubs' ? 'selected' : '' }}>Community Clubs</option>

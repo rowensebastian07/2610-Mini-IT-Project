@@ -40,18 +40,13 @@ class ClubController extends Controller
         return view('create-clubs.edit', compact('club'));
     }
 
-    public function update(Request $request, Club $club)
+        public function update(Request $request, Club $club)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'profile_picture' => 'nullable|image',
             'category' => 'required|string',
-            'email' => 'nullable|string',
-            'banner' => 'nullable|image',
-            'registration_link' => 'nullable|url',
-            'registration_open' => 'sometimes'
-
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -146,15 +141,14 @@ class ClubController extends Controller
                         ->with('success', 'Club created successfully!');
     }
 
-   public function search(Request $request) 
-   {
-        $query = $request->input('query');
-        $clubs = Club::where('name','like',"%{$query}%")
-                    ->orWhere('description','like',"%{$query}%")
-                    ->with('events')
-                    ->paginate(10);
-        return view('clubs.search', compact('clubs','query'));
-    }   
+   public function search(Request $request) {
+    $query = $request->input('query');
+    $clubs = Club::where('name','like',"%{$query}%")
+                 ->orWhere('description','like',"%{$query}%")
+                 ->with('events')
+                 ->paginate(10);
+    return view('clubs.search', compact('clubs','query'));
+}   
 
     public function create(Club $club)
     {
