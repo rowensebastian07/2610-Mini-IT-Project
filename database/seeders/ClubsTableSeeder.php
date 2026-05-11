@@ -17,6 +17,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'MMUsic Club',
                 'email' => 'mmusic@mmu.edu.my',
+                'registration_link' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+                'registration_open' => false,
                 'category' => ClubCategory::ART->value,
                 'profile_picture' => 'images/1.jpg',
                 'created_at' => $now,
@@ -25,6 +27,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'MMU Superheroes',
                 'email' => 'superheroes@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::COMMUNITY->value,
                 'profile_picture' => 'images/2.jpg',
                 'created_at' => $now,
@@ -33,6 +37,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'Buddhist Society',
                 'email' => 'buddhist_society@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::RELIGION->value,
                 'profile_picture' => 'images/3.png',
                 'created_at' => $now,
@@ -41,6 +47,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'MMU Esports',
                 'email' => 'mmuesports@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::ENTERTAINMENT->value,
                 'profile_picture' => 'images/4.png',
                 'created_at' => $now,
@@ -49,6 +57,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'Chinese Language Society',
                 'email' => 'chinese_language@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::CULTURAL->value,
                 'profile_picture' => 'images/5.png',
                 'created_at' => $now,
@@ -57,6 +67,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'IT Society',
                 'email' => 'itsociety@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::TECH->value,
                 'profile_picture' => 'images/6.jpg',
                 'created_at' => $now,
@@ -65,6 +77,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'Badminton Club',
                 'email' => 'badminton@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::RECREATIONAL->value,
                 'profile_picture' => 'images/7.jpg',
                 'created_at' => $now,
@@ -73,6 +87,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'CyberFitness Club',
                 'email' => 'cyberfitness@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::RECREATIONAL->value,
                 'profile_picture' => 'images/8.jpg',
                 'created_at' => $now,
@@ -81,6 +97,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'TechGirls MMU',
                 'email' => 'techgirls@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::TECH->value,
                 'profile_picture' => 'images/9.jpg',
                 'created_at' => $now,
@@ -89,6 +107,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'Rentak Dance Club',
                 'email' => 'rentak_dance@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::ART->value,
                 'profile_picture' => 'images/10.jpg',
                 'created_at' => $now,
@@ -97,6 +117,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'Chess Club',
                 'email' => 'chessclub@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::ENTERTAINMENT->value,
                 'profile_picture' => 'images/11.jpeg',
                 'created_at' => $now,
@@ -105,6 +127,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'University Peer Group',
                 'email' => 'peer_group@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::COMMUNITY->value,
                 'profile_picture' => 'images/12.png',
                 'created_at' => $now,
@@ -113,6 +137,8 @@ class ClubsTableSeeder extends Seeder
             [
                 'name' => 'Table Tennis Club',
                 'email' => 'tabletennis@mmu.edu.my',
+                'registration_link' => null,
+                'registration_open' => false,
                 'category' => ClubCategory::RECREATIONAL->value,
                 'profile_picture' => 'images/13.png',
                 'created_at' => $now,
