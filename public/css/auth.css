@@ -1,0 +1,38 @@
+body{
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.auth-lbl{
+    font-size: 1.2em;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.auth-input{
+    width: 500px;
+    height: 40px;
+    margin-bottom: 3em;
+    margin-top: 1em;
+}
+
+.log-in-form{
+    margin: 3em auto;
+    max-width: 500px;
+    background-color: rgb(245, 245, 245);
+    padding: 2em;
+    border-radius: 1em;
+    box-shadow: 0px 3px 5px grey;
+}
+
+.remember_me{
+    transform: scale(1.5);
+    margin-bottom: 2em;
+}
+
+.remember_me:hover{
+    cursor: pointer;
+}
+
+.forgot-pass{
+    font-size: 120%;
+}
