@@ -144,7 +144,20 @@
             <div class="info-card">
                 <h4>Membership</h4>
                 <p>Join us to get the latest updates and participate in exclusive events.</p>
-                <a href="#" class="btn-join">Register Now</a>
+
+                @if($club->registration_open && $club->registration_link)
+                    <a href="{{ $club->registration_link }}" class="btn-join" target="_blank">
+                        Register Now
+                    </a>
+                @elseif($club->registration_open)
+                    <span class="btn-join disabled" style="background:#ccc; cursor:not-allowed;">
+                        Registration URL not set
+                    </span>
+                @else
+                    <span class="btn-join disabled" style="background:#ccc; cursor:not-allowed;">
+                        Registration closed
+                    </span>
+                @endif
             </div>
 
             <div class="info-card">
