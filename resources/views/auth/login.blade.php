@@ -1,16 +1,6 @@
-<x-top-nav>
-  
-</x-top-nav>
-
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('css/navigation-page.css') }}">
-    <title>Log In</title>
-</head>
-
-<body>
+<x-guest-layout>
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <form method="POST" action="{{ route('login') }}">
         @csrf
@@ -54,5 +44,4 @@
             </x-primary-button>
         </div>
     </form>
-</body>
-</html>
+</x-guest-layout>

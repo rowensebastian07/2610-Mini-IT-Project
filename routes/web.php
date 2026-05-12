@@ -37,7 +37,7 @@ Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show')
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Dashboard - shows profile + followed clubs/events
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::patch('/dashboard', [UserController::class, 'updateProfile'])->name('dashboard.update');
