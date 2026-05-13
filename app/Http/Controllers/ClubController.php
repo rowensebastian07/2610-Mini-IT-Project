@@ -49,7 +49,7 @@ class ClubController extends Controller
             'profile_picture' => 'nullable|image',
             'category' => 'required|string',
             'email' => 'nullable|string',
-            'banner' => 'nullable|image',
+            'banner_image' => 'nullable|image',
             'registration_link' => 'nullable|url',
             'registration_open' => 'sometimes'
         ]);
@@ -57,6 +57,10 @@ class ClubController extends Controller
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
         }
+
+          if ($request->hasFile('banner_image')) {
+        $data['banner_image'] = $request->file('banner_image')->store('banners', 'public'); // ✅ save banner
+    }
 
         $club->update($data);
 
@@ -116,14 +120,13 @@ class ClubController extends Controller
 
     // Temporary store function as we figure out how to reroute things
 
-    public function store(Request $request,  \App\Models\Club $clubs)
+    public function store(Request $request,  Club $clubs)
     {
         $validated = $request->validate([
         'name'   => 'required|string|max:255',
         'category' => 'required',
         'profile_picture'   => 'nullable|image|max:2048',
         'description' => 'nullable|string',
-        'category' => 'required|string',
         'email' => 'nullable|string',
         'banner' => 'nullable|image',
         'registration_link' => 'nullable|url',

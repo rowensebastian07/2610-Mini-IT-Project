@@ -16,21 +16,27 @@
 }
 
 /* Banner */
-.club-banner-placeholder {
-    width: 100%;
-    height: 200px;
-    background: #999999 url("https://via.placeholder.com/1200x200/999999/333333?text=Club+Banner") no-repeat center center;
-    background-size: cover;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    border-radius: 8px;
+.club-banner {
+    width: 100uv;
+    height: 200px; /* ✅ same slim height as your header */
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    left: 0;
 }
+
+.banner-img {
+    width: 100%;
+    height: 100%; /* ✅ fills the 60px container */
+    object-fit: cover;
+    object-position: center;
+}
+
+
+
+
+
 
 /* Grey Blocks & Info Cards */
 .club-section, .info-card {

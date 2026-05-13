@@ -6,9 +6,16 @@
 
 @section('content')
     <!-- Sub-header -->
-    <div class="club-banner-placeholder">
-    <h2>{{ $club->name }}</h2>
-    </div>
+   <div class="club-banner">
+    @if($club->banner_image)
+        <img src="{{ asset('storage/' . $club->banner_image) }}" alt="{{ $club->name }} Banner" class="banner-img">
+    @else
+        <div class="club-banner-placeholder">
+            <h2>{{ $club->name }}</h2>
+        </div>
+    @endif
+</div>
+
 
     <div class="sub-header" style="display:flex; justify-content:space-between; align-items:center;">
         <div style="flex:1;"></div>
