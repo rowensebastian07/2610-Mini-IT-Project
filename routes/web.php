@@ -75,7 +75,15 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     Route::patch('/clubs/{club}/events/{event}/passed', [EventController::class, 'markPassed'])->name('events.markPassed');
 
-    Route::resource('posts', PostController::class); // do not remove this
+// Posts nested under clubs
+Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
+Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
+
+// Keep other post routes (edit, update, destroy, show)
+Route::resource('posts', PostController::class)->except(['create', 'store']);
+
+
+    // do not remove this
     /* DO NO manually define 
         posts.edit
         posts.update

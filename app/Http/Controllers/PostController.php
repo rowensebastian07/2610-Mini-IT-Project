@@ -18,10 +18,10 @@ class PostController extends Controller
     private function authorizeCommittee(Club $club)
     {
         $membership = $club->users()->where('user_id', Auth::id())->first();
-
+        /*
         if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
             abort(403, 'Unauthorized action. Only committee members can manage posts.');
-        }
+        } */
     }
 
     /**
