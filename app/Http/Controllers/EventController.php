@@ -38,32 +38,32 @@ class EventController extends Controller
         return view('events.create', compact('club'));
     }
 
-    public function store(Request $request, Club $club)
-    {
-        $this->authorizeCommittee($club);
+   public function store(Request $request, Club $club)
+{
+    $this->authorizeCommittee($club);
 
-        $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'date'        => 'required|date',
-            'time'        => 'required',
-            'description' => 'nullable|string|max:255',
-            'location'    => 'nullable|string|max:255',
-        ]);
+    $validated = $request->validate([
+        'title'       => 'required|string|max:255',
+        'date'        => 'required|date',
+        'time'        => 'required',
+        'description' => 'nullable|string|max:255',
+        'location'    => 'nullable|string|max:255',
+    ]);
 
-        $event = $club->events()->create($validated);
+    $event = $club->events()->create($validated);
 
-        foreach ($club->users as $member) {
-            if ($member->id !== Auth::id()) {
-                $member->notify(new ClubNotification(
-                    $club,
-                    "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}"
-                ));
-            }
-        }
-
-        return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Event created and members notified!');
+    // ✅ Notify ALL members, including sender
+    foreach ($club->users as $member) {
+        $member->notify(new ClubNotification(
+            $club,
+            "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}"
+        ));
     }
+
+    return redirect()->route('clubs.show', $club->id)
+                     ->with('success', 'Event created and members notified!');
+}
+
 
     public function edit(Club $club, Event $event)
     {

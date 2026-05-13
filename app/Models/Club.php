@@ -67,11 +67,12 @@ class Club extends Model
      * The users that belong to the club.
      */
     public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'memberships', 'club_id', 'user_id')
-                    ->withPivot('role', 'status', 'verification')
-                    ->withTimestamps(); // Use this if your pivot table has created_at/updated_at
-    }
+{
+    return $this->belongsToMany(User::class, 'memberships', 'club_id', 'user_id')
+                ->withPivot('role', 'status', 'verification')
+                ->withTimestamps();
+}
+
 
     /**
      * Relationship: Events hosted by this club.
