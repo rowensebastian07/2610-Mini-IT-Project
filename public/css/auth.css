@@ -91,3 +91,9 @@ h1{
     background-image: linear-gradient(to right, rgb(69, 37, 84), rgb(147, 89, 136));
 
 }
+
+/* error message */
+
+.mt-2 li{
+    width: 100%;
+}

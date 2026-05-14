@@ -22,17 +22,17 @@
         @csrf
 
         <!-- Email Address -->
-        <div>
+        <div class="form-box-category">
             <x-input-label for="email" :value="__('Email')" class="auth-lbl"/><br>
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" class="auth-input" />
+            <x-text-input id="email" class="block mt-1 w-full first-box" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" class="auth-input" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
+        <div class="mt-4 form-box-category">
             <x-input-label for="password" :value="__('Password')" class="auth-lbl" /><br>
 
-            <x-text-input id="password" class="block mt-1 w-full"
+            <x-text-input id="password" class="block mt-1 w-full second-box"
                             type="password"
                             name="password"
                             required autocomplete="current-password"
