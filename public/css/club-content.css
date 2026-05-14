@@ -299,3 +299,47 @@
     color: #333;
     font-weight: 500;
 }
+
+.info-card {
+    background: grey;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    position: relative;
+}
+.icon-bar {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+.edit-icon {
+    background-color: transparent;
+    border: none;
+    color: #1a73e8;
+    font-size: 22px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.edit-icon:hover { color: #4dabf7; }
+.btn {
+    background: #2563eb;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+.btn:hover { background: #1e40af; }
+.logout-btn {
+    background: #dc2626;
+}
+.logout-btn:hover {
+    background: #b91c1c;
+}
+.link-text {
+    color: white;
+    font-weight: bold;
+    text-decoration: underline;
+}
+

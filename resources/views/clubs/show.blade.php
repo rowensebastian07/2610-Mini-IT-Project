@@ -177,15 +177,69 @@
                 <h4>Committee</h4>
                 <a href="/clubs/{{ $club->id }}/committee" class="link-text">View Committee Members</a>
             </div>
-
-            <div class="info-card">
-                <h4>Contact & FAQ</h4>
-                <p><strong>Email:</strong> {{ $club->email ?? 'N/A' }}</p>
-                <a href="#faq" class="link-text">Frequently Asked Questions</a>
-            </div>
-        </div>
+<div class="info-card">
+    <div class="icon-bar">
+        <button class="edit-icon" id="edit-contact">✏️</button>
     </div>
 
+    <!-- Public View -->
+    <div id="contact-view">
+        <h4>Contact & FAQ</h4>
+        <p><strong>Email:</strong> N/A</p>
+        <p><strong>Instagram:</strong> N/A</p>
+        <p><strong>Website:</strong> N/A</p>
+        <a href="#faq" class="link-text">Frequently Asked Questions</a>
+    </div>
+
+    <!-- Edit Form (hidden by default) -->
+    <form id="contact-edit" style="display:none;">
+        <input type="email" name="email" placeholder="Club Email">
+        <input type="text" name="instagram" placeholder="Instagram URL">
+        <input type="text" name="website" placeholder="Website URL">
+
+        <button type="button" class="btn" id="save-contact">Save Changes</button>
+        <button type="button" class="btn logout-btn" id="cancel-contact">Cancel</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Show edit form
+    $('#edit-contact').on('click', function() {
+        $('#contact-view').hide();
+        $('#contact-edit').show();
+    });
+
+    // Cancel edit
+    $('#cancel-contact').on('click', function() {
+        $('#contact-edit').hide();
+        $('#contact-view').show();
+    });
+
+    // Save changes (simulate publish)
+    $('#save-contact').on('click', function() {
+        const email = $('input[name="email"]').val() || 'N/A';
+        const instagram = $('input[name="instagram"]').val() || 'N/A';
+        const website = $('input[name="website"]').val() || 'N/A';
+
+        $('#contact-view').html(`
+            <h4>Contact & FAQ</h4>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Instagram:</strong> ${instagram !== 'N/A' ? `<a href="${instagram}" target="_blank">${instagram}</a>` : 'N/A'}</p>
+            <p><strong>Website:</strong> ${website !== 'N/A' ? `<a href="${website}" target="_blank">${website}</a>` : 'N/A'}</p>
+            <a href="#faq" class="link-text">Frequently Asked Questions</a>
+        `);
+
+        $('#contact-edit').hide();
+        $('#contact-view').show();
+    });
+});
+</script>
+
+
+
+ <!-- script for JSON photo collection  for events -->
 @push('scripts')
 <script>
 function updateDriveLink(eventId, link) {
