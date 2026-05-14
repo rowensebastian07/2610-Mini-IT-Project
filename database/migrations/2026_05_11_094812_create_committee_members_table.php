@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('role');
             $table->text('description')->nullable(); 
             $table->string('profile_picture')->nullable();
+            $table->enum('status', ['pending','accepted','declined'])->default('pending');
             $table->timestamps();
         });
     }

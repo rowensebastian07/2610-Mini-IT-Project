@@ -38,11 +38,17 @@ class User extends Authenticatable
     // Relationships
     // --------------------------
 
+    /**
+     * Memberships for clubs (pivot table).
+     */
     public function memberships(): HasMany
     {
         return $this->hasMany(Membership::class, 'user_id');
     }
 
+    /**
+     * Clubs the user belongs to.
+     */
     public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class, 'memberships')
@@ -50,13 +56,18 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /**
+     * Clubs owned by the user.
+     */
     public function ownedClubs(): HasMany
     {
         return $this->hasMany(Club::class, 'owner_id');
     }
 
+    /**
+     * All events across clubs the user is a member of.
+     */
     public function getEventsAttribute()
-  
     {
         return $this->clubs()->with('events')->get()->pluck('events')->flatten();
     }

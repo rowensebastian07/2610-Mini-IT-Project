@@ -78,10 +78,41 @@
         transition: opacity 0.2s ease;
         margin-right: 10px;
     }
+/* Mark as Read (blue) */
+.btn-markread {
+    background-color: #1a73e8;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-markread:hover { opacity: 0.9; }
 
-    .btn:hover { opacity: 0.9; }
-    .btn-success { background-color: #1a73e8; color: #fff; }
-    .btn-danger  { background-color: #d93025; color: #fff; }
+/* Accept (green) */
+.btn-success {
+    background-color: #34a853;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-success:hover { opacity: 0.9; }
+
+/* Decline (red) */
+.btn-danger {
+    background-color: #d93025;
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-danger:hover { opacity: 0.9; }
 
     .notification-actions { margin-top: 20px; }
 </style>
@@ -119,33 +150,58 @@
 
 <script>
     const notifications = @json($notifications);
+function showNotification(id) {
+    // Reset active state
+    document.querySelectorAll('.notification-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('notif-' + id).classList.add('active');
 
-    function showNotification(id) {
-        document.querySelectorAll('.notification-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('notif-' + id).classList.add('active');
+    const notif = notifications.find(n => n.id == id);
+    const detail = document.getElementById('notification-detail');
 
-        const notif = notifications.find(n => n.id == id);
-        const detail = document.getElementById('notification-detail');
-        detail.innerHTML = `
-            <h4 style="color:#fff;">${notif.data.club_name ?? 'Club Update'}
-                ${notif.data.type ? `<span class="badge badge-${notif.data.type}">${notif.data.type}</span>` : ''}
-            </h4>
-            <p style="color:#ccc;">${notif.data.message ?? 'No message content'}</p>
-            <small style="color:#999;">${new Date(notif.created_at).toLocaleString()}</small>
+    // ✅ Default actions (Mark as Read + Delete)
+    let actionsHtml = `
+        <div class="notification-actions">
+            <form action="/notifications/${id}/read" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-markread">Mark as Read</button>
+            </form>
+            <form action="/notifications/${id}" method="POST" style="display:inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    `;
 
-            <div class="notification-actions">
-                <form action="/notifications/${id}/read" method="POST" style="display:inline;">
+    // ✅ Add Accept/Decline buttons for committee invites
+    if (notif.data.type === 'committee') {
+        actionsHtml += `
+            <div class="notification-actions" style="margin-top:15px;">
+                <form action="/clubs/${notif.data.club_id}/invite/respond" method="POST" style="display:inline;">
                     @csrf
-                    <button type="submit" class="btn btn-success">Mark as Read</button>
+                    <input type="hidden" name="action" value="accept">
+                    <button type="submit" class="btn btn-success">Accept</button>
                 </form>
-
-                <form action="/notifications/${id}" method="POST" style="display:inline;">
+                <form action="/clubs/${notif.data.club_id}/invite/respond" method="POST" style="display:inline;">
                     @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <input type="hidden" name="action" value="decline">
+                    <button type="submit" class="btn btn-danger">Decline</button>
                 </form>
             </div>
         `;
     }
+
+    // ✅ Render detail panel
+    detail.innerHTML = `
+        <h4 style="color:#fff;">${notif.data.club_name ?? 'Club Update'}
+            ${notif.data.type ? `<span class="badge badge-${notif.data.type}">${notif.data.type}</span>` : ''}
+        </h4>
+        <p style="color:#ccc;">${notif.data.message ?? 'No message content'}</p>
+        <small style="color:#999;">${new Date(notif.created_at).toLocaleString()}</small>
+        ${actionsHtml}
+    `;
+}
+
+
 </script>
-@endsection
+@endsection 

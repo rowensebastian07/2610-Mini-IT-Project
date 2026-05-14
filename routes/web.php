@@ -122,5 +122,14 @@ Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('
 Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
 Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
 Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
+Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+Route::get('/committee/search', [ClubController::class, 'searchCommittee'])->name('committee.search');
+Route::post('/clubs/{club}/invite/respond', [ClubController::class, 'respondToInvite'])
+     ->name('committee.invite.respond');
+Route::put('/clubs/{club}/committee/{id}/update', [App\Http\Controllers\ClubController::class, 'updateCommitteeMember'])
+    ->name('clubs.committee.update');
+
+
+
 
 require __DIR__ . '/auth.php';

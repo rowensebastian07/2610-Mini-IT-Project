@@ -89,4 +89,16 @@ class UserController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Profile updated successfully!');
     }
+
+    public function search(Request $request)
+{
+    $q = $request->input('q');
+    $users = \App\Models\User::where('name', 'like', "%{$q}%")
+                ->orWhere('email', 'like', "%{$q}%")
+                ->limit(10)
+                ->get(['id','name','email']);
+
+    return response()->json($users);
+}
+
 }
