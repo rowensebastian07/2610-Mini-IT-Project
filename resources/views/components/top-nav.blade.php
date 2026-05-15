@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{ asset('css/top-nav.css') }}">
 
 <div class="top-nav">
-    <img src="images/drop down.png" id="drop-down">
+    <img src="{{ asset('images/drop down.png') }}" id="drop-down">
     <ul class="drop-down-list">
         <li><a href="{{ url('/') }}">Home</a></li>
         <li><a href="{{ url('/clubs') }}">Clubs</a></li>
@@ -20,7 +20,12 @@
    <div class="search-bar">
        <form action="{{ route('clubs.search') }}" method="GET">
            <input type="text" name="query" id="query" placeholder="Search clubs or events... "value="{{ request('query') }}">
-           <button type="submit" id="search-submit" style=" position: absolute; background-color:rgb(82, 82, 82); z-index:999; border-color:white; align-items:center; margin:6px 3px; border-radius:7em; border-style:solid;"><img src="images/search-icon.png" style="width:30px; height:30px; transform:scale(1.7); "></button>
+           <button type="submit" id="search-submit" 
+           style=" position: absolute; background-color:rgb(82, 82, 82);
+            z-index:999; border-color:white; align-items:center; margin:6px 3px; 
+            border-radius:7em; border-style:solid;">
+            <img src="{{asset('images/search-icon.png')}}" style="width:30px; height:30px; transform:scale(1.7); ">
+        </button>
        </form>
    </div>
 
