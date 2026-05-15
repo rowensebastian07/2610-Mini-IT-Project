@@ -282,7 +282,6 @@ class ClubController extends Controller
                      ->with('success', 'Profile updated successfully!');
 }
 
-
     // --------------------------
     // Remove committee member
     // --------------------------
@@ -291,4 +290,12 @@ class ClubController extends Controller
         DB::table('committee_members')->where('id', $id)->delete();
         return redirect()->route('clubs.committee', $club->id);
     }
+
+   // Chatroom fucntion 
+   public function chatroom(Club $club)
+{
+    return view('clubs.chatroom', compact('club'));
+}
+
+
 }

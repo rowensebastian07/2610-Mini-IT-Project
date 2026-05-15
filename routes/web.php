@@ -9,7 +9,6 @@ use App\Http\Controllers\UserController;
 use App\Models\Event;
 use App\Http\Controllers\NotificationController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -94,7 +93,6 @@ Route::middleware(['auth'])->group(function () {
      ->name('events.deletePhoto');
 
 
-
 // Posts nested under clubs
 Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
 Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
@@ -102,18 +100,6 @@ Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('post
 // Keep other post routes (edit, update, destroy, show)
 Route::resource('posts', PostController::class)->except(['create', 'store']);
 
-
-    // do not remove this
-    /* DO NO manually define 
-        posts.edit
-        posts.update
-        posts.destroy
-    */ 
-
-    /* Route::resource() already creates
-        posts.create
-        posts.store
-    */
 
     // Route for edit club // huh? -lzh
     Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
@@ -137,7 +123,9 @@ Route::post('/clubs/{club}/invite/respond', [ClubController::class, 'respondToIn
 Route::put('/clubs/{club}/committee/{id}/update', [App\Http\Controllers\ClubController::class, 'updateCommitteeMember'])
     ->name('clubs.committee.update');
 
-
+ //Club Chatroom Page
+Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class, 'chatroom'])
+     ->name('clubs.chatroom');
 
 
 require __DIR__ . '/auth.php';

@@ -343,3 +343,32 @@
     text-decoration: underline;
 }
 
+
+.info-card {
+    background-color: #6c6c6c;
+    color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    text-align: center;
+}
+.info-card h4 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.info-card p {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+.info-card .btn-primary {
+    background-color: #1a73e8;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.info-card .btn-primary:hover {
+    opacity: 0.9;
+}
+

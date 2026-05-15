@@ -201,6 +201,13 @@
         <button type="button" class="btn logout-btn" id="cancel-contact">Cancel</button>
     </form>
 </div>
+<div class="info-card">
+    <h4>Club Chatroom</h4>
+    <p>Interact with other members in real time!</p>
+    <a href="{{ route('clubs.chatroom', $club->id) }}" class="btn btn-primary">Open Chatroom</a>
+</div>
+
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
