@@ -137,6 +137,17 @@
         width: 100%;
         margin-bottom: 10px;
     }
+
+    /* Grip handle for drag */
+    .drag-handle {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        font-size: 20px;
+        color: #888;
+        cursor: grab;
+    }
+    .drag-handle:hover { color: #ccc; }
 </style>
 
 @if(session('success'))
@@ -164,9 +175,11 @@
     </div>
 </div>
 
+<div id="committee-list">
 @foreach($committee as $member)
     @if($member->status === 'accepted')
-        <div class="profile-card" id="card-{{ $member->id }}">
+        <div class="profile-card" id="card-{{ $member->id }}" data-id="{{ $member->id }}">
+            <span class="drag-handle">⋮⋮</span>
             <div class="icon-bar">
                 <button class="edit-icon" data-id="{{ $member->id }}">✏️</button>
                 <form action="{{ route('clubs.committee.remove', [$club->id, $member->id]) }}" 
@@ -211,13 +224,16 @@
         </div>
     @endif
 @endforeach
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
 $(document).ready(function() {
+    // Select2 search
     $('#member-search').select2({
         placeholder: 'Search by name or email',
         allowClear: true,
@@ -237,6 +253,7 @@ $(document).ready(function() {
         minimumInputLength: 2
     });
 
+    // Edit toggle
     $('.edit-icon').on('click', function() {
         const id = $(this).data('id');
         $('#view-' + id).hide();
@@ -247,6 +264,14 @@ $(document).ready(function() {
         const id = $(this).data('id');
         $('#edit-' + id).hide();
         $('#view-' + id).show();
+    });
+
+    // ✅ Drag and drop with SortableJS
+    Sortable.create(document.getElementById('committee-list'), {
+        animation: 150,
+        handle: '.drag-handle',   // only grip icon draggable
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen'
     });
 });
 </script>

@@ -44,11 +44,12 @@
         padding: 18px 22px;
         border-bottom: 1px solid #3c4043;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: background-color 0.5s ease;
     }
 
     .notification-item:hover { background-color: #3c4043; }
     .notification-item.active { background-color: #1a73e8; color: #fff; }
+    .notification-item.read { background-color: #d4edda !important; color: #000 !important; }
 
     .notification-detail {
         flex: 1;
@@ -67,7 +68,7 @@
     }
     .badge-event { background-color: #1a73e8; color: #fff; }
     .badge-post  { background-color: #34a853; color: #fff; }
-    .badge-club  { background-color: #fbbc05; color: #000; } /* ✅ new club badge */
+    .badge-club  { background-color: #fbbc05; color: #000; }
 
     .btn {
         border: none;
@@ -78,41 +79,24 @@
         transition: opacity 0.2s ease;
         margin-right: 10px;
     }
-/* Mark as Read (blue) */
-.btn-markread {
-    background-color: #1a73e8;
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-}
-.btn-markread:hover { opacity: 0.9; }
 
-/* Accept (green) */
-.btn-success {
-    background-color: #34a853;
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-}
-.btn-success:hover { opacity: 0.9; }
+    .btn-markread {
+        background-color: #1a73e8;
+        color: #fff;
+    }
+    .btn-markread:hover { opacity: 0.9; }
 
-/* Decline (red) */
-.btn-danger {
-    background-color: #d93025;
-    color: #fff;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
-}
-.btn-danger:hover { opacity: 0.9; }
+    .btn-success {
+        background-color: #34a853;
+        color: #fff;
+    }
+    .btn-success:hover { opacity: 0.9; }
+
+    .btn-danger {
+        background-color: #d93025;
+        color: #fff;
+    }
+    .btn-danger:hover { opacity: 0.9; }
 
     .notification-actions { margin-top: 20px; }
 </style>
@@ -125,7 +109,7 @@
             {{-- Left panel --}}
             <div class="notification-list">
                 @foreach($notifications as $notification)
-                    <div class="notification-item" 
+                    <div class="notification-item {{ $notification->read_at ? 'read' : '' }}" 
                          onclick="showNotification('{{ $notification->id }}')"
                          id="notif-{{ $notification->id }}">
                         <strong>{{ $notification->data['club_name'] ?? 'Club Update' }}</strong>
@@ -148,8 +132,10 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const notifications = @json($notifications);
+const notifications = @json($notifications);
+
 function showNotification(id) {
     // Reset active state
     document.querySelectorAll('.notification-item').forEach(el => el.classList.remove('active'));
@@ -158,13 +144,10 @@ function showNotification(id) {
     const notif = notifications.find(n => n.id == id);
     const detail = document.getElementById('notification-detail');
 
-    // ✅ Default actions (Mark as Read + Delete)
+    // Default actions (Mark as Read + Delete)
     let actionsHtml = `
         <div class="notification-actions">
-            <form action="/notifications/${id}/read" method="POST" style="display:inline;">
-                @csrf
-                <button type="submit" class="btn btn-markread">Mark as Read</button>
-            </form>
+            <button type="button" class="btn btn-markread" onclick="markAsRead('${id}')">Mark as Read</button>
             <form action="/notifications/${id}" method="POST" style="display:inline;">
                 @csrf
                 @method('DELETE')
@@ -173,7 +156,7 @@ function showNotification(id) {
         </div>
     `;
 
-    // ✅ Add Accept/Decline buttons for committee invites
+    // Add Accept/Decline buttons for committee invites
     if (notif.data.type === 'committee') {
         actionsHtml += `
             <div class="notification-actions" style="margin-top:15px;">
@@ -191,7 +174,7 @@ function showNotification(id) {
         `;
     }
 
-    // ✅ Render detail panel
+    // Render detail panel
     detail.innerHTML = `
         <h4 style="color:#fff;">${notif.data.club_name ?? 'Club Update'}
             ${notif.data.type ? `<span class="badge badge-${notif.data.type}">${notif.data.type}</span>` : ''}
@@ -202,6 +185,17 @@ function showNotification(id) {
     `;
 }
 
-
+// ✅ Mark as Read (AJAX + permanent visual feedback on left item)
+function markAsRead(id) {
+    $.ajax({
+        url: `/notifications/${id}/read`,
+        type: 'POST',
+        data: { _token: '{{ csrf_token() }}' },
+        success: function() {
+            // Add "read" class to left item permanently
+            $('#notif-' + id).addClass('read');
+        }
+    });
+}
 </script>
-@endsection 
+@endsection
