@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('css/navigation-page.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
     <title>Forgot Password</title>
 </head>
 
@@ -16,7 +16,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('password.email') }}">
+    <form method="POST" action="{{ route('password.email') }}" class="log-in-form">
         @csrf
 
         <!-- Email Address -->
