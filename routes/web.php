@@ -44,6 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])
     ->name('users.destroy');
 
+    //FAQ SECTION
+    Route::post('/clubs/{club}/contact', [ClubController::class, 'updateContact'])
+    ->name('clubs.updateContact');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

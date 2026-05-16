@@ -20,6 +20,8 @@ class Club extends Model
         'category', // need this, otherwise can't mass-assign categories.
         'profile_picture',
         'email',
+        'instagram',
+        'website',
         'banner_image',
         'registration_link',
         'registration_open'

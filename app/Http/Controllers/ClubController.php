@@ -86,6 +86,20 @@ class ClubController extends Controller
                          ->with('success', 'Club updated successfully and members notified!');
     }
 
+    public function updateContact(Request $request, Club $club)
+{
+    $validated = $request->validate([
+        'email' => 'nullable|email',
+        'instagram' => 'nullable|string|max:255',
+        'website' => 'nullable|url',
+    ]);
+
+    $club->update($validated);
+
+    return redirect()->back()->with('success', 'Contact info updated successfully!');
+}
+
+
     // --------------------------
     // Delete club
     // --------------------------
