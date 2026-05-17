@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('club_id')->constrained()->onDelete('cascade'); // Link to club
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Link to committee member
-            $table->string('title');
-            $table->text('content');
-            $table->string('image')->nullable(); 
-            $table->timestamps();
-        });
+   Schema::create('posts', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('club_id')->constrained()->onDelete('cascade'); 
+    $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+    $table->string('title');
+    $table->text('content');
+    $table->string('image')->nullable();
+
+    $table->unsignedInteger('likes_count')->default(0);    
+    $table->unsignedInteger('comments_count')->default(0); 
+
+    $table->timestamps();
+});
+
     }
 
     /**

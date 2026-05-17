@@ -9,13 +9,10 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'content',   
-        'image',
-        'user_id',
-        'club_id',
-    ];
+   protected $fillable = [
+    'club_id', 'user_id', 'title', 'content', 'image',
+    'likes_count', 'comments_count'
+];
 
     public function club()
     {

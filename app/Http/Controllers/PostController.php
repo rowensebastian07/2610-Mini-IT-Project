@@ -105,4 +105,11 @@ class PostController extends Controller
         return redirect()->route('clubs.show', $post->club->id)
                          ->with('success', 'Post deleted successfully!');
     }
+
+    public function like(Post $post)
+{
+    $post->increment('likes_count');
+    return back();
+}
+
 }
