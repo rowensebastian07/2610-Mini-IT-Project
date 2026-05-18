@@ -134,6 +134,23 @@ h1{
     padding: 2em;
     border-radius: 1em;
     box-shadow: 0px 3px 5px grey;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.mt-register{
+    display: inline;
+    width: inherit;
+    margin: 0 auto;
+    padding: 0;
+    top: 0;
+    left: 0;
+}
+
+.mt-register li{
+    width: inherit;
+    margin-top: -1.5em;
 }
 
 .already-register{
