@@ -33,6 +33,7 @@ Route::get('/clubs/search', [ClubController::class, 'search'])->name('clubs.sear
 Route::get('/clubs', [ClubController::class, 'list'])->name('clubs.index');
 Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show');
 
+Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,12 @@ Route::middleware(['auth'])->group(function () {
     $notification = auth()->user()->notifications()->findOrFail($id);
     $notification->markAsRead(); // sets read_at timestamp
     return response()->json(['success' => true]);
+});
+
+Route::middleware(['auth'])->group(function () {
+    
+    Route::get('/clubs/{id}/faq/edit', [ClubController::class, 'faqEdit'])->name('clubs.faq.edit');
+    Route::put('/clubs/{id}/faq', [ClubController::class, 'updateFaq'])->name('clubs.faq.update');
 });
 
 
@@ -134,8 +141,6 @@ Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class
      Route::post('/clubs/{club}/messages', [MessageController::class, 'store'])
     ->name('clubs.messages.store');
     Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
-
-
 
 
 require __DIR__ . '/auth.php';
