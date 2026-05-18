@@ -29,8 +29,7 @@ class Club extends Model
 
     protected $casts = [
         'registration_open' => 'boolean',
-        'category' => ClubCategory::class,
-        'faq' => 'array',
+        'category' => ClubCategory::class
     ];
 
     // app/Models/Club.php
@@ -107,10 +106,6 @@ class Club extends Model
     return $this->hasMany(Message::class);
 }
 
-    public function faqs()
-    {
-        return $this->hasMany(Faq::class); 
-        // This assumes your FAQ model is named 'Faq' and has a 'club_id' foreign key
-    }
+
 }
 
