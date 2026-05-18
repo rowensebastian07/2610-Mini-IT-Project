@@ -66,4 +66,5 @@
             </x-primary-button>
         
     </form>
-</x-guest-layout>
+</body>
+</html>
