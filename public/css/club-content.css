@@ -303,3 +303,38 @@ body{
     color: #333;
     font-weight: 500;
 }
+
+/* preview theme button */
+#preview-div{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    position: relative;
+}
+
+#preview-btn {
+    width: 220px;
+    height: 50px;
+    border-radius: 2em;
+    display: block;
+    background-color: white;
+    box-shadow:  0 4px 8px rgba(0,0,0,0.15);
+    border: none;
+}
+
+
+#theme-lbl{
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+#theme{
+    position: absolute;
+    display: none;
+    width: 500px;
+    height: 300px;
+    background-color: white;
+    border-radius: 1em;
+    bottom: 4em;
+}

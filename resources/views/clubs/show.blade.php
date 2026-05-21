@@ -195,6 +195,19 @@
         </div>
     </div>
 
+    <div id="preview-div">
+        <div id="theme">
+                
+        </div>
+
+        <button id="preview-btn" onclick="openTheme()">
+            <p id="theme-lbl">Theme</p>
+            
+
+        </button>
+    </div>
+    
+
 @push('scripts')
 <script>
 function updateDriveLink(eventId, link) {
@@ -212,6 +225,18 @@ function updateDriveLink(eventId, link) {
     })
     .catch(err => console.error("Error updating drive link:", err));
 }
+    // theme preview button 
+    var div = document.getElementById('theme');
+    function openTheme(){
+        if(div.style.display == 'block'){
+            div.style.display = 'none';
+        }
+        else {
+            div.style.display = 'block';
+        }
+    }
+
+
 </script>
 @endpush
 
