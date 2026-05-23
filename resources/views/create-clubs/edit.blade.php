@@ -1,3 +1,5 @@
+<x-top-nav></x-top-nav>
+
 @php
     $themes = config('themes');
 @endphp
@@ -7,7 +9,7 @@
 @section('content')
 <style>
     /* Embedded CSS for Edit Club Form */
-    // WHY
+    
     body {
         background-color: #f8f9fa;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;

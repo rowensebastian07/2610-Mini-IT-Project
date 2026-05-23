@@ -322,6 +322,9 @@ body{
     border: none;
 }
 
+#preview-btn:hover{
+    cursor: pointer;
+}
 
 #theme-lbl{
     text-align: center;
