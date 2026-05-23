@@ -326,6 +326,9 @@ body{
     background-color: white;
     box-shadow:  0 4px 8px rgba(0,0,0,0.15);
     border: none;
+    position: fixed;
+    bottom: 20px;
+    right: 25px;
 }
 
 #preview-btn:hover{
@@ -346,6 +349,8 @@ body{
     background-color: white;
     border-radius: 1em;
     bottom: 4em;
+    right: 0;
+    
 }
 .info-card {
     background: grey;

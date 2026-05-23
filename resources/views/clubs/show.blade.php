@@ -262,17 +262,18 @@ $(document).ready(function() {
 
 <!-- Theme preview -->
 
-    <div id="preview-div">
+<div id="preview-div">
+    
+
+    <button id="preview-btn" onclick="openTheme()">
+        <p id="theme-lbl">Theme</p>
         <div id="theme-menu">
                 
-        </div>
-
-        <button id="preview-btn" onclick="openTheme()">
-            <p id="theme-lbl">Theme</p>
+    </div>
             
 
-        </button>
-    </div>
+    </button>
+</div>
     
 
 
@@ -295,7 +296,7 @@ function updateDriveLink(eventId, link) {
     .catch(err => console.error("Error updating drive link:", err));
 }
     // theme preview button 
-    var div = document.getElementById('theme');
+    var div = document.getElementById('theme-menu');
     function openTheme(){
         if(div.style.display == 'block'){
             div.style.display = 'none';
