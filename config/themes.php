@@ -40,4 +40,12 @@ return [
         'shadow-color' =>  '0px 3px 5px #C3CC9B',
         'post-colour' => '#FBE8CE',
     ],
+
+    'Grandpa Maroon' => [
+        'bg' => '#810B38',
+        'text' => '#000',
+        'content-box' => '#DCC3AA',
+        'shadow-color' =>  '0px 3px 5px #541A1A',
+        'post-colour' => '#F1E2D1',
+    ],
 ];

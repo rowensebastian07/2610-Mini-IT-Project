@@ -27,6 +27,7 @@ return new class extends Migration
             // Media & branding
             $table->string('profile_picture')->nullable();
             $table->string('banner_image')->nullable();
+            $table->string('theme');
 
             // Contact & registration
             $table->string('email')->nullable();
