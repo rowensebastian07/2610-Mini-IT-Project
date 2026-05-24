@@ -35,7 +35,7 @@
 
     <div class="sub-header" style="display:flex; justify-content:space-between; align-items:center; background-color:var(--content-box);">
         <div style="flex:1;"></div>
-        <h1 style="flex:1; text-align:center; margin:0;">{{ $club->name }}</h1>
+        <h1 style="flex:1; text-align:center; margin:0; color:var(--text);">{{ $club->name }}</h1>
         <div class="follow-section" style="flex:1; text-align:right;">
             @auth
                 @if(in_array($club->id, auth()->user()->followed_clubs ?? []))
