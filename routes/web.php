@@ -109,6 +109,9 @@ Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.
     // Route for create clubs
     Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
     Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
+    Route::put('/clubs/{club}', [ClubController::class, 'updateTheme'])
+    ->name('clubs.updateTheme');
+
 
     // Route for edit club // huh? -lzh
     Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');

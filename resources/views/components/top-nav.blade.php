@@ -3,13 +3,13 @@
 <div class="top-nav">
     <img src="{{ asset('images/drop down.png') }}" id="drop-down">
     <ul class="drop-down-list">
-        <li><a href="{{ url('/') }}">Home</a></li>
-        <li><a href="{{ url('/clubs') }}">Clubs</a></li>
+        <a href="{{ url('/') }}"><li>Home</li></a>
+        <a href="{{ url('/clubs') }}"><li>Clubs</li></a>
      @if (Route::has('login'))
         @auth
-        <li><a href="{{ url('/calendar') }}">Calendar</a></li>
-        <li><a href="{{ url('/notifications') }}">Notifications</a></li>
-        <li><a href="{{ url('/create-clubs') }}">Create Clubs</a></li>
+        <a href="{{ url('/calendar') }}"><li>Calendar</li></a>
+       <a href="{{ url('/notifications') }}"><li>Notifications</li></a>
+        <a href="{{ url('/create-clubs') }}"><li>Create Clubs</li></a>
 
         
         @endauth

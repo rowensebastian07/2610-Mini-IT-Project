@@ -33,7 +33,7 @@
 </div>
 
 
-    <div class="sub-header" style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="sub-header" style="display:flex; justify-content:space-between; align-items:center; background-color:var(--content-box);">
         <div style="flex:1;"></div>
         <h1 style="flex:1; text-align:center; margin:0;">{{ $club->name }}</h1>
         <div class="follow-section" style="flex:1; text-align:right;">
@@ -46,7 +46,7 @@
                         <button type="submit" class="btn-red">Unfollow</button>
                     </form>
                 @else
-                    <span style="color:gray; font-weight:bold; margin-right:10px;">Not Following</span>
+                    <span style="color:var(--text); font-weight:bold; margin-right:10px;">Not Following</span>
                     <form method="POST" action="{{ route('clubs.follow', $club->id) }}" style="display:inline;">
                         @csrf
                         <button type="submit" class="btn-green">Follow</button>
@@ -260,6 +260,51 @@ $(document).ready(function() {
     <a href="{{ route('clubs.chatroom', $club->id) }}" class="btn btn-primary">Open Chatroom</a>
 </div>
 
+<!-- Theme preview -->
+ @if (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT || auth()->user()->role === \App\Enums\ClubRole::COMMITTEE || auth()->user()->is_admin )
+                
+    <div id="preview-div">
+        <div id="theme-menu" style="position: relative;">
+                <div>
+                    
+                <form action="{{ route('clubs.updateTheme', $club->id) }}" method="POST" enctype="multipart/form-data" >
+                    @csrf
+                    @method('PUT')
+                    
+                    <input type="hidden" name="theme" id="theme" value="{{ $club->theme }}" id="form-themes">
+                        @foreach($themes as $themeName => $theme)
+                                <button type="button" onclick="changeTheme()" name="btn-preview-theme" class="btn-preview-theme" 
+                                data-value="{{ $themeName }}" 
+                                data-bg =   "{{ $theme['bg'] }}"
+                                data-text = "{{ $theme['text'] }}"
+                                data-context = "{{ $theme['content-box'] }}"
+                                data-shadow="{{ $theme['shadow-color'] }}"
+                                data-post = "{{ $theme['post-colour'] }}"
+                                style="width:40px; 
+                                height:40px; border:black solid 1px; border-radius: 2em;
+                                margin:1em 0.5em; background:linear-gradient({{ $theme['bg'] }}, 
+                                {{ $theme['content-box'] }});">
+                                </button>
+                        @endforeach
+                
+
+
+                    <button type="submit" class="btn-submit" style="position: absolute; bottom:1em; right:0em; transform:scale(0.9);">Update Theme</button>
+                </form>
+                </div>
+            
+            </div>
+            
+
+        <button id="preview-btn" onclick="openTheme()">
+            <p id="theme-lbl">Theme</p>
+            
+                
+
+        </button>
+    </div>
+    
+@endif
 
  <!-- script for JSON photo collection  for events -->
 @push('scripts')
@@ -279,6 +324,37 @@ function updateDriveLink(eventId, link) {
     })
     .catch(err => console.error("Error updating drive link:", err));
 }
+    // theme preview button 
+    var div = document.getElementById('theme-menu');
+    function openTheme(){
+        if(div.style.display == 'block'){
+            div.style.display = 'none';
+        }
+        else {
+            div.style.display = 'block';
+        }
+    }
+
+
+
+document.querySelectorAll('.btn-preview-theme').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('theme').value = btn.dataset.value;
+
+        document.documentElement.style.setProperty('--bg', btn.dataset.bg);
+        document.documentElement.style.setProperty('--text', btn.dataset.text);
+        document.documentElement.style.setProperty('--content-box', btn.dataset.context);
+        document.documentElement.style.setProperty('--shadow-color', btn.dataset.shadow);
+        document.documentElement.style.setProperty('--post-colour', btn.dataset.post);
+
+    });
+    
+});
+
+
+
+    
+
 </script>
 @endpush
 

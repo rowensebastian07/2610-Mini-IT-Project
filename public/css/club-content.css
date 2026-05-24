@@ -67,6 +67,8 @@ body{
     letter-spacing: 1px;
 }
 
+
+
 /* 2. POST CARD STYLES */
 .post-card {
     background-color: var(--post-colour); 
@@ -172,7 +174,7 @@ body{
 
 /* 4. CLUB HEADER & PROFILE SECTION */
 .club-card-header {
-    background: grey;     
+    background: var(--content-box);     
     padding: 2rem;
     text-align: center;
     margin-bottom: 2rem;  
@@ -310,8 +312,63 @@ body{
     font-weight: 500;
 }
 
+/* preview theme button */
+#preview-div{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    position: relative;
+    position: fixed;
+    bottom: 20px;
+    right: 25px;
+}
+
+#preview-btn {
+    width: 220px;
+    height: 50px;
+    border-radius: 2em;
+    display: block;
+    background-color: white;
+    box-shadow:  0 4px 8px rgba(0,0,0,0.15);
+    border: none;
+    
+}
+
+#preview-btn:hover{
+    cursor: pointer;
+}
+
+#theme-lbl{
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.2em;
+}
+
+#theme-menu{
+    display: none;
+    width: 500px;
+    height: 300px;
+    background-color:   white;
+    border-radius: 1em;
+    margin-bottom: 0.5em;
+    
+}
+
+#form-themes{
+    display: flex;
+}
+
+.btn-preview-theme:hover{
+    cursor:pointer;
+}
+
+
+
+
+
+
 .info-card {
-    background: grey;
+    background: var(--content-box);
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -348,15 +405,15 @@ body{
     background: #b91c1c;
 }
 .link-text {
-    color: white;
+    color: var(--text);
     font-weight: bold;
     text-decoration: underline;
 }
 
 
 .info-card {
-    background-color: #6c6c6c;
-    color: #fff;
+    background-color: var(--content-box);
+    color: var(--text);
     border-radius: 8px;
     padding: 20px;
     margin-top: 15px;

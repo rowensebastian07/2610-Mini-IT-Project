@@ -325,6 +325,19 @@ public function chatroom(Club $club)
     return view('clubs.chatroom', compact('club', 'messages'));
 }
 
+    // Update themes
+    public function updateTheme(Request $request, Club $club)
+    {
+        $data = $request->validate([
+            'theme' => 'required|string'
+        ]);
+
+
+        $club->update($data);
+
+        return redirect()->route('clubs.show', $club->id)
+                         ->with('success', 'Club updated successfully and members notified!');
+    }
 
 
 
