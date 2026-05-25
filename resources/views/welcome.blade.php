@@ -24,7 +24,8 @@
         <!-- Likes & Comments -->
         <div style="position:absolute; bottom:10px; right:10px; display:flex; gap:15px;">
             <button type="button" class="like-btn {{ $post->likedByUser ? 'liked' : '' }}" data-id="{{ $post->id }}">
-                <i class="{{ $post->likedByUser ? 'fa-solid' : 'fa-regular' }} fa-heart"></i> {{ $post->likes_count }}
+                <i class="{{ $post->likedByUser ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                <span id="like-count-{{ $post->id }}">{{ $post->likes_count }}</span>
             </button>
 
             <button type="button" class="comment-toggle" data-id="{{ $post->id }}">
@@ -112,6 +113,20 @@
     to { opacity: 1; transform: translateY(0); }
 }
 .comment-bubble strong { color: #007bff; }
+.like-btn {
+    color: black;
+    font-size: 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+.like-btn.liked i {
+    color: #e0245e; 
+    transition: color 0.3s ease;
+}
+
+.like-btn:active { transform: scale(1.3); }
 </style>
 @endpush
 
@@ -124,14 +139,43 @@ document.addEventListener("DOMContentLoaded", function() {
     const closeBtn = popup.querySelector(".close");
     let currentPostId = null;
 
-    // Open popup
+    // ✅ Like button logic
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const postId = btn.dataset.id;
+            fetch(`/posts/${postId}/like`, {
+                method: 'POST',
+                headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" }
+            })
+            .then(res => res.json())
+            .then(data => {
+                const icon = btn.querySelector('i');
+                const countEl = document.getElementById(`like-count-${postId}`);
+
+               if (data.liked) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+                btn.classList.add('liked'); 
+            } else {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+                btn.classList.remove('liked');
+            }
+
+
+                countEl.textContent = data.likes_count;
+            })
+            .catch(err => console.error('Like error:', err));
+        });
+    });
+
+    // ✅ Open popup
     document.querySelectorAll('.comment-toggle').forEach(btn => {
         btn.addEventListener('click', e => {
             e.preventDefault();
             currentPostId = btn.dataset.id;
             popup.style.display = "block";
 
-            // Load comments
             fetch(`/posts/${currentPostId}/comments`)
                 .then(res => res.json())
                 .then(comments => {
@@ -143,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     popupComments.scrollTop = popupComments.scrollHeight;
                 });
 
-            // Bind Echo for this post
             Echo.channel(`post.${currentPostId}`)
                 .listen('CommentPosted', (e) => {
                     popupComments.innerHTML += `
@@ -153,20 +196,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     `;
                     popupComments.scrollTop = popupComments.scrollHeight;
 
-                    // Update count
                     const countEl = document.getElementById(`comment-count-${currentPostId}`);
                     countEl.textContent = parseInt(countEl.textContent) + 1;
                 });
         });
     });
 
-    // Close popup
+    // ✅ Close popup
     closeBtn.addEventListener('click', () => {
         popup.style.display = "none";
-        popupComments.innerHTML = ''; // clear when closing
+        popupComments.innerHTML = '';
     });
 
-    // Submit comment
+    // ✅ Submit comment
     popupForm.addEventListener('submit', e => {
         e.preventDefault();
         const body = popupForm.querySelector('textarea').value;
@@ -185,7 +227,6 @@ document.addEventListener("DOMContentLoaded", function() {
             popupComments.innerHTML += `<div class="comment-bubble"><strong>${data.user.name}</strong>: ${data.body}</div>`;
             popupComments.scrollTop = popupComments.scrollHeight;
 
-            // Update count
             const countEl = document.getElementById(`comment-count-${currentPostId}`);
             countEl.textContent = parseInt(countEl.textContent) + 1;
         });

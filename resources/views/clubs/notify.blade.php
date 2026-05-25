@@ -1,4 +1,6 @@
 <x-top-nav></x-top-nav>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
 @extends('layouts.app')
 
@@ -59,6 +61,7 @@
         overflow-y: auto;
         background-color: #292a2d;
         color: #e8eaed;
+        position: relative;
     }
 
     .badge {
@@ -72,7 +75,41 @@
     .badge-post  { background-color: #34a853; color: #fff; }
     .badge-club  { background-color: #fbbc05; color: #000; }
 
-    .btn {
+ 
+.notification-icons {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    display: flex;
+    align-items: center;   /* vertical alignment */
+    gap: 15px;             /* spacing */
+    z-index: 10;
+}
+
+.icon-form {
+    margin: 0;             /* remove default form margin */
+    padding: 0;
+    display: flex;          /* ensures button aligns like siblings */
+    align-items: center;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;         /* normalize vertical centering */
+    transition: color 0.3s ease;
+}
+
+    .icon-btn:hover { color: #1a73e8; }
+    .icon-btn.delete:hover { color: #d93025; }
+
+    .btn-success {
+        background-color: #34a853;
+        color: #fff;
         border: none;
         border-radius: 4px;
         padding: 8px 14px;
@@ -81,26 +118,21 @@
         transition: opacity 0.2s ease;
         margin-right: 10px;
     }
-
-    .btn-markread {
-        background-color: #1a73e8;
-        color: #fff;
-    }
-    .btn-markread:hover { opacity: 0.9; }
-
-    .btn-success {
-        background-color: #34a853;
-        color: #fff;
-    }
     .btn-success:hover { opacity: 0.9; }
 
     .btn-danger {
         background-color: #d93025;
         color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 14px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
     }
     .btn-danger:hover { opacity: 0.9; }
 
-    .notification-actions { margin-top: 20px; }
+    .notification-actions { margin-top: 60px; }
 </style>
 
 <div class="container mt-4">
@@ -139,45 +171,50 @@
 const notifications = @json($notifications);
 
 function showNotification(id) {
-    // Reset active state
     document.querySelectorAll('.notification-item').forEach(el => el.classList.remove('active'));
     document.getElementById('notif-' + id).classList.add('active');
 
     const notif = notifications.find(n => n.id == id);
     const detail = document.getElementById('notification-detail');
 
-    // Default actions (Mark as Read + Delete)
-    let actionsHtml = `
-        <div class="notification-actions">
-            <button type="button" class="btn btn-markread" onclick="markAsRead('${id}')">Mark as Read</button>
-            <form action="/notifications/${id}" method="POST" style="display:inline;">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
-            </form>
-        </div>
-    `;
+    // Icon buttons (Mark as Read + Delete)
+let iconsHtml = `
+    <div class="notification-icons">
+        <button type="button" class="icon-btn mark-read" onclick="markAsRead('${id}')" title="Mark as Read">
+            <i class="fa-solid fa-envelope-open"></i>
+        </button>
+        <form action="/notifications/${id}" method="POST" class="icon-form">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="icon-btn delete" title="Delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </form>
+    </div>
+`;
 
-    // Add Accept/Decline buttons for committee invites
+
+    // Accept/Decline buttons for committee invites
+    let actionsHtml = '';
     if (notif.data.type === 'committee') {
-        actionsHtml += `
-            <div class="notification-actions" style="margin-top:15px;">
+        actionsHtml = `
+            <div class="notification-actions">
                 <form action="/clubs/${notif.data.club_id}/invite/respond" method="POST" style="display:inline;">
                     @csrf
                     <input type="hidden" name="action" value="accept">
-                    <button type="submit" class="btn btn-success">Accept</button>
+                    <button type="submit" class="btn-success">Accept</button>
                 </form>
                 <form action="/clubs/${notif.data.club_id}/invite/respond" method="POST" style="display:inline;">
                     @csrf
                     <input type="hidden" name="action" value="decline">
-                    <button type="submit" class="btn btn-danger">Decline</button>
+                    <button type="submit" class="btn-danger">Decline</button>
                 </form>
             </div>
         `;
     }
 
-    // Render detail panel
     detail.innerHTML = `
+        ${iconsHtml}
         <h4 style="color:#fff;">${notif.data.club_name ?? 'Club Update'}
             ${notif.data.type ? `<span class="badge badge-${notif.data.type}">${notif.data.type}</span>` : ''}
         </h4>
@@ -187,14 +224,12 @@ function showNotification(id) {
     `;
 }
 
-// ✅ Mark as Read (AJAX + permanent visual feedback on left item)
 function markAsRead(id) {
     $.ajax({
         url: `/notifications/${id}/read`,
         type: 'POST',
         data: { _token: '{{ csrf_token() }}' },
         success: function() {
-            // Add "read" class to left item permanently
             $('#notif-' + id).addClass('read');
         }
     });
