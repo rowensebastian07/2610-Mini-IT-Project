@@ -170,7 +170,10 @@
             </select>
 
             <!-- ✅ Attempts counter -->
-            <div id="attempts-left" class="text-muted mt-2">Attempts left today: 10</div>
+                <div id="attempts-left" class="text-muted mt-2">
+            Attempts left today: {{ $remaining }}
+        </div>
+
 
             <label>Role</label>
             <input type="text" name="role" class="form-control" placeholder="Enter role">

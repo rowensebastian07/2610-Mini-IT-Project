@@ -215,14 +215,28 @@ class ClubController extends Controller
     // --------------------------
     // Committee page
     // --------------------------
-    public function committee(Club $club)
-    {
-        $committee = DB::table('committee_members')
-            ->where('club_id', $club->id)
-            ->get();
+  public function committee(Club $club)
+{
+    $committee = DB::table('committee_members')
+        ->where('club_id', $club->id)
+        ->get();
 
-        return view('clubs.committee', compact('club', 'committee'));
-    }
+    $president = DB::table('committee_members')
+        ->where('club_id', $club->id)
+        ->where('role', 'President')
+        ->first();
+
+    // ✅ Add remaining attempts calculation here
+    $user = auth()->user();
+    $searchCount = DB::table('search_logs')
+        ->where('user_id', $user->id)
+        ->whereDate('created_at', now()->toDateString())
+        ->count();
+
+    $remaining = max(0, 10 - $searchCount);
+
+    return view('clubs.committee', compact('club', 'committee', 'president', 'remaining'));
+}
 
     // --------------------------
     // Add committee member

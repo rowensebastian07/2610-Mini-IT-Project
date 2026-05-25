@@ -24,14 +24,38 @@ class MessageController extends Controller
         return response()->json($message);
     }
 
-    public function destroy(Message $message)
+  public function update(Request $request, Message $message)
 {
-    if ($message->user_id == auth()->id()) {
-        $message->delete();
-        return response()->noContent();
+    if ($message->user_id != auth()->id()) {
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
-    return response()->json(['error' => 'Unauthorized'], 403);
+
+    // ✅ Block edits after 30 minutes
+    if ($message->created_at->diffInMinutes(now()) > 30) {
+        return response()->json(['error' => 'Edit time expired'], 403);
+    }
+
+    $message->body = $request->body;
+    $message->save();
+
+    return response()->json([
+        'id' => $message->id,
+        'body' => $message->body,
+        'updated_at' => $message->updated_at,
+        'user' => [
+            'name' => $message->user->name,
+            'profile_picture' => $message->user->profile_picture,
+        ],
+    ]);
 }
 
 
+    public function destroy(Message $message)
+    {
+        if ($message->user_id == auth()->id()) {
+            $message->delete();
+            return response()->noContent();
+        }
+        return response()->json(['error' => 'Unauthorized'], 403);
+    }
 }

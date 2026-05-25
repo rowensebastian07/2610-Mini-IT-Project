@@ -132,7 +132,10 @@ Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class
      ->name('clubs.chatroom');
      Route::post('/clubs/{club}/messages', [MessageController::class, 'store'])
     ->name('clubs.messages.store');
-    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+    Route::put('/messages/{message}', [App\Http\Controllers\MessageController::class, 'update'])
+    ->name('messages.update');
+ Route::delete('/messages/{message}', [App\Http\Controllers\MessageController::class, 'destroy']) ->name('messages.destroy');
+
 
 });
 
