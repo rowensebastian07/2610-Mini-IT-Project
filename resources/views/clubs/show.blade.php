@@ -307,6 +307,17 @@
                 <a href="{{ route('clubs.chatroom', $club->id) }}" class="btn btn-primary">Open Chatroom</a>
             </div>
 
+            <!-- CLUB MARKETPLACE CARD -->
+            <div class="info-card marketplace-card">
+                <h4>Club Marketplace</h4>
+                <p>Browse and purchase items offered by this club.</p>
+                <a href="{{ route('clubs.marketplace', $club->id) }}" class="btn btn-warning">
+    Visit Marketplace
+</a>
+
+            </div>
+
+
 <!-- Theme preview -->
  @if (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT || auth()->user()->role === \App\Enums\ClubRole::COMMITTEE || auth()->user()->is_admin )
                 

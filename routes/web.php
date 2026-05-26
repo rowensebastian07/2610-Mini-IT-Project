@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Models\Event;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\ProductController;
 
 
 /*
@@ -142,6 +143,23 @@ Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class
     Route::put('/messages/{message}', [App\Http\Controllers\MessageController::class, 'update'])
     ->name('messages.update');
  Route::delete('/messages/{message}', [App\Http\Controllers\MessageController::class, 'destroy']) ->name('messages.destroy');
+
+ //Marketplace
+Route::get('/clubs/{club}/marketplace', [ProductController::class, 'index'])
+    ->name('clubs.marketplace');
+
+Route::get('/clubs/{club}/products/create', [ProductController::class, 'create'])
+    ->name('products.create');
+Route::post('/clubs/{club}/products', [ProductController::class, 'store'])
+    ->name('products.store');
+
+Route::resource('products', ProductController::class)->except(['index','create','store']);
+Route::get('/cart', function () {
+    // You can pass products in cart from session later
+    return view('cart.index');
+})->name('cart.index');
+
+
 
 
 });
