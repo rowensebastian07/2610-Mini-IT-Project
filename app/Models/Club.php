@@ -112,6 +112,10 @@ public function treasurer()
     return $this->hasOne(Treasurer::class);
 }
 
+public function products()
+{
+    return $this->hasMany(Product::class);
+}
 
 
 }
