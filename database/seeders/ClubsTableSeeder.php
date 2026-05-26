@@ -24,6 +24,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'MMU Superheroes',
@@ -35,6 +36,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'Buddhist Society',
@@ -46,6 +48,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'MMU Esports',
@@ -57,6 +60,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'Chinese Language Society',
@@ -68,6 +72,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'IT Society',
@@ -79,6 +84,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'Badminton Club',
@@ -90,6 +96,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'CyberFitness Club',
@@ -101,6 +108,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'TechGirls MMU',
@@ -112,6 +120,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'Rentak Dance Club',
@@ -123,6 +132,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'Chess Club',
@@ -134,6 +144,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'University Peer Group',
@@ -145,6 +156,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
             [
                 'name' => 'Table Tennis Club',
@@ -156,6 +168,7 @@ class ClubsTableSeeder extends Seeder
                 'theme' => 'default',
                 'created_at' => $now,
                 'updated_at' => $now,
+                'is_Verified' => true,
             ],
         ]);
     }

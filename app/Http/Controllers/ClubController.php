@@ -180,7 +180,7 @@ class ClubController extends Controller
 
         Club::create($validated);
 
-        return redirect()->route('navigation')
+        return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
     }
 

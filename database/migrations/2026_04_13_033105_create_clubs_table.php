@@ -43,6 +43,9 @@ return new class extends Migration
                   ->constrained('users')
                   ->nullOnDelete();
 
+            // Club Verification
+            $table->boolean('is_Verified')->default(false);
+
             // Soft delete + timestamps
             $table->softDeletes();
             $table->timestamps();
