@@ -117,65 +117,43 @@ Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('
     Route::put('/clubs/{club}', [ClubController::class, 'updateTheme'])
     ->name('clubs.updateTheme');
 
-
     // Route for edit club // huh? -lzh
     Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
 
 //Committee page 
-Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
-Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
-Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
-Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
-Route::get('/committee/search', [ClubController::class, 'searchCommittee'])->name('committee.search');
-Route::post('/clubs/{club}/invite/respond', [ClubController::class, 'respondToInvite'])
-     ->name('committee.invite.respond');
-Route::put('/clubs/{club}/committee/{id}/update', [App\Http\Controllers\ClubController::class, 'updateCommitteeMember'])
-    ->name('clubs.committee.update');
+    Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
+    Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
+    Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
+    Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
+    Route::get('/committee/search', [ClubController::class, 'searchCommittee'])->name('committee.search');
+    Route::post('/clubs/{club}/invite/respond', [ClubController::class, 'respondToInvite'])->name('committee.invite.respond');
+    Route::put('/clubs/{club}/committee/{id}/update', [App\Http\Controllers\ClubController::class, 'updateCommitteeMember'])->name('clubs.committee.update');
 
  //Club Chatroom Page
-Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class, 'chatroom'])
-     ->name('clubs.chatroom');
-     Route::post('/clubs/{club}/messages', [MessageController::class, 'store'])
-    ->name('clubs.messages.store');
-    Route::put('/messages/{message}', [App\Http\Controllers\MessageController::class, 'update'])
-    ->name('messages.update');
- Route::delete('/messages/{message}', [App\Http\Controllers\MessageController::class, 'destroy']) ->name('messages.destroy');
+    Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class, 'chatroom'])->name('clubs.chatroom');
+    Route::post('/clubs/{club}/messages', [MessageController::class, 'store']) ->name('clubs.messages.store');
+    Route::put('/messages/{message}', [App\Http\Controllers\MessageController::class, 'update'])->name('messages.update');
+    Route::delete('/messages/{message}', [App\Http\Controllers\MessageController::class, 'destroy']) ->name('messages.destroy');
 
  //Marketplace
-Route::get('/clubs/{club}/marketplace', [ProductController::class, 'index'])
-    ->name('clubs.marketplace');
-
-Route::get('/clubs/{club}/products/create', [ProductController::class, 'create'])
-    ->name('products.create');
-Route::post('/clubs/{club}/products', [ProductController::class, 'store'])
-    ->name('products.store');
-
-Route::resource('products', ProductController::class)->except(['index','create','store']);
-Route::get('/cart', function () { return view('cart.index');})->name('cart.index');
-Route::get('/clubs/{club}/marketplace/admin', [ProductController::class, 'adminDashboard'])->name('marketplace.admin');
-Route::get('/products/{product}/sales', [ProductController::class, 'sales']) ->name('products.sales');
-Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-Route::get('/products/{product}/payment', [PaymentController::class, 'create'])
-    ->name('payment.create');
-Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
-Route::post('/clubs/{club}/treasurer/update', [ProductController::class, 'updateTreasurer'])
-    ->name('treasurer.update');
-    Route::get('/clubs/{club}/products/{product}/payment', [PaymentController::class, 'showPaymentForm'])
-    ->name('payment.show');
-    Route::post('/products/{product}/payment', [PaymentController::class, 'store'])
-    ->name('products.payment');
-    Route::post('/products/{product}/payment', [PaymentController::class, 'store'])
-    ->name('payment.store');
-Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])
-    ->name('orders.verify');
-
-
-
-
-
-
+    Route::get('/clubs/{club}/marketplace', [ProductController::class, 'index'])->name('clubs.marketplace');
+    Route::get('/clubs/{club}/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/clubs/{club}/products', [ProductController::class, 'store'])->name('products.store');
+    Route::resource('products', ProductController::class)->except(['index','create','store']);
+    Route::get('/cart', function () { return view('cart.index');})->name('cart.index');
+    Route::get('/clubs/{club}/marketplace/admin', [ProductController::class, 'adminDashboard'])->name('marketplace.admin');
+    Route::get('/products/{product}/sales', [ProductController::class, 'sales']) ->name('products.sales');
+    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('/products/{product}/payment', [PaymentController::class, 'create']) ->name('payment.create');
+    Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
+    Route::post('/clubs/{club}/treasurer/update', [ProductController::class, 'updateTreasurer'])->name('treasurer.update');
+    Route::get('/clubs/{club}/products/{product}/payment', [PaymentController::class, 'showPaymentForm']) ->name('payment.show');
+    Route::post('/products/{product}/payment', [PaymentController::class, 'store']) ->name('products.payment');
+    Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
+    Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 
 });
-
 
 require __DIR__ . '/auth.php';

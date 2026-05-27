@@ -74,12 +74,27 @@ class ProductController extends Controller
 
     // Admin: update product
     public function update(Request $request, Product $product)
-    {
-        $product->update($request->only('title','description','price','stock'));
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'required|numeric',
+        'stock' => 'required|integer',
+        'image' => 'nullable|image|max:2048',
+    ]);
 
-        return redirect()->route('clubs.marketplace', $product->club_id)
-                         ->with('success','Product updated!');
+    $data = $request->only('title', 'description', 'price', 'stock');
+
+    if ($request->hasFile('image')) {
+        $data['image'] = $request->file('image')->store('products', 'public');
     }
+
+    $product->update($data);
+
+    return redirect()->route('clubs.marketplace', $product->club_id)
+                     ->with('success', 'Product updated successfully!');
+}
+
 
     // Admin: delete product
     public function destroy(Product $product)
@@ -111,7 +126,6 @@ public function adminDashboard(Club $club)
 }
 
 
-
 public function updateTreasurer(Request $request, Club $club)
 {
     $treasurer = $club->treasurer ?? new Treasurer(['club_id' => $club->id]);
@@ -130,7 +144,6 @@ public function updateTreasurer(Request $request, Club $club)
     return response()->json(['success' => true]);
 }
 
-
  public function sales(Product $product)
 {
     // Get all orders for this product
@@ -142,6 +155,5 @@ public function updateTreasurer(Request $request, Club $club)
 
     return view('marketplace.sales', compact('product', 'sales', 'totalQuantity', 'totalRevenue'));
 }
-
 
 }
