@@ -1,8 +1,8 @@
-<x-top-nav></x-top-nav>
-
 @extends('layouts.app')
 
 @section('content')
+<x-top-nav></x-top-nav>
+
 <style>
     body {
         background-color: #fff;
@@ -59,6 +59,7 @@
     }
     .btn-secondary:hover { opacity: 0.9; }
 
+    /* 🛠️ IMPROVED: Made the popup clickable-pass-through using pointer-events */
     .popup {
         position: fixed;
         top: 20px;
@@ -69,7 +70,10 @@
         border-radius: 6px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         animation: fadeInOut 3s forwards;
-        z-index: 9999;
+        
+        /* Ensures popup element and its fade footprints can't steal mouse focus */
+        z-index: 30000000 !important;
+        pointer-events: none !important; 
     }
     @keyframes fadeInOut {
         0% { opacity: 0; transform: translateY(-10px); }
@@ -168,12 +172,10 @@
             <select id="member-search" name="user_id" class="form-control">
                 <option value="">Search by name or email</option>
             </select>
-
-            <!-- ✅ Attempts counter -->
-                <div id="attempts-left" class="text-muted mt-2">
-            Attempts left today: {{ $remaining }}
-        </div>
-
+            <!-- Attempts counter -->
+            <div id="attempts-left" class="text-muted mt-2">
+                Attempts left today: {{ $remaining }}
+            </div>
 
             <label>Role</label>
             <input type="text" name="role" class="form-control" placeholder="Enter role">
@@ -260,35 +262,35 @@
     @endforeach
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
+
 $('#member-search').select2({
     placeholder: 'Search by name or email',
     allowClear: true,
-   ajax: {
-    url: '{{ route("users.search") }}',
-    dataType: 'json',
-    delay: 250,
-    data: params => ({ q: params.term }),
-    processResults: data => {
-        $('#attempts-left').text("Attempts left today: " + data.remaining);
-        return { results: data.results };
+    ajax: {
+        url: '{{ route("users.search") }}',
+        dataType: 'json',
+        delay: 250,
+        data: params => ({ q: params.term }),
+        processResults: data => {
+            $('#attempts-left').text("Attempts left today: " + data.remaining);
+            return { results: data.results };
+        },
+        error: xhr => {
+            if (xhr.status === 429) {
+                const data = xhr.responseJSON;
+                alert(data.error || "Daily search limit reached.");
+                $('#attempts-left').text("Attempts left today: " + (data.remaining || 0));
+                $('#member-search').prop('disabled', true);
+            }
+        },
+        cache: true
     },
-    error: xhr => {
-        if (xhr.status === 429) {
-            const data = xhr.responseJSON;
-            alert(data.error || "Daily search limit reached.");
-            $('#attempts-left').text("Attempts left today: " + (data.remaining || 0));
-            $('#member-search').prop('disabled', true);
-        }
-    },
-    cache: true
-},
     minimumInputLength: 2
 });
 
