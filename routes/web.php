@@ -33,6 +33,7 @@ Route::get('/clubs/search', [ClubController::class, 'search'])->name('clubs.sear
 Route::get('/clubs', [ClubController::class, 'list'])->name('clubs.index');
 Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show');
 
+Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
 
 /*
 |--------------------------------------------------------------------------
