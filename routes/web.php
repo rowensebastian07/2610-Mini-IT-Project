@@ -136,25 +136,22 @@ Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('
     Route::delete('/messages/{message}', [App\Http\Controllers\MessageController::class, 'destroy']) ->name('messages.destroy');
 
  //Marketplace
-    Route::get('/clubs/{club}/marketplace', [ProductController::class, 'index'])->name('clubs.marketplace');
-    Route::get('/clubs/{club}/products/create', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/clubs/{club}/products', [ProductController::class, 'store'])->name('products.store');
-    Route::resource('products', ProductController::class)->except(['index','create','store']);
-    Route::get('/cart', function () { return view('cart.index');})->name('cart.index');
-    Route::get('/clubs/{club}/marketplace/admin', [ProductController::class, 'adminDashboard'])->name('marketplace.admin');
-    Route::get('/products/{product}/sales', [ProductController::class, 'sales']) ->name('products.sales');
-    Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-    Route::get('/products/{product}/payment', [PaymentController::class, 'create']) ->name('payment.create');
-    Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
-    Route::post('/clubs/{club}/treasurer/update', [ProductController::class, 'updateTreasurer'])->name('treasurer.update');
-    Route::get('/clubs/{club}/products/{product}/payment', [PaymentController::class, 'showPaymentForm']) ->name('payment.show');
-    Route::post('/products/{product}/payment', [PaymentController::class, 'store']) ->name('products.payment');
-    Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
-    Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-   Route::post('/products/{product}/soldout', [ProductController::class, 'markSoldOut'])
-    ->name('products.soldout');
+Route::get('/clubs/{club}/marketplace', [ProductController::class, 'index'])->name('clubs.marketplace');
+Route::get('/clubs/{club}/marketplace/admin', [ProductController::class, 'adminDashboard'])->name('marketplace.admin');
+Route::get('/clubs/{club}/products/create', [ProductController::class, 'create'])->name('products.create');
+Route::post('/clubs/{club}/products', [ProductController::class, 'store'])->name('products.store');
+Route::resource('products', ProductController::class)->except(['index','create','store']);
+Route::get('/cart', fn() => view('cart.index'))->name('cart.index');
+Route::get('/products/{product}/sales', [ProductController::class, 'sales'])->name('products.sales');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+Route::post('/products/{product}/soldout', [ProductController::class, 'markSoldOut'])->name('products.soldout');
+Route::post('/clubs/{club}/treasurer/update', [ProductController::class, 'updateTreasurer'])->name('treasurer.update');
+Route::get('/products/{product}/payment', [PaymentController::class, 'create'])->name('payment.create');
+Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
+Route::get('/clubs/{club}/products/{product}/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.show');
+Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
 
 
 });

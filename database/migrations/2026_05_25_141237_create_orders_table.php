@@ -11,23 +11,21 @@ return new class extends Migration
      */
    public function up()
 {
-   Schema::create('orders', function (Blueprint $table) {
+  Schema::create('orders', function (Blueprint $table) {
     $table->id();
+    $table->foreignId('user_id')->constrained()->onDelete('cascade');
     $table->foreignId('club_id')->constrained()->onDelete('cascade');
     $table->foreignId('product_id')->constrained()->onDelete('cascade');
     $table->integer('quantity')->default(1);
     $table->decimal('total', 10, 2);
-
-    // ✅ Payment-related fields
     $table->string('payer_name')->nullable();
     $table->decimal('amount', 10, 2)->nullable();
     $table->date('payment_date')->nullable();
     $table->string('proof_image')->nullable();
     $table->enum('verification_status', ['pending', 'verified'])->default('pending');
-
+    $table->text('message')->nullable();
     $table->timestamps();
 });
-
 
 }
 

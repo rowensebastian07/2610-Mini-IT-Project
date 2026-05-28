@@ -1,7 +1,6 @@
 <x-top-nav></x-top-nav>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-
 @extends('layouts.app')
 
 @section('content')
@@ -71,38 +70,43 @@
         font-size: 0.75rem;
         margin-left: 8px;
     }
+
+    /* Existing badges */
     .badge-event { background-color: #1a73e8; color: #fff; }
     .badge-post  { background-color: #34a853; color: #fff; }
     .badge-club  { background-color: #fbbc05; color: #000; }
 
- 
-.notification-icons {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    display: flex;
-    align-items: center;   /* vertical alignment */
-    gap: 15px;             /* spacing */
-    z-index: 10;
-}
+    /* ✅ New badges */
+    .badge-purchase { background-color: #007bff; color: #fff; }
+    .badge-verification { background-color: #28a745; color: #fff; }
 
-.icon-form {
-    margin: 0;             /* remove default form margin */
-    padding: 0;
-    display: flex;          /* ensures button aligns like siblings */
-    align-items: center;
-}
+    .notification-icons {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        z-index: 10;
+    }
 
-.icon-btn {
-    background: none;
-    border: none;
-    color: #ccc;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0;
-    line-height: 1;         /* normalize vertical centering */
-    transition: color 0.3s ease;
-}
+    .icon-form {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+        transition: color 0.3s ease;
+    }
 
     .icon-btn:hover { color: #1a73e8; }
     .icon-btn.delete:hover { color: #d93025; }
@@ -178,21 +182,20 @@ function showNotification(id) {
     const detail = document.getElementById('notification-detail');
 
     // Icon buttons (Mark as Read + Delete)
-let iconsHtml = `
-    <div class="notification-icons">
-        <button type="button" class="icon-btn mark-read" onclick="markAsRead('${id}')" title="Mark as Read">
-            <i class="fa-solid fa-envelope-open"></i>
-        </button>
-        <form action="/notifications/${id}" method="POST" class="icon-form">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="icon-btn delete" title="Delete">
-                <i class="fa-solid fa-trash"></i>
+    let iconsHtml = `
+        <div class="notification-icons">
+            <button type="button" class="icon-btn mark-read" onclick="markAsRead('${id}')" title="Mark as Read">
+                <i class="fa-solid fa-envelope-open"></i>
             </button>
-        </form>
-    </div>
-`;
-
+            <form action="/notifications/${id}" method="POST" class="icon-form">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="icon-btn delete" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    `;
 
     // Accept/Decline buttons for committee invites
     let actionsHtml = '';

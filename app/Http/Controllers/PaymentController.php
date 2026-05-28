@@ -6,6 +6,8 @@ use App\Models\Product;
 use App\Models\Club;
 use App\Models\Treasurer;
 use Illuminate\Http\Request;
+use App\Notifications\ClubNotification;
+
 
 class PaymentController extends Controller
 {
@@ -33,9 +35,6 @@ class PaymentController extends Controller
         return view('marketplace.payment', compact('product', 'club', 'treasurer'));
     }
 
-    /**
-     * Store a submitted payment proof.
-     */
   public function store(Request $request, Product $product)
 {
     $request->validate([
@@ -47,19 +46,24 @@ class PaymentController extends Controller
 
     $path = $request->file('proof_image')->store('payments', 'public');
 
-  $order = \App\Models\Order::create([
-    'club_id'          => $product->club_id,
-    'product_id'       => $product->id,
-    'payer_name'       => $request->payer_name,
-    'amount'           => $request->amount,
-    'total'            => $request->amount,   // ✅ Fix: set total = amount
-    'payment_date'     => $request->payment_date,
-    'proof_image'      => $path,
-    'verification_status' => 'pending',
-]);
+    $order = \App\Models\Order::create([
+         'user_id' => auth()->id(),
+        'club_id'             => $product->club_id,
+        'product_id'          => $product->id,
+        'payer_name'          => $request->payer_name,
+        'amount'              => $request->amount,
+        'total'               => $request->amount,
+        'payment_date'        => $request->payment_date,
+        'proof_image'         => $path,
+        'verification_status' => 'pending',
+    ]);
 
-   return back()->with('success', 'Payment submitted, pending verification. You may leave this page');
+    // Notify buyer
+    $club = $product->club;
+    $message = 'YOUR PURCHASE IS SUCCESSFUL. PLEASE WAIT FOR US TO REVIEW YOUR PAYMENT AND WE WILL GET BACK TO YOU IN 2 DAYS TIME.';
+    auth()->user()->notify(new ClubNotification($club, $message, 'purchase'));
 
+    return back()->with('success', 'Payment submitted, pending verification. You may leave this page');
 }
 
 }
