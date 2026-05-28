@@ -40,7 +40,7 @@ Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.f
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'Verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard - shows profile + followed clubs/events
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::patch('/dashboard', [UserController::class, 'updateProfile'])->name('dashboard.update');
