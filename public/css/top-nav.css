@@ -6,7 +6,7 @@
     height: 10vh;
     position: absolute;
     display: flex;
-    align-items: center;
+    align-items: center; /* Vertically centers side icon, search bar, and right items */
     top: 0;
     left: 0;
     z-index: 999;
@@ -30,10 +30,7 @@
     cursor: pointer;
     height: auto;
     max-height: 40px;
-}
-
-#drop-down:hover {
-    z-index: 999;
+    margin-left: 40px; /* Indents burger menu to match right side gutter spacing */
 }
 
 .drop-down-list {
@@ -96,11 +93,11 @@ a {
     position: absolute;
     top: 0;
     left: 0;
-    pointer-events: none; 
+    pointer-events: none; /* Allows user clicks to pass through to elements behind it */
 }
 
 .search-bar form {
-    pointer-events: auto;
+    pointer-events: auto; /* Restores clickable actions for input and submit items */
     display: flex;
     align-items: center;
     position: relative; 
@@ -154,7 +151,7 @@ a {
    ========================================================================== */
 .right-side-nav {
     width: auto;
-    margin-left: auto;
+    margin-left: auto; /* Shifts items to right layout border */
     display: flex;
     justify-content: flex-end;
     align-items: center; 
@@ -245,32 +242,28 @@ a {
     transition: transform 0.3s ease;
 }
 
-.profile-dropdown-wrapper.open .dropdown-arrow {
-    transform: rotate(180deg);
-}
-
 .profile-submenu {
     display: none;
     position: absolute;
-    top: calc(100% + 10px);
+    top: 100%; 
     right: 0;
-    background-color: white;
+    padding-top: 12px; 
+    padding-bottom: 5px;
+    background-color: transparent; 
     min-width: 160px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    border-radius: 6px;
-    padding: 5px 0;
     list-style: none;
     z-index: 1001;
-}
-
-.profile-submenu.active {
-    display: block;
+    
+    /* Rounded corners configuration with fixed overflow parsing template */
+    border-radius: 6px !important; 
+    overflow: hidden !important; 
 }
 
 .profile-submenu li {
     width: 100% !important;
     padding: 0 !important;
     text-align: left;
+    background-color: white;
 }
 
 .profile-submenu li a {
@@ -296,7 +289,20 @@ a {
 }
 
 /* ==========================================================================
-   🛠️ UPDATED: GUEST LINK SPACING & TYPOGRAPHY MATCHES PROFILE TRIGGER
+   5. PURE CSS HOVER TRIGGER CONTROLS
+   ========================================================================== */
+/* Display sub-navigation dropdown when hovering trigger wrapper layout */
+.profile-dropdown-wrapper:hover .profile-submenu {
+    display: block !important;
+}
+
+/* Handle indicator arrow rotations smoothly over pure hover states */
+.profile-dropdown-wrapper:hover .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   6. GUEST LINK SPACING & TYPOGRAPHY MATCHES PROFILE TRIGGER
    ========================================================================== */
 .guest-link {
     margin-left: 20px; 
@@ -305,7 +311,7 @@ a {
 }
 
 .right-side-nav .guest-link:last-child {
-    margin-right: 40px; 
+    margin-right: 40px; /* Keeps the logged-out menu links away from screen borders */
 }
 
 .guest-link a {

@@ -71,25 +71,3 @@
         @endif
     </ul>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const trigger = document.getElementById('profileMenuTrigger');
-        const submenu = document.getElementById('profileSubmenu');
-
-        if(trigger && submenu) {
-            // Toggle dropdown open status on click
-            trigger.addEventListener('click', function (e) {
-                e.stopPropagation();
-                submenu.classList.toggle('active');
-                trigger.classList.toggle('open');
-            });
-
-            // Close the dropdown menu if a user clicks anywhere outside of it
-            document.addEventListener('click', function () {
-                submenu.classList.remove('active');
-                trigger.classList.remove('open');
-            });
-        }
-    });
-</script>
