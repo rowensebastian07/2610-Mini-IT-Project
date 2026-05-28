@@ -44,6 +44,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Committee Lead',
             'email' => 'admin@club.com',
             'password' => Hash::make('password'),
+            'name' => 'Committee Lead',
+            'is_admin' => true,
+            'email_verified_at' => "2026-05-28 12:00:00",
+            'status' => UserStatus::ACTIVE->value,
+            'verification' => UserVerification::VERIFIED->value,
         ]);
 
         $member = User::create([
