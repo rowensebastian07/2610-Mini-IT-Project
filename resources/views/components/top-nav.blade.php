@@ -1,60 +1,95 @@
 <link rel="stylesheet" href="{{ asset('css/top-nav.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="top-nav">
     <img src="{{ asset('images/drop down.png') }}" id="drop-down">
     <ul class="drop-down-list">
-        <a href="{{ url('/') }}"><li>Home</li></a>
-        <a href="{{ url('/clubs') }}"><li>Clubs</li></a>
-     @if (Route::has('login'))
-        @auth
-        <a href="{{ url('/calendar') }}"><li>Calendar</li></a>
-       <a href="{{ url('/notifications') }}"><li>Notifications</li></a>
-        <a href="{{ url('/create-clubs') }}"><li>Create Clubs</li></a>
-
-        
-        @endauth
-    @endif
-    
+        <li><a href="{{ url('/') }}">Home</a></li>
+        <li><a href="{{ url('/clubs') }}">Clubs</a></li>
+        @if (Route::has('login'))
+            @auth
+                <li><a href="{{ url('/calendar') }}">Calendar</a></li>
+            @endauth
+        @endif
     </ul>
 
-    <!-- 🔍 Search Bar -->
-   <div class="search-bar">
-       <form action="{{ route('clubs.search') }}" method="GET">
-           <input type="text" name="query" id="query" placeholder="Search clubs or events... "value="{{ request('query') }}">
-           <button type="submit" id="search-submit" 
-           style=" position: absolute; background-color:rgb(82, 82, 82);
-            z-index:999; border-color:white; align-items:center; margin:6px 3px; 
-            border-radius:7em; border-style:solid;">
-            <img src="{{asset('images/search-icon.png')}}" style="width:30px; height:30px; transform:scale(1.7); ">
-        </button>
-       </form>
-   </div>
-
-    
-    <ul class="right-side-nav">
-        <div class="underline"></div>
-        @if (Route::has('login'))
-        @auth
-        <a href="{{ url('/dashboard') }}"><li>Profile</li></a>
-            <a href="{{ route('logout') }}"
-            onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();"><li>Log Out</li>
-                
-            </a>
-
-        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-            @csrf
+    <div class="search-bar">
+        <form action="{{ route('clubs.search') }}" method="GET">
+            <input type="text" name="query" id="query" placeholder="Search clubs or events..." value="{{ request('query') }}">
+            <button type="submit" id="search-submit" style="position: absolute; background-color:rgb(82, 82, 82); z-index:999; border-color:white; align-items:center; margin:6px 3px; border-radius:7em; border-style:solid;">
+                <img src="{{ asset('images/search-icon.png') }}" style="width:30px; height:30px; transform:scale(1.7);">
+            </button>
         </form>
-        @else
-            <a href="{{ route('login') }}"><li>Log in</li></a>
+    </div>
 
-            @if (Route::has('register'))
-                <a href="{{ route('register') }}"><li>Register</li></a>
-            @endif
-            
-        @endauth
+    <ul class="right-side-nav">
+        @if (Route::has('login'))
+            @auth
+                <li class="nav-item-wrapper notification-wrapper">
+                    <a href="{{ url('/notifications') }}" class="bell-link">
+                        <i class="fa-regular fa-bell"></i>
+                        @if(Auth::user()->unreadNotifications->count() > 0)
+                            <span class="notification-badge">{{ Auth::user()->unreadNotifications->count() }}</span>
+                        @endif
+                    </a>
+                </li>
+
+                <li class="nav-item-wrapper profile-dropdown-wrapper" id="profileMenuTrigger">
+                    <div class="profile-trigger">
+                        <span>Profile</span>
+                        <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                    </div>
+                    
+                    <ul class="profile-submenu" id="profileSubmenu">
+                        <li>
+                            <a href="{{ url('/dashboard') }}">
+                                <i class="fa-regular fa-user"></i> My Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('logout') }}"
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Log Out
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            @else
+                <li class="nav-item-wrapper guest-link">
+                    <a href="{{ route('login') }}">Log in</a>
+                </li>
+                @if (Route::has('register'))
+                    <li class="nav-item-wrapper guest-link">
+                        <a href="{{ route('register') }}">Register</a>
+                    </li>
+                @endif
+            @endauth
         @endif
-        
-        <div class="underline"></div>
     </ul>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const trigger = document.getElementById('profileMenuTrigger');
+        const submenu = document.getElementById('profileSubmenu');
+
+        if(trigger && submenu) {
+            // Toggle dropdown open status on click
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                submenu.classList.toggle('active');
+                trigger.classList.toggle('open');
+            });
+
+            // Close the dropdown menu if a user clicks anywhere outside of it
+            document.addEventListener('click', function () {
+                submenu.classList.remove('active');
+                trigger.classList.remove('open');
+            });
+        }
+    });
+</script>
