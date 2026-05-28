@@ -58,7 +58,7 @@ class PaymentController extends Controller
     'verification_status' => 'pending',
 ]);
 
-   return back()->with('success', 'Payment submitted, pending verification.');
+   return back()->with('success', 'Payment submitted, pending verification. You may leave this page');
 
 }
 

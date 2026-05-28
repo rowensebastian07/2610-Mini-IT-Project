@@ -56,6 +56,17 @@
         color: #004085; font-weight: 500; border-radius: 8px;
         padding: 20px; text-align: center;
     }
+
+    .btn-danger {
+    background-color: #ff3b30;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: not-allowed;
+}
+
 </style>
 
 <!-- Blue Top Nav -->
@@ -94,21 +105,24 @@
                     @if($product->image)
                         <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->title }}">
                     @endif
-                    <div class="card-body">
+                   <div class="card-body">
                         <h5>{{ $product->title }}</h5>
-                        <p>RM {{ number_format($product->price, 2) }}</p>
-
-                        <span class="badge {{ $product->stock > 0 ? 'bg-success' : 'bg-danger' }}">
-                            {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
-                        </span>
 
                         <p class="small text-muted mt-2 mb-0">
                             Sold by: <strong>{{ $product->club->name }}</strong>
                         </p>
 
-                        <!-- Correct product detail link -->
-                        <a href="{{ route('products.show', $product->id) }}" class="btn-view mt-2">View</a>
+                        @if($product->is_sold_out)
+                            <button class="btn btn-danger mt-2" disabled>Sold Out</button>
+                        @else
+                            <p>RM {{ number_format($product->price, 2) }}</p>
+                            <span class="badge {{ $product->stock > 0 ? 'bg-success' : 'bg-danger' }}">
+                                {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
+                            </span>
+                            <a href="{{ route('products.show', $product->id) }}" class="btn-view mt-2">View</a>
+                        @endif
                     </div>
+
                 </div>
             @endforeach
         </div>
@@ -122,4 +136,5 @@
         </div>
     @endif
 </div>
+
 @endsection

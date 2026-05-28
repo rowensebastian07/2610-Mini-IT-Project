@@ -153,6 +153,9 @@ Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('
     Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+   Route::post('/products/{product}/soldout', [ProductController::class, 'markSoldOut'])
+    ->name('products.soldout');
+
 
 });
 

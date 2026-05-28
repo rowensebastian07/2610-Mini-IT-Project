@@ -24,37 +24,30 @@
         text-align: center;
     }
 
-    .stats-box {
-        display: flex;
-        justify-content: space-around;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-    }
+    .btn-danger {
+    background-color: #ff3b30;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
 
-    .stat {
-        background-color: #ffe0b2;
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
-        width: 30%;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        margin-bottom: 10px;
-    }
+.btn-danger:hover {
+    background-color: #e02a20;
+}
 
-    .stat h4 { color: #ff5722; margin-bottom: 10px; }
-    .stat p { font-size: 1.2rem; font-weight: 600; color: #333; }
-
-    h3.sub-header {
+    .sub-header {
         color: #ff5722;
         font-weight: 700;
         text-align: center;
-        margin-top: 40px;
+        margin-top: 20px;
         border-bottom: 2px solid #ffcc80;
         display: inline-block;
         padding-bottom: 5px;
     }
 
-    /* ✅ Table Styling */
     .table {
         width: 100%;
         border-collapse: collapse;
@@ -78,14 +71,18 @@
         color: #333;
     }
 
-    .table a {
-        color: #1976d2;
-        font-weight: 600;
-        text-decoration: none;
+    .badge.bg-success {
+        background-color: #4CAF50;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 6px;
     }
 
-    .table a:hover {
-        text-decoration: underline;
+    .badge.bg-warning {
+        background-color: #FFC107;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 6px;
     }
 
     .btn-sm.btn-success {
@@ -101,45 +98,21 @@
     .btn-sm.btn-success:hover {
         background-color: #e64a19;
     }
-
-    .badge.bg-success {
-        background-color: #4CAF50;
-        color: #fff;
-        padding: 6px 10px;
-        border-radius: 6px;
-    }
-
-    .badge.bg-warning {
-        background-color: #FFC107;
-        color: #fff;
-        padding: 6px 10px;
-        border-radius: 6px;
-    }
 </style>
 
-<div class="sales-container">
-    {{-- 🔸 Overview Section --}}
-    <h2>{{ $product->title }} Sales Overview</h2>
+{{-- 🔻 Sold Out Button Below Table --}}
+<div style="text-align:center; margin-top:25px;">
+    <form action="{{ route('products.soldout', $product->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="btn btn-danger btn-lg">Mark as Sold Out</button>
+    </form>
+</div>
 
-    <div class="stats-box">
-        <div class="stat">
-            <h4>Total Units Sold</h4>
-            <p>{{ $totalQuantity ?? 0 }}</p>
-        </div>
-        <div class="stat">
-            <h4>Total Revenue (RM)</h4>
-            <p>{{ number_format($totalRevenue ?? 0, 2) }}</p>
-        </div>
-        <div class="stat">
-            <h4>Remaining Stock</h4>
-            <p>{{ $product->stock }}</p>
-        </div>
-    </div>
 
-    {{-- 🔸 Sub-header --}}
-    <h3 class="sub-header">Your Orders</h3>
 
     {{-- 🔸 Orders Table --}}
+    <h3 class="sub-header">Your Orders</h3>
+
     <table class="table mt-4">
         <thead>
             <tr>

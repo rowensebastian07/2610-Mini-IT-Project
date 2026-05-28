@@ -13,7 +13,10 @@ class ProductController extends Controller
     // Show products for a specific club
     public function index(Request $request, Club $club)
     {
-        $query = Product::with('club')->where('club_id', $club->id);
+        $query = Product::with('club')
+    ->where('club_id', $club->id)
+    ->orderBy('created_at', 'desc');
+
 
         if ($request->search) {
             $query->where('title', 'like', "%{$request->search}%");
@@ -149,11 +152,19 @@ public function updateTreasurer(Request $request, Club $club)
     // Get all orders for this product
     $sales = Order::where('product_id', $product->id)->latest()->get();
 
-    // Totals
-    $totalQuantity = $sales->count(); // or sum('quantity') if you track quantity
-    $totalRevenue  = $sales->sum('total');
-
-    return view('marketplace.sales', compact('product', 'sales', 'totalQuantity', 'totalRevenue'));
+    return view('marketplace.sales', compact('product', 'sales'));
 }
+
+public function markSoldOut(Product $product)
+{
+    $product->update(['is_sold_out' => true]);
+
+    return redirect()
+        ->route('clubs.marketplace', $product->club_id)
+        ->with('success', 'Product marked as sold out.');
+}
+
+
+
 
 }
