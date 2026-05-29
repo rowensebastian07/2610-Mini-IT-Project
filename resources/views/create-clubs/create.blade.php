@@ -86,18 +86,22 @@
 
         <script>
             
-            let input_file = document.getElementById('profile_picture');
-            let pic_display = document.getElementById('pic_label'); 
-            
+            let input_file = document.querySelector('input[type="file"]');
+            let picDisplay = document.getElementById('pic_label'); 
             input_file.onchange = (e) => {
-                console.log(e.target.files[0]);
-                let file = e.target.files[0];
-                var url = URL.createObjectURL(file);
 
-                console.log(url);
-                
-                pic_display.style.background  = 'url($url)';
-            }
+            let file = e.target.files[0];
+
+
+            let url = URL.createObjectURL(file);
+
+            picDisplay.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better perfomance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+        }
         </script>
 </body>
 </html>

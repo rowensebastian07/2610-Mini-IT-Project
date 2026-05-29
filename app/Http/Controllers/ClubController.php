@@ -203,7 +203,7 @@ class ClubController extends Controller
         if ($request->hasFile('profile_picture')) {
             $validated['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
         } else {
-            $validated['profile_picture'] = "images/1.png";
+            $validated['profile_picture'] = "images/mmu.png";
         }
 
         $validated['owner_id'] = Auth::id();
@@ -227,7 +227,7 @@ class ClubController extends Controller
         foreach ($admins as $admin){
             $admin->notify(new ClubNotification(
             $clubs,
-            "There is a new club to review  "
+            "There is a new club to review"
             ));
         
         }
