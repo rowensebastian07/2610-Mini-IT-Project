@@ -219,17 +219,21 @@ class ClubController extends Controller
             ));
         }
 
-        
-        $admins = \App\Models\User::where('is_admin', 1)->get();
-        
+        $admins = \App\Models\User::where('is_admin', true) -> get();
 
         foreach ($admins as $admin){
-            $id = $admin -> id;
-            $admin->notify(new AdminNotification(
-            $id,
-            "There is a new club to verify."
-        ));
+            $admin->notify(new ClubNotification(
+            $clubs,
+            "There is a new club to review  "
+            ));
+        
         }
+        
+    
+
+      
+        
+
         
 
         return redirect()->route('clubs.index')
