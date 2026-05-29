@@ -33,7 +33,7 @@
                    <form action="{{ route('clubs.updateVerify', $club->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Verify this club?')" >
                                             @csrf
                                             @method('PUT')
-                                            <button type="submit" class="btn-green">Verify Club</button>
+                                            <button type="submit" class="btn-red">Verify Club</button>
                     </form>
 
                    <form action="{{ route('clubs.destroy', $club->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this club?')" >

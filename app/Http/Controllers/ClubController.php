@@ -10,9 +10,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\AdminNotification;
 
 class ClubController extends Controller
 {
+    use Notifiable;
     private function authorizeCommittee(Club $club)
     {
         $membership = $club->users()->where('user_id', Auth::id())->first();
@@ -126,14 +129,14 @@ class ClubController extends Controller
         $club = Club::findOrFail($id);
         $club->delete();
 
-        $user = \App\Models\Club::find($club['owner_id']);
+        $user = \App\Models\User::find($club->owner_id);
 
-        if ($user = auth()->user()) {
-            $user->notify(new ClubNotification(
+        
+        $user->notify(new ClubNotification(
             $club,
-            "Your club {$club->name} has been submitted deleted. "
+            "Your club {$club->name} has been deleted. "
             ));
-        }
+    
 
 
         return redirect()->route('clubs.index')
@@ -219,9 +222,26 @@ class ClubController extends Controller
 
         
 
+        $admins = \App\Models\User::where('is_admin', true) -> get();
+
+        foreach ($admins as $admin){
+            $admin->notify(new ClubNotification(
+            $clubs,
+            "There is a new club to review  "
+            ));
+        
+        }
+        
+
+        
 
         return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
+
+        
+        
+        
+        
     }
 
     // --------------------------
@@ -399,15 +419,15 @@ class ClubController extends Controller
         $club->is_Verified = true;
         $club->save();
 
-        $user = \App\Models\Club::find($club['owner_id']);
+        $user = \App\Models\User::find($club->owner_id);
 
-        if ($user = auth()->user()) {
-            $user->notify(new ClubNotification(
+        $user->notify(new ClubNotification(
             $club,
             "Your club {$club->name} has been verified by admins and your page is available. 
-            Congratulations! "
+            Congratulations!  "
             ));
-        }
+    
+        
 
         return redirect()->route('clubs.show', $club->id)
                          ->with('success', 'Club updated successfully and members notified!');

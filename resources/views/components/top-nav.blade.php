@@ -6,13 +6,16 @@
     <ul class="drop-down-list">
         <a href="{{ url('/') }}"><li>Home</li></a>
         <a href="{{ url('/clubs') }}"><li>Clubs</li></a>
-        @if (Route::has('login'))
-            @auth
-                <a href="{{ url('/calendar') }}"><li>Calendar</li></a>
-            @endauth
-        @endif
-    </ul>
+     @if (Route::has('login'))
+        @auth
+        <a href="{{ url('/calendar') }}"><li>Calendar</li></a>
+        <a href="{{ url('/create-clubs') }}"><li>Create Clubs</li></a>
 
+        
+        @endauth
+    @endif
+    
+    </ul>
     <div class="search-bar">
         <form action="{{ route('clubs.search') }}" method="GET">
             <input type="text" name="query" id="query" placeholder="Search clubs or events..." value="{{ request('query') }}">
