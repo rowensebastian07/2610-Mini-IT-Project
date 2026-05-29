@@ -10,9 +10,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\AdminNotification;
 
 class ClubController extends Controller
 {
+    use Notifiable;
     private function authorizeCommittee(Club $club)
     {
         $membership = $club->users()->where('user_id', Auth::id())->first();
@@ -217,10 +220,25 @@ class ClubController extends Controller
         }
 
         
+        $admins = \App\Models\User::where('is_admin', 1)->get();
+        
 
+        foreach ($admins as $admin){
+            $id = $admin -> id;
+            $admin->notify(new AdminNotification(
+            $id,
+            "There is a new club to verify."
+        ));
+        }
+        
 
         return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
+
+        
+        
+        
+        
     }
 
     // --------------------------
