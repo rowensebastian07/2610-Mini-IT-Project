@@ -27,6 +27,7 @@ class Club extends Model
         'registration_open',
         'theme',
         'is_Verified',
+        'owner_id',
     ];
 
     protected $casts = [
