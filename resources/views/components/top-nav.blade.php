@@ -4,15 +4,18 @@
 <div class="top-nav">
     <img src="{{ asset('images/drop down.png') }}" id="drop-down">
     <ul class="drop-down-list">
-        <li><a href="{{ url('/') }}">Home</a></li>
-        <li><a href="{{ url('/clubs') }}">Clubs</a></li>
-        @if (Route::has('login'))
-            @auth
-                <li><a href="{{ url('/calendar') }}">Calendar</a></li>
-            @endauth
-        @endif
-    </ul>
+        <a href="{{ url('/') }}"><li>Home</li></a>
+        <a href="{{ url('/clubs') }}"><li>Clubs</li></a>
+     @if (Route::has('login'))
+        @auth
+        <a href="{{ url('/calendar') }}"><li>Calendar</li></a>
+        <a href="{{ url('/create-clubs') }}"><li>Create Clubs</li></a>
 
+        
+        @endauth
+    @endif
+    
+    </ul>
     <div class="search-bar">
         <form action="{{ route('clubs.search') }}" method="GET">
             <input type="text" name="query" id="query" placeholder="Search clubs or events..." value="{{ request('query') }}">

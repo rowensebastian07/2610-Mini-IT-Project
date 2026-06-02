@@ -27,6 +27,7 @@ class Club extends Model
         'registration_open',
         'theme',
         'is_Verified',
+        'owner_id',
     ];
 
     protected $casts = [
@@ -107,6 +108,16 @@ class Club extends Model
     public function messages()
 {
     return $this->hasMany(Message::class);
+}
+
+public function treasurer()
+{
+    return $this->hasOne(Treasurer::class);
+}
+
+public function products()
+{
+    return $this->hasMany(Product::class);
 }
 
     public function faqs()

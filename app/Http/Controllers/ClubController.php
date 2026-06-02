@@ -10,9 +10,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Notifications\Notifiable;
+use App\Notifications\AdminNotification;
 
 class ClubController extends Controller
 {
+    use Notifiable;
     private function authorizeCommittee(Club $club)
     {
         $membership = $club->users()->where('user_id', Auth::id())->first();
@@ -125,6 +128,17 @@ class ClubController extends Controller
     {
         $club = Club::findOrFail($id);
         $club->delete();
+
+        $user = \App\Models\User::find($club->owner_id);
+
+        
+        $user->notify(new ClubNotification(
+            $club,
+            "Your club {$club->name} has been deleted. "
+            ));
+    
+
+
         return redirect()->route('clubs.index')
                          ->with('success', 'Club deleted successfully!');
     }
@@ -196,8 +210,38 @@ class ClubController extends Controller
 
         Club::create($validated);
 
+        $user = \App\Models\Club::find($clubs['owner_id']);
+
+        if ($user = auth()->user()) {
+            $user->notify(new ClubNotification(
+            $clubs,
+            "Your club {$clubs->name} has been submitted for review. 
+            The admins will review your club and determine if it's official. "
+            ));
+        }
+
+        
+
+        $admins = \App\Models\User::where('is_admin', true) -> get();
+
+        foreach ($admins as $admin){
+            $admin->notify(new ClubNotification(
+            $clubs,
+            "There is a new club to review  "
+            ));
+        
+        }
+        
+
+        
+
         return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
+
+        
+        
+        
+        
     }
 
     // --------------------------
@@ -329,9 +373,9 @@ class ClubController extends Controller
             ->where('club_id', $club->id)
             ->update($updateData);
 
-        return redirect()->route('clubs.committee', $club->id)
-                         ->with('success', 'Profile updated successfully!');
-    }
+    return redirect()->route('clubs.committee', $club->id)
+                     ->with('success', 'Profile updated successfully!');
+}
 
     // --------------------------
     // Remove committee member
@@ -366,50 +410,4 @@ class ClubController extends Controller
                          ->with('success', 'Club updated successfully and members notified!');
     }
 
-    // --------------------------
-    // Add committee member
-    // --------------------------
-
-    public function updateVerify(Request $request, Club $club)
-    {
-        $club->is_Verified = true;
-        $club->save();
-        return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Club updated successfully and members notified!');
-    }
-
-    //Public Display Method
-    public function faqView($id)
-    {
-        $club = Club::findOrFail($id);
-
-        // Check if the current user is a committee member of THIS club
-        $isCommittee = false;
-        if (Auth::check()) {
-            $membership = $club->users()->where('user_id', Auth::id())->first();
-            $isCommittee = $membership && $membership->pivot->role === ClubRole::COMMITTEE->value;
-        }
-        
-        // Pass $isCommittee safely down into the view template
-        return view('clubs.faq', compact('club', 'isCommittee'));
-    }
-
-    public function updateFaq(Request $request, $id)
-    {
-        $club = Club::findOrFail($id);
-
-        $this->authorizeCommittee($club);
-
-        $request->validate([
-            'faq' => 'nullable|array',
-            'faq.*.question' => 'required|string',
-            'faq.*.answer' => 'required|string',
-        ]);
-
-        $club->faq = $request->input('faq', []); 
-        $club->save();
-
-        // Redirect them straight back to the view-only page with the success confirmation!
-        return redirect()->route('clubs.faq.view', $club->id)->with('success', 'FAQs updated successfully!');
-    }
 }

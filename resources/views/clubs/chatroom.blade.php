@@ -267,8 +267,6 @@ document.addEventListener('click', () => {
 </script>
 
 
-
-
 <script>
 let selectedMessageId = null;
 
