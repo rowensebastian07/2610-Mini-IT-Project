@@ -118,14 +118,16 @@ Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('
     // Route for create clubs
     Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
     Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
-    
-    // Route for updating themes
-    Route::put('/clubs/{club}', [ClubController::class, 'updateTheme'])
-    ->name('clubs.updateTheme');
+
+    // Route for updating club details
+
+    Route::put('/clubs/{club}', [ClubController::class, 'update'])
+    ->name('clubs.update');
 
     // Route for verifying clubs
     Route::put('/clubs/{club}/verify', [ClubController::class, 'updateVerify'])
     ->name('clubs.updateVerify');
+
 
     // Route for edit club // huh? -lzh
     Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');

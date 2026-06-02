@@ -309,7 +309,7 @@
                 <div id="preview-div">
                     <div id="theme-menu" style="position: relative; display: none;">
                         <div>
-                            <form action="{{ route('clubs.updateTheme', $club->id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('clubs.update', $club->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 

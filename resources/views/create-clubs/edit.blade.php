@@ -118,7 +118,24 @@
     #pic_label input[ type = "file" ]{
         display: none;
     }
+    
+    #banner_label{
+        background: url("{{  asset($club->banner_image) }}") no-repeat center;
+        background-size: cover;
+        display: inline-block;
+        width: 25rem;
+        height: 10rem;
+        text-align: center;
+    }
 
+    #banner_label input[ type = "file" ]{
+        display: none;
+    }
+
+    #banner_label:hover{
+        cursor: pointer;
+    }
+    
 </style>
 
 <div>
@@ -143,17 +160,15 @@
             <div class="form-group">
                 <label for="profile_picture">Profile Picture</label><br>
                 <label id="pic_label">
-                <input type="file" name="profile_picture" id="profile_picture" accept="image/*" style="background: ">
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
                 </label>
             </div>
 
             <div class="form-group">
                 <label for="banner_image">Banner Image</label><br>
-                <input type="file" name="banner_image" id="banner_image">
-                @if($club->banner_image)
-                    <p>Current banner:</p>
-                    <img src="{{ asset('storage/' . $club->banner_image) }}" alt="Banner" width="300">
-                @endif
+                <label id="banner_label">
+                <input type="file" name="banner_image" id="banner_image" accept="image/*">
+                </label>
             </div>
 
             <div class="form-group">
@@ -197,10 +212,18 @@
     </div>
 </div>
 
-     <script>
+  <script>
             
-            let input_file = document.querySelector('input[type="file"]');
+            // Declaring variables for profile pic
+            let input_file = document.getElementById('profile_picture');
             let picDisplay = document.getElementById('pic_label'); 
+        
+
+            // Declaring variables for banner
+            let banner_input = document.getElementById('banner_image')
+            let banLabel = document.getElementById('banner_label')
+
+            // Live preview for profile pic
             input_file.onchange = (e) => {
 
             let file = e.target.files[0];
@@ -214,6 +237,29 @@
             setTimeout(() => {
                 URL.revokeObjectURL(url);
             }, 100)
+            
+        }
+
+            // Live preview for banner
+
+            banner_input.onchange = (e) => {
+
+            let file = e.target.files[0];
+
+
+            let url = URL.createObjectURL(file);
+
+            banLabel.style.background = `url(${url}) center / cover no-repeat`;
+
+
+            // Free up memory space (better perfomance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
         }
         </script>
+
 @endsection
+
+
+   

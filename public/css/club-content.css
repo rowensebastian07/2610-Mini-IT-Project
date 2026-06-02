@@ -220,7 +220,7 @@ body{
 }
 
 .club-description {
-    color: white; 
+    color: var(--text); 
     margin-bottom: 1rem;
 }
 

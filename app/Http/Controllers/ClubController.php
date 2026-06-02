@@ -75,15 +75,14 @@ class ClubController extends Controller
     public function update(Request $request, Club $club)
     {
         $data = $request->validate([
-            'name'              => 'required|string|max:255',
+            'name'              => 'nullable|string|max:255',
             'description'       => 'nullable|string',
             'profile_picture'   => 'nullable|image',
-            'category'          => 'required|string',
+            'category'          => 'nullable|string',
             'email'             => 'nullable|string',
             'banner_image'      => 'nullable|image',
             'registration_link' => 'nullable|url',
-            'registration_open' => 'sometimes',
-            'theme' => 'required|string'
+            'theme' => 'nullable|string'
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -239,15 +238,9 @@ class ClubController extends Controller
         }
         
 
-        
-
         return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
 
-        
-        
-        
-        
     }
 
     // --------------------------
@@ -403,18 +396,7 @@ class ClubController extends Controller
         return view('clubs.chatroom', compact('club', 'messages'));
     }
 
-    // Update themes
-    public function updateTheme(Request $request, Club $club)
-    {
-        $data = $request->validate([
-            'theme' => 'required|string'
-        ]);
 
-        $club->update($data);
-
-        return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Club updated successfully and members notified!');
-    }
 
     // --------------------------
     // Add committee member
