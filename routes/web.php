@@ -36,12 +36,14 @@ Route::get('/clubs/search', [ClubController::class, 'search'])->name('clubs.sear
 Route::get('/clubs', [ClubController::class, 'list'])->name('clubs.index');
 Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show');
 
+Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
+
 /*
 |--------------------------------------------------------------------------
 | Authenticated Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard - shows profile + followed clubs/events
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::patch('/dashboard', [UserController::class, 'updateProfile'])->name('dashboard.update');
@@ -66,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
     $notification = auth()->user()->notifications()->findOrFail($id);
     $notification->markAsRead(); // sets read_at timestamp
     return response()->json(['success' => true]);
+    
 });
 
     // Notifications/Notify Logic
@@ -114,8 +117,14 @@ Route::resource('posts', PostController::class)->except(['create', 'store']);
     // Route for create clubs
     Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
     Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
+    
+    // Route for updating themes
     Route::put('/clubs/{club}', [ClubController::class, 'updateTheme'])
     ->name('clubs.updateTheme');
+
+    // Route for verifying clubs
+    Route::put('/clubs/{club}/verify', [ClubController::class, 'updateVerify'])
+    ->name('clubs.updateVerify');
 
     // Route for edit club // huh? -lzh
     Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
@@ -150,6 +159,7 @@ Route::resource('posts', PostController::class)->except(['create', 'store']);
     Route::get('/products/{product}/sales', [ProductController::class, 'sales'])->name('products.sales');
     Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
 
+    
 
 });
 

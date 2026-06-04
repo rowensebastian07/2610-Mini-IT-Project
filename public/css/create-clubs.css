@@ -2,6 +2,7 @@ body {
     margin: 0;
     max-width: 100%;
     font-family: Arial, Helvetica, sans-serif;
+    background:none;
 }
 
 h1 {
@@ -53,7 +54,7 @@ h2, p {
     background-color: rgb(245, 245, 245);
     padding: 2em;
     border-radius: 1em;
-    box-shadow: 0px 3px 5px grey;
+    box-shadow: 0px 3px 5px #808080;
 }
 
 .form-group-clubs{
@@ -98,6 +99,26 @@ h2, p {
     cursor: pointer;
     background-image: linear-gradient(to right, rgb(69, 37, 84), rgb(147, 89, 136));
 
+}
+
+
+#pic_label{
+    margin-top: 1rem;
+    background: url("../images/mmu.png") no-repeat center;
+    background-size: cover;
+    display: inline-block;
+    width: 10rem;
+    height: 10rem;
+    text-align: center;
+    border-radius: 50%;
+}
+
+#pic_label:hover{
+    cursor: pointer;
+}
+
+#pic_label input[ type = "file" ]{
+    display: none;
 }
 
 

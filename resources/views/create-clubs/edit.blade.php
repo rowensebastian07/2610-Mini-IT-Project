@@ -97,6 +97,28 @@
     .btn-submit:hover {
         background-color: #1d4ed8;
     }
+    
+    /*Live preview Image*/
+    #pic_label{
+    margin-top: 1rem;
+    background: url("{{  asset($club->profile_picture) }}") no-repeat center;
+    border: solid black 3px;
+    background-size: cover;
+    display: inline-block;
+    width: 10rem;
+    height: 10rem;
+    text-align: center;
+    border-radius: 50%;
+    }
+
+    #pic_label:hover{
+        cursor: pointer;
+    }
+
+    #pic_label input[ type = "file" ]{
+        display: none;
+    }
+
 </style>
 
 <div>
@@ -119,12 +141,10 @@
             </div>
 
             <div class="form-group">
-                <label for="profile_picture">Profile Picture</label>
-                <input type="file" name="profile_picture" id="profile_picture">
-                @if($club->profile_picture)
-                    <p>Current:</p>
-                    <img src="{{ asset('storage/' . $club->profile_picture) }}" alt="Club Picture">
-                @endif
+                <label for="profile_picture">Profile Picture</label><br>
+                <label id="pic_label">
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*" style="background: ">
+                </label>
             </div>
 
             <div class="form-group">
@@ -176,4 +196,24 @@
         </form>
     </div>
 </div>
+
+     <script>
+            
+            let input_file = document.querySelector('input[type="file"]');
+            let picDisplay = document.getElementById('pic_label'); 
+            input_file.onchange = (e) => {
+
+            let file = e.target.files[0];
+
+
+            let url = URL.createObjectURL(file);
+
+            picDisplay.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better perfomance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+        }
+        </script>
 @endsection

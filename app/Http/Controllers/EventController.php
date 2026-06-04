@@ -13,14 +13,14 @@ use Carbon\Carbon;
 class EventController extends Controller
 {
     // ✅ Helper method to verify if the user is a Committee Member
- //   private function authorizeCommittee(Club $club)
- //   {
-   //     $membership = $club->users()->where('user_id', Auth::id())->first();
+    private function authorizeCommittee(Club $club)
+    {
+       $membership = $club->users()->where('user_id', Auth::id())->first();
 
-     //   if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-      //      abort(403, 'Unauthorized action. Only committee members can manage events.');
-    //    }
- //   }
+         if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
+           abort(403, 'Unauthorized action. Only committee members can manage events.');
+        }
+    }
 
     public function index()
     {
@@ -35,47 +35,47 @@ class EventController extends Controller
 
     public function create(Club $club)
     {
-      //  $this->authorizeCommittee($club);
+        $this->authorizeCommittee($club);
         return view('events.create', compact('club'));
     }
 
-   public function store(Request $request, Club $club)
-{
-  //  $this->authorizeCommittee($club);
+    public function store(Request $request, Club $club)
+    {
+        $this->authorizeCommittee($club);
 
-    $validated = $request->validate([
-        'title'       => 'required|string|max:255',
-        'date'        => 'required|date',
-        'time'        => 'required',
-        'description' => 'nullable|string|max:255',
-        'location'    => 'nullable|string|max:255',
-    ]);
+        $validated = $request->validate([
+            'title'       => 'required|string|max:255',
+            'date'        => 'required|date',
+            'time'        => 'required',
+            'description' => 'nullable|string|max:255',
+            'location'    => 'nullable|string|max:255',
+        ]);
 
-    $event = $club->events()->create($validated);
+        $event = $club->events()->create($validated);
 
-    // ✅ Notify ALL members, including sender
-        foreach ($club->users as $member) {
-            $member->notify(new ClubNotification(
-                $club,
-                "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}",
-                'event' 
-            ));
-        }
+        // ✅ Notify ALL members, including sender
+            foreach ($club->users as $member) {
+                $member->notify(new ClubNotification(
+                    $club,
+                    "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}",
+                    'event' 
+                ));
+            }
 
-    return redirect()->route('clubs.show', $club->id)
-                     ->with('success', 'Event created and members notified!');
-}
+        return redirect()->route('clubs.show', $club->id)->with('success', 'Event created and members notified!');
+    }
 
 
     public function edit(Club $club, Event $event)
     {
-        //$this->authorizeCommittee($club);
+        $this->authorizeCommittee($club);
+
         return view('events.edit', compact('club', 'event'));
     }
 
     public function update(Request $request, Club $club, Event $event)
     {
-      //  $this->authorizeCommittee($club);
+        $this->authorizeCommittee($club);
 
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
@@ -94,7 +94,8 @@ class EventController extends Controller
 
     public function destroy(Club $club, Event $event)
     {
-      //  $this->authorizeCommittee($club);
+        $this->authorizeCommittee($club);
+
         $event->delete();
 
         return redirect()->route('clubs.show', $club->id)
@@ -117,47 +118,55 @@ public function pastEvents(Club $club)
 
 
     // ✅ Multiple file upload handler
-    public function uploadFiles(Request $request, $eventId)
-{
-    $event = Event::findOrFail($eventId);
+    // ✅ Add Club $club right here
+    public function uploadFiles(Request $request, Club $club, $eventId)
+    {
+        // Now $club is recognized!
+        $this->authorizeCommittee($club);
 
-    if ($request->hasFile('event_files')) {
-        $paths = [];
+        $event = Event::findOrFail($eventId);
 
-        foreach ($request->file('event_files') as $file) {
-            // ✅ store inside a folder named by event ID
-            $paths[] = $file->store("event_uploads/{$event->id}", 'public');
+        $request->validate([
+            'event_files.*' => 'required|file|max:10240',
+        ]);
+
+        if ($request->hasFile('event_files')) {
+            $paths = [];
+
+            foreach ($request->file('event_files') as $file) {
+                $paths[] = $file->store("event_uploads/{$event->id}", 'public');
+            }
+
+            $existing = $event->uploads ? json_decode($event->uploads, true) : [];
+            $event->uploads = json_encode(array_merge($existing, $paths));
+            $event->save();
         }
 
-        $existing = $event->uploads ? json_decode($event->uploads, true) : [];
-        $event->uploads = json_encode(array_merge($existing, $paths));
-        $event->save();
+        return back()->with('success', 'Files uploaded successfully!');
     }
 
-    return back()->with('success', 'Files uploaded successfully!');
-}
+    public function viewUploads(Event $event)
+    {
+        $files = $event->uploads ? json_decode($event->uploads, true) : [];
+        return view('events.uploads', compact('event', 'files'));
+    }
 
-public function viewUploads(Event $event)
-{
-    $files = $event->uploads ? json_decode($event->uploads, true) : [];
-    return view('events.uploads', compact('event', 'files'));
-}
+    public function deletePhoto(Request $request, Event $event)
+    {
+        $this->authorizeCommittee($club);
 
-public function deletePhoto(Request $request, Event $event)
-{
-    $filePath = $request->input('file_path');
+        $filePath = $request->input('file_path');
 
-    // Remove file from storage
-    \Storage::disk('public')->delete($filePath);
+        // Remove file from storage
+        \Storage::disk('public')->delete($filePath);
 
-    // Remove from JSON list
-    $files = json_decode($event->uploads, true);
-    $files = array_filter($files, fn($path) => $path !== $filePath);
-    $event->uploads = json_encode(array_values($files));
-    $event->save();
+        // Remove from JSON list
+        $files = json_decode($event->uploads, true);
+        $files = array_filter($files, fn($path) => $path !== $filePath);
+        $event->uploads = json_encode(array_values($files));
+        $event->save();
 
-    return back()->with('success', 'Photo deleted successfully!');
-}
-
+        return back()->with('success', 'Photo deleted successfully!');
+    }
 
 }

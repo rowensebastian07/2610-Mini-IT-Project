@@ -16,6 +16,7 @@ body {
     overflow: hidden;
     position: relative;
     display: inline-block;
+    text-align: center;
 }
 
 .container > a > img{
@@ -96,4 +97,38 @@ h2 {
     font-size: 2.2em;
     text-transform: uppercase;
 
+}
+
+.btn-red,
+.btn-green{
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid #000;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    z-index:999999;
+    position: relative;
+    bottom: 5em;
+    color: white;
+    
+}
+
+.btn-green{
+     background-color: green;
+}
+
+.btn-green:hover{
+    background-color: rgb(0, 77, 0);
+}
+
+.btn-red{
+    background-color: red;
+}
+
+.btn-red:hover{
+    background-color: rgb(177, 0, 0);
 }

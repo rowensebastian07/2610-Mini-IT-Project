@@ -25,12 +25,15 @@ class Club extends Model
         'banner_image',
         'registration_link',
         'registration_open',
-        'theme'
+        'theme',
+        'is_Verified',
+        'owner_id',
     ];
 
     protected $casts = [
         'registration_open' => 'boolean',
-        'category' => ClubCategory::class
+        'category' => ClubCategory::class,
+        'faq' => 'array',
     ];
 
     // app/Models/Club.php
@@ -107,6 +110,10 @@ class Club extends Model
     return $this->hasMany(Message::class);
 }
 
+    public function faqs()
+    {
+        return $this->hasMany(Faq::class); 
+    }
 public function treasurer()
 {
     return $this->hasOne(Treasurer::class);
@@ -119,4 +126,3 @@ public function products()
 
 
 }
-
