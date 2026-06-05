@@ -114,4 +114,15 @@ class Club extends Model
     {
         return $this->hasMany(Faq::class); 
     }
+public function treasurer()
+{
+    return $this->hasOne(Treasurer::class);
+}
+
+public function products()
+{
+    return $this->hasMany(Product::class);
+}
+
+
 }

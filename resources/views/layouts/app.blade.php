@@ -40,6 +40,7 @@
     </div>
 
     <!-- Page-specific scripts pushed from child views -->
+       @yield('scripts')
     @stack('scripts')
 </body>
 </html>

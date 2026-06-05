@@ -211,6 +211,16 @@
                             @else
                                 <p class="text-center">No past events for this club.</p>
                             @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+                </div>
+            @else
+                <p class="text-center">No past events for this club.</p>
+            @endif
+
                         </div>
                     </section>
                 </div>
@@ -369,6 +379,71 @@
         .catch(err => console.error("Error updating drive link:", err));
     }
 
+            <!-- CLUB MARKETPLACE CARD -->
+            <div class="info-card marketplace-card">
+                <h4>Club Marketplace</h4>
+                <p>Browse and purchase items offered by this club.</p>
+                <a href="{{ route('clubs.marketplace', $club->id) }}" class="btn btn-warning"> Visit Marketplace </a>
+              </div>
+
+<!-- Theme preview -->
+ @if (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT || auth()->user()->role === \App\Enums\ClubRole::COMMITTEE || auth()->user()->is_admin )
+                
+    <div id="preview-div">
+        <div id="theme-menu" style="position: relative;">
+                <div>
+                    
+                <form action="{{ route('clubs.updateTheme', $club->id) }}" method="POST" enctype="multipart/form-data" >
+                    @csrf
+                    @method('PUT')
+                    
+                    <input type="hidden" name="theme" id="theme" value="{{ $club->theme }}" id="form-themes">
+                        @foreach($themes as $themeName => $theme)
+                                <button type="button" onclick="changeTheme()" name="btn-preview-theme" class="btn-preview-theme" 
+                                data-value="{{ $themeName }}" 
+                                data-bg =   "{{ $theme['bg'] }}"
+                                data-text = "{{ $theme['text'] }}"
+                                data-context = "{{ $theme['content-box'] }}"
+                                data-shadow="{{ $theme['shadow-color'] }}"
+                                data-post = "{{ $theme['post-colour'] }}"
+                                style="width:40px; 
+                                height:40px; border:black solid 1px; border-radius: 2em;
+                                margin:1em 0.5em; background:linear-gradient({{ $theme['bg'] }}, 
+                                {{ $theme['content-box'] }});">
+                                </button>
+                        @endforeach
+
+                    <button type="submit" class="btn-submit" style="position: absolute; bottom:1em; right:0em; transform:scale(0.9);">Update Theme</button>
+                </form>
+                </div>
+            
+            </div>
+            
+        <button id="preview-btn" onclick="openTheme()">
+            <p id="theme-lbl">Theme</p>
+        </button>
+    </div>   
+@endif
+
+ <!-- script for JSON photo collection  for events -->
+@push('scripts')
+<script>
+function updateDriveLink(eventId, link) {
+    fetch(`/events/${eventId}/drive-link`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ drive_link: link })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Drive link updated:", data);
+    })
+    .catch(err => console.error("Error updating drive link:", err));
+}
+    // theme preview button 
     var div = document.getElementById('theme-menu');
     function openTheme(){
         if(div.style.display == 'block'){
@@ -408,3 +483,31 @@
     </script>
     @endpush
 @endsection
+    
+});
+
+// 1. Select all matching links
+const links = document.querySelectorAll('.jump-anchor');
+
+// 2. Loop through each link in the list
+links.forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault(); 
+    
+    const targetId = this.getAttribute('href'); 
+    const targetElement = document.querySelector(targetId);
+    
+    if (targetElement) {
+      targetElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+function togglePastEvents() {
+    const section = document.getElementById('past-events');
+    section.style.display = section.style.display === 'none' ? 'block' : 'none';
+}
+
+
+</script>
+@endpush

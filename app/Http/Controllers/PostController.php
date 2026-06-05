@@ -141,15 +141,12 @@ public function comment(Request $request, Post $post)
 }
 
 
-
 public function getComments(Post $post)
 {
     return response()->json(
         $post->comments()->with('user')->latest()->get()
     );
 }
-
-
 
 
 }
