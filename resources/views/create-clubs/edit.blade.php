@@ -160,20 +160,22 @@
             <div class="form-group">
                 <label for="profile_picture">Profile Picture</label><br>
                 <label id="pic_label">
-                <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
+                value="{{ old('profile_picture', $club->profile_picture) }}">
                 </label>
             </div>
 
             <div class="form-group">
                 <label for="banner_image">Banner Image</label><br>
                 <label id="banner_label">
-                <input type="file" name="banner_image" id="banner_image" accept="image/*">
+                <input type="file" name="banner_image" id="banner_image" accept="image/*"
+                value="{{ old('banner_image', $club->banner_image) }}">
                 </label>
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label><br>
-                <input type="text" name="email" id="email" value="{{ old('description', $club->email) }}">
+                <input type="text" name="email" id="email" value="{{ old('email', $club->email) }}">
             </div>
 
             <div class="form-group">
