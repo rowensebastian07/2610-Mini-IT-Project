@@ -264,19 +264,16 @@ document.getElementById('delete-message').addEventListener('click', function() {
   }
 });
 
-
 // ✅ Close modal when clicking outside
 document.getElementById('edit-modal').addEventListener('click', function(e) {
   if (e.target === this) this.style.display = 'none';
 });
-
 
 // Hide menu when clicking elsewhere
 document.addEventListener('click', () => {
   document.getElementById('message-menu').style.display = 'none';
 });
 </script>
-
 
 <script>
 let selectedMessageId = null;
