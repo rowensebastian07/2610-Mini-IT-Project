@@ -33,7 +33,6 @@
     <a class="next" onclick="changePhoto(1)">&#10095;</a>
 </div>
 
-{{-- ✅ Embedded CSS --}}
 <style>
 .gallery-grid {
     display: flex;
@@ -41,19 +40,23 @@
     gap: 15px;
     margin-top: 20px;
 }
+
 .gallery-item {
     width: 180px;
     text-align: center;
 }
+
 .gallery-item img {
     width: 100%;
     border-radius: 6px;
     cursor: pointer;
     transition: transform 0.2s ease;
 }
+
 .gallery-item img:hover {
     transform: scale(1.05);
 }
+
 .btn-red {
     background-color: #e74c3c;
     color: white;
@@ -64,9 +67,11 @@
     margin-top: 6px;
     font-size: 13px;
 }
+
 .btn-red:hover {
     background-color: #c0392b;
 }
+
 .lightbox {
     display: none;
     position: fixed;
@@ -77,10 +82,12 @@
     background-color: rgba(0,0,0,0.9);
     text-align: center;
 }
+
 .lightbox img {
     max-width: 80%;
     max-height: 80%;
 }
+
 .close {
     position: absolute;
     top: 20px; right: 35px;
@@ -88,6 +95,7 @@
     font-size: 40px;
     cursor: pointer;
 }
+
 .prev, .next {
     cursor: pointer;
     position: absolute;
@@ -97,11 +105,12 @@
     padding: 16px;
     user-select: none;
 }
+
 .prev { left: 0; }
 .next { right: 0; }
 </style>
 
-{{-- ✅ JavaScript for lightbox + keyboard arrows --}}
+{{--  JavaScript for lightbox + keyboard arrows --}}
 <script>
     let photos = @json($files);
     let currentIndex = 0;
@@ -123,7 +132,7 @@
         document.getElementById('lightbox-img').src = '/storage/' + photos[currentIndex];
     }
 
-    // ✅ Keyboard arrow + Esc support
+    // Keyboard arrow + Esc support
     document.addEventListener('keydown', function(event) {
         const lightbox = document.getElementById('lightbox');
         if (lightbox.style.display === 'block') {
