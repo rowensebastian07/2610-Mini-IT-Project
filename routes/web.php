@@ -29,7 +29,7 @@ Route::get('/calendar', function () {
 Route::get('/clubs/search', [ClubController::class, 'search'])->name('clubs.search');
 Route::get('/clubs', [ClubController::class, 'list'])->name('clubs.index');
 Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show');
-Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
+Route::get('/clubs/{club}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
 
 /*
 |--------------------------------------------------------------------------
@@ -109,8 +109,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
         // FAQ Management
-        Route::get('/clubs/{id}/faq/edit', [ClubController::class, 'faqEdit'])->name('clubs.faq.edit');
-        Route::put('/clubs/{id}/faq', [ClubController::class, 'updateFaq'])->name('clubs.faq.update');
+        Route::get('/clubs/{club}/faq/edit', [ClubController::class, 'faqEdit'])->name('clubs.faq.edit');
+        Route::put('/clubs/{club}/faq', [ClubController::class, 'updateFaq'])->name('clubs.faq.update');
 
         // 4. Committee and Terms Assignments
         Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
