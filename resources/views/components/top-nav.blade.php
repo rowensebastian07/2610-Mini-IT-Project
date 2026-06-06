@@ -1,25 +1,29 @@
 <link rel="stylesheet" href="{{ asset('css/top-nav.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<div class="top-nav">
-    <img src="{{ asset('images/drop down.png') }}" id="drop-down">
-    <ul class="drop-down-list">
-        <a href="{{ url('/') }}"><li>Home</li></a>
-        <a href="{{ url('/clubs') }}"><li>Clubs</li></a>
-     @if (Route::has('login'))
-        @auth
-        <a href="{{ url('/calendar') }}"><li>Calendar</li></a>
-        <a href="{{ url('/create-clubs') }}"><li>Create Clubs</li></a>
+<img src="{{ asset('images/drop down.png') }}" id="drop-down" onclick="toggleMenu()" class="drop-down">
+ <aside class="sidebar" id="sidebar">
+            
+            <div class="drop-down-list">
+                <a href="{{ url('/') }}"><p>Home</p></a>
+                <a href="{{ url('/clubs') }}"><p>Clubs</p></a>
+            @if (Route::has('login'))
+                @auth
+                <a href="{{ url('/calendar') }}"><p>Calendar</p></a>
+                <a href="{{ url('/create-clubs') }}"><p>Create Clubs</p></a>
 
-        
-        @endauth
-    @endif
-    
-    </ul>
+                
+                @endauth
+            @endif
+            </div>
+        </aside>
+
+<div class="top-nav">
+   
     <div class="search-bar">
         <form action="{{ route('clubs.search') }}" method="GET">
             <input type="text" name="query" id="query" placeholder="Search clubs or events..." value="{{ request('query') }}">
-            <button type="submit" id="search-submit" style="position: absolute; background-color:rgb(82, 82, 82); z-index:999; border-color:white; align-items:center; margin:6px 3px; border-radius:7em; border-style:solid;">
+            <button type="submit" id="search-submit">
                 <img src="{{ asset('images/search-icon.png') }}" style="width:30px; height:30px; transform:scale(1.7);">
             </button>
         </form>
@@ -74,3 +78,20 @@
         @endif
     </ul>
 </div>
+
+<script>
+    
+
+    function toggleMenu(){
+
+        const burgerMenu = document.getElementById('drop-down')
+        const sidebar = document.getElementById('sidebar');
+
+        sidebar.classList.toggle('active');
+        burgerMenu.classList.toggle('active');
+
+
+    }
+    
+
+</script>

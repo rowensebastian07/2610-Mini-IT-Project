@@ -23,57 +23,95 @@
 /* ==========================================================================
    2. LEFT SIDE MENU ICON & DROPDOWN LIST FIXES
    ========================================================================== */
+
+.left-side-nav{
+    z-index: 1000;
+    position: fixed;
+}
+
+#sidebar{
+    display: block;
+    width: 250px;
+    min-height: 100vh;
+    left: -350px;
+    margin: 0;
+    z-index: 1000;
+    position: fixed;
+    border: none;
+    top: 0;
+    background-color: white;
+    transition: .3s ease;
+}
+
+#sidebar.active{
+    left: 0;
+}
+
 #drop-down {
     transform: scale(100%);
     display: inline-block;
-    z-index: 999;
+    z-index: 9999999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-left: 30px;
+    max-height: 10vh;
+    transition: 0.3s ease;
+    filter: brightness(1);
+}
+
+#drop-down:hover{
     cursor: pointer;
-    height: auto;
-    max-height: 40px;
-    margin-left: 40px; /* Indents burger menu to match right side gutter spacing */
+
+}
+
+#drop-down.active{
+    filter: brightness(0);
+    position: fixed;
 }
 
 .drop-down-list {
-    display: none;
+    display: block;
     position: absolute;
     top: 40px; 
     left: 0;
-    margin: 0;
+    margin-top: 0.9rem;
     padding-top: 20px; 
     padding-left: 0;
     padding-right: 0;
     padding-bottom: 0;
-    z-index: 1002;
+    z-index: 90;
+    width: 100%;
+    border: none;
+    width: 250px;
+    overflow: hidden;
+
 }
 
-.drop-down-list li {
-    background-color: white;
-    width: 180px !important;
-    padding: 15px 20px !important;
+.drop-down-list p {
+    color: black;
+    padding: 30px 20px !important;
+    margin: 0;
+    border: none;
     text-align: left;
     border-bottom: 1px solid #eee;
+    padding: 20px;
 }
 
 .drop-down-list a {
     color: black;
     font-size: 1.2rem;
+    border: none;
     font-family: Arial, Helvetica, sans-serif;
     display: block;
 }
 
-.drop-down-list li:hover {
+.drop-down-list p:hover {
     background-color: rgb(235, 235, 235);
 }
 
-#drop-down:hover ~ .drop-down-list,
-.drop-down-list:hover {
-    display: block;
-}
 
-li {
-    list-style: none;
-    padding: 20px;
-    width: 100px;
+p {
     text-align: center;
 }
 
@@ -89,10 +127,8 @@ a {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 100%;
     position: absolute;
-    top: 0;
-    left: 0;
+    height: 100%;
     pointer-events: none; /* Allows user clicks to pass through to elements behind it */
 }
 
@@ -100,11 +136,13 @@ a {
     pointer-events: auto; /* Restores clickable actions for input and submit items */
     display: flex;
     align-items: center;
+    height: 100vh;
     position: relative; 
+    margin-bottom: 0;
 }
 
+
 #query {
-    position: relative;
     height: 45px;
     width: 400px;
     font-size: 1em;
@@ -120,20 +158,16 @@ a {
 }
 
 #search-submit {
-    position: absolute;
-    right: 6px;
     background-color: rgb(82, 82, 82);
     z-index: 1000;
     border-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 7em;
     border-style: solid;
-    width: 32px;
-    height: 32px;
+    width: 55px;
+    height: 40px;
     padding: 0;
     cursor: pointer;
+    margin-left: 3px;
 }
 
 #search-submit img {
@@ -161,6 +195,7 @@ a {
     position: relative;
     top: 0;
     padding-right: 0;
+    height: 10px;
     z-index: 1000;
 }
 
