@@ -7,6 +7,7 @@ use App\Models\Club;
 use App\Models\Post; 
 use App\Enums\UserStatus;
 use App\Enums\UserVerification;
+use App\Enums\ClubRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,7 +35,7 @@ class DatabaseSeeder extends Seeder
         // 2. CREATE SYSTEM AUTHENTICATION USERS
         // =======================================================
 
-        $adminUser = User::factory()->create([
+        $presidentUser = User::UpdateOrCreate([
             'name' => 'President of Music Club',
             'email' => 'admin@club.com', 
             'password' => Hash::make('password'),
@@ -81,6 +82,16 @@ class DatabaseSeeder extends Seeder
             'verification' => UserVerification::VERIFIED->value,
         ]);
 
+        $subCom = User::create([
+            'name' => 'sub Committee',
+            'email' => 'subcom@club.com', 
+            'password' => Hash::make('password'),
+            'is_admin' => false,
+            'email_verified_at' => "2026-05-28 12:00:00",
+            'status' => UserStatus::ACTIVE->value,
+            'verification' => UserVerification::VERIFIED->value,
+        ]);
+
         $regularMember = User::create([
             'name' => 'Regular Student',
             'email' => 'student@club.com',
@@ -92,8 +103,8 @@ class DatabaseSeeder extends Seeder
         // =======================================================
 
         // Attach testing President
-        $club->users()->attach($adminUser->id, [
-            'role' => ClubRole::PRESIDENT-value,
+        $club->users()->attach($presidentUser->id, [
+            'role' => ClubRole::PRESIDENT->value,
             'term' => '2025/2026',
             'status' => 'active',
         ]);
@@ -101,6 +112,12 @@ class DatabaseSeeder extends Seeder
         // Attach High Committee member
         $club->users()->attach($committeeLead->id, [
             'role' => ClubRole::HICOM->value, 
+            'term' => '2025/2026',  
+            'status' => 'active'
+        ]);
+
+        $club->users()->attach($subCom->id, [
+            'role' => ClubRole::SUBCOM->value, 
             'term' => '2025/2026',  
             'status' => 'active'
         ]);
