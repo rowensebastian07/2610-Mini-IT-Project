@@ -17,7 +17,7 @@ class Club extends Model
     protected $fillable = [
         'name',
         'description',
-        'category', // need this, otherwise can't mass-assign categories.
+        'category',
         'profile_picture',
         'email',
         'instagram',
@@ -73,12 +73,18 @@ class Club extends Model
      * The users that belong to the club.
      */
     public function users(): BelongsToMany
-{
-    return $this->belongsToMany(User::class, 'memberships', 'club_id', 'user_id')
-                ->withPivot('role', 'status', 'verification')
-                ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(User::class, 'memberships', 'club_id', 'user_id')
+                    ->withPivot('role', 'status', 'verification', 'term')
+                    ->withTimestamps();
+    }
 
+    public function currentMembers()
+    {
+        return $this->belongsToMany(User::class)
+                    ->withPivot('role', 'term', 'status')
+                    ->wherePivot('status', 'active');
+    }
 
     /**
      * Relationship: Events hosted by this club.

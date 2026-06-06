@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Club;
 use App\Models\Post;
+use App\Models\User;
 use App\Enums\ClubRole;
 use App\Notifications\ClubNotification;
 use Illuminate\Http\Request;
@@ -11,19 +12,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
-use App\Notifications\AdminNotification;
 
 class ClubController extends Controller
 {
     use Notifiable;
-    private function authorizeCommittee(Club $club)
-    {
-        $membership = $club->users()->where('user_id', Auth::id())->first();
-
-        if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-            abort(403, 'Unauthorized action. Only committee members can manage this club.');
-        }
-    }
 
     // --------------------------
     // Homepage: list all clubs and posts
@@ -49,7 +41,6 @@ class ClubController extends Controller
     // --------------------------
     public function show(Club $club)
     {
-        $user = Auth::user();
         $club->load(['posts', 'events']);
 
         $today = Carbon::today();
@@ -57,7 +48,10 @@ class ClubController extends Controller
         $upcomingEvents = $club->events->filter(fn($event) => Carbon::parse($event->date)->gte($today));
         $pastEvents     = $club->events->filter(fn($event) => Carbon::parse($event->date)->lt($today));
 
-        return view('clubs.show', compact('club', 'upcomingEvents', 'pastEvents'));
+        $themes = config('themes');
+        $selectedTheme = $themes[$club->theme] ?? $themes['default'];
+
+        return view('clubs.show', compact('club', 'upcomingEvents', 'pastEvents', 'selectedTheme'));
     }
 
     // --------------------------
@@ -65,8 +59,7 @@ class ClubController extends Controller
     // --------------------------
     public function edit(Club $club)
     {
-        $this->authorizeCommittee($club);
-        return view('create-clubs.edit', compact('club'));
+        return view('clubs.edit', compact('club'));
     }
 
     // --------------------------
@@ -79,11 +72,11 @@ class ClubController extends Controller
             'description'       => 'nullable|string',
             'profile_picture'   => 'nullable|image',
             'category'          => 'required|string',
-            'email'             => 'nullable|string',
+            'email'             => 'nullable|email',
             'banner_image'      => 'nullable|image',
             'registration_link' => 'nullable|url',
             'registration_open' => 'sometimes',
-            'theme' => 'required|string'
+            'theme'             => 'nullable|string'
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -124,20 +117,20 @@ class ClubController extends Controller
     // --------------------------
     // Delete club
     // --------------------------
-    public function destroy($id)
+    public function destroy(Club $club)
     {
-        $club = Club::findOrFail($id);
+        $ownerId = $club->owner_id;
+        $clubName = $club->name;
+        
         $club->delete();
 
-        $user = \App\Models\User::find($club->owner_id);
-
-        
-        $user->notify(new ClubNotification(
-            $club,
-            "Your club {$club->name} has been deleted. "
+        $user = User::find($ownerId);
+        if ($user) {
+            $user->notify(new ClubNotification(
+                $club,
+                "Your club {$clubName} has been deleted."
             ));
-    
-
+        }
 
         return redirect()->route('clubs.index')
                          ->with('success', 'Club deleted successfully!');
@@ -148,11 +141,6 @@ class ClubController extends Controller
     // --------------------------
     public function showNotifyForm(Club $club)
     {
-        $membership = $club->users()->where('user_id', Auth::id())->first();
-        if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-            abort(403, 'Unauthorized.');
-        }
-
         return view('clubs.notify', compact('club'));
     }
 
@@ -161,11 +149,6 @@ class ClubController extends Controller
     // --------------------------
     public function sendUpdate(Request $request, Club $club)
     {
-        $membership = $club->users()->where('user_id', Auth::id())->first();
-        if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-            abort(403, 'Unauthorized.');
-        }
-
         $request->validate([
             'message' => 'required|string|min:5',
         ]);
@@ -184,14 +167,14 @@ class ClubController extends Controller
     }
 
     // --------------------------
-    // Create new club
+    // Create new club (Fixed payload signatures)
     // --------------------------
-    public function store(Request $request, Club $clubs)
+    public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'   => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'category' => 'required',
-            'profile_picture'   => 'nullable|image|max:2048',
+            'profile_picture' => 'nullable|image|max:2048',
             'description' => 'nullable|string',
             'email' => 'nullable|string',
             'banner' => 'nullable|image',
@@ -208,40 +191,25 @@ class ClubController extends Controller
 
         $validated['owner_id'] = Auth::id();
 
-        Club::create($validated);
-
-        $user = \App\Models\Club::find($clubs['owner_id']);
+        $club = Club::create($validated);
 
         if ($user = auth()->user()) {
             $user->notify(new ClubNotification(
-            $clubs,
-            "Your club {$clubs->name} has been submitted for review. 
-            The admins will review your club and determine if it's official. "
+                $club,
+                "Your club {$club->name} has been submitted for review. The admins will review your club and determine if it's official."
             ));
         }
 
-        
-
-        $admins = \App\Models\User::where('is_admin', true) -> get();
-
-        foreach ($admins as $admin){
+        $admins = User::where('is_admin', true)->get();
+        foreach ($admins as $admin) {
             $admin->notify(new ClubNotification(
-            $clubs,
-            "There is a new club to review  "
+                $club,
+                "There is a new club to review"
             ));
-        
         }
-        
-
-        
 
         return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
-
-        
-        
-        
-        
     }
 
     // --------------------------
@@ -260,9 +228,9 @@ class ClubController extends Controller
     // --------------------------
     // Create club form
     // --------------------------
-    public function create(Club $club)
+    public function create()
     {
-        return view('create-clubs.create', compact('club'));
+        return view('create-clubs.create');
     }
 
     // --------------------------
@@ -279,7 +247,6 @@ class ClubController extends Controller
             ->where('role', 'President')
             ->first();
 
-        // ✅ Add remaining attempts calculation here
         $user = auth()->user();
         $searchCount = DB::table('search_logs')
             ->where('user_id', $user->id)
@@ -305,20 +272,19 @@ class ClubController extends Controller
         if ($request->hasFile('profile_picture')) {
             $data['profile_picture'] = $request->file('profile_picture')->store('committee', 'public');
         } else {
-            // ✅ Default image path
             $data['profile_picture'] = 'images/mmu.png';
         }
 
-        $user = \App\Models\User::find($data['user_id']);
+        $user = User::find($data['user_id']);
 
         DB::table('committee_members')->insert([
-            'club_id'        => $club->id,
-            'name'           => $user->name,
-            'role'           => $data['role'],
+            'club_id'         => $club->id,
+            'name'            => $user->name,
+            'role'            => $data['role'],
             'profile_picture'=> $data['profile_picture'],
-            'status'         => 'pending',
-            'created_at'     => now(),
-            'updated_at'     => now(),
+            'status'          => 'pending',
+            'created_at'      => now(),
+            'updated_at'      => now(),
         ]);
 
         $user->notify(new ClubNotification(
@@ -336,11 +302,11 @@ class ClubController extends Controller
     // --------------------------
     public function respondToInvite(Request $request, Club $club)
     {
-        $action = $request->input('action'); // 'accept' or 'decline'
+        $action = $request->input('action');
 
         DB::table('committee_members')
             ->where('club_id', $club->id)
-            ->where('name', Auth::user()->name) // ✅ match by name
+            ->where('name', Auth::user()->name)
             ->update([
                 'status'     => $action === 'accept' ? 'accepted' : 'declined',
                 'updated_at' => now(),
@@ -373,9 +339,9 @@ class ClubController extends Controller
             ->where('club_id', $club->id)
             ->update($updateData);
 
-    return redirect()->route('clubs.committee', $club->id)
-                     ->with('success', 'Profile updated successfully!');
-}
+        return redirect()->route('clubs.committee', $club->id)
+                         ->with('success', 'Profile updated successfully!');
+    }
 
     // --------------------------
     // Remove committee member
@@ -390,7 +356,7 @@ class ClubController extends Controller
     public function chatroom(Club $club)
     {
         $messages = $club->messages()
-            ->with('user') // critical: ensures $message->user is populated
+            ->with('user')
             ->orderBy('created_at')
             ->get();
 
@@ -406,8 +372,48 @@ class ClubController extends Controller
 
         $club->update($data);
 
+        $themes = config('themes');
+        $selectedTheme = $themes[$club->theme] ?? $themes['default'];
+
         return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Club updated successfully and members notified!');
+                     ->with([
+                         'success' => 'Club theme updated successfully!',
+                         'selectedTheme' => $selectedTheme 
+                     ]);
     }
 
+    public function faqView($id)
+    {
+        $club = Club::findOrFail($id);
+
+        $isCommittee = false;
+        if (Auth::check()) {
+            $membership = $club->users()->where('user_id', Auth::id())->wherePivot('status', 'active')->first();
+            
+            // ✨ Fixed: Uses updated role enums instead of deleted COMMITTEE key
+            $isCommittee = $membership && in_array(strtolower($membership->pivot->role), [
+                strtolower(ClubRole::PRESIDENT->value),
+                strtolower(ClubRole::HICOM->value),
+                strtolower(ClubRole::SUBCOM->value)
+            ]);
+        }
+        
+        return view('clubs.faq', compact('club', 'isCommittee'));
+    }
+
+    public function updateFaq(Request $request, $id)
+    {
+        $club = Club::findOrFail($id);
+
+        $request->validate([
+            'faq' => 'nullable|array',
+            'faq.*.question' => 'required|string',
+            'faq.*.answer' => 'required|string',
+        ]);
+
+        $club->faq = $request->input('faq', []); 
+        $club->save();
+
+        return redirect()->route('clubs.faq.view', $club->id)->with('success', 'FAQs updated successfully!');
+    }
 }

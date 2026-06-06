@@ -138,7 +138,7 @@
 
             <div class="form-group">
                 <label for="email">Email</label><br>
-                <input type="text" name="email" id="email" value="{{ old('description', $club->email) }}">
+                <input type="text" name="email" id="email" value="{{ old('email', $club->email) }}">
             </div>
 
             <div class="form-group">
@@ -150,7 +150,7 @@
             <div class="form-group">
                 <label for="category">Category</label>
                 <select name="category" id="category">
-                    <option value="Arts Clubs" {{ $club->category == 'Arts Clubs' ? 'selected' : '' }}>Art Clubs</option>
+                    <option value="Arts Clubs" {{ $club->category == 'Arts Clubs' ? 'selected' : '' }}>Arts Clubs</option>
                     <option value="Community Clubs" {{ $club->category == 'Community Clubs' ? 'selected' : '' }}>Community Clubs</option>
                     <option value="Religious Clubs" {{ $club->category == 'Religious Clubs' ? 'selected' : '' }}>Religious Clubs</option>
                     <option value="Games / Entertainment Clubs" {{ $club->category == 'Games / Entertainment Clubs' ? 'selected' : '' }}>Games / Entertainment Clubs</option>

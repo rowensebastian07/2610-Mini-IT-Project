@@ -1,0 +1,150 @@
+body {
+    background-color: #fff;
+    font-family: 'Roboto', sans-serif;
+}
+
+.committee-form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 40px;
+}
+
+.committee-form-container {
+    background-color: #5f6368;
+    color: #fff;
+    border-radius: 10px;
+    padding: 25px 30px;
+    width: 85%;
+    max-width: 1100px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    margin: 0 auto;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #3c4043;
+    background-color: #292a2d;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.btn-primary {
+    background-color: #1a73e8;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-primary:hover { opacity: 0.9; }
+
+.btn-secondary {
+    background-color: #5f6368;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+.btn-secondary:hover { opacity: 0.9; }
+
+/* 🛠️ IMPROVED: Made the popup clickable-pass-through using pointer-events */
+.popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1a73e8;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    animation: fadeInOut 3s forwards;
+    
+    /* Ensures popup element and its fade footprints can't steal mouse focus */
+    z-index: 30000000 !important;
+    pointer-events: none !important; 
+}
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.profile-card {
+    position: relative;
+    display: flex;
+    background-color: #202124;
+    color: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 25px auto;
+    width: 90%;
+    max-width: 1200px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    transition: transform 0.2s ease;
+}
+.profile-card:hover { transform: scale(1.02); }
+
+.profile-left {
+    flex: 0 0 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile-img {
+    width: 160px;
+    height: 160px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid #5f6368;
+}
+
+.profile-right { flex: 1; padding-left: 25px; }
+
+.icon-bar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.edit-icon, .delete-icon {
+    background-color: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.edit-icon { color: #1a73e8; }
+.edit-icon:hover { color: #4dabf7; }
+
+.delete-icon { color: #e63946; }
+.delete-icon:hover { color: #ff6b6b; }
+
+.form-control-inline {
+    background-color: #292a2d;
+    color: #fff;
+    border: 1px solid #3c4043;
+    border-radius: 6px;
+    padding: 8px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Grip handle for drag */
+.drag-handle {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+    font-size: 20px;
+    color: #888;
+    cursor: grab;
+}
+.drag-handle:hover { color: #ccc; }

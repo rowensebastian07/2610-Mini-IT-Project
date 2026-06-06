@@ -52,7 +52,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function clubs(): BelongsToMany
     {
         return $this->belongsToMany(Club::class, 'memberships')
-            ->withPivot('role', 'status')
+            ->withPivot('role', 'status', 'term')
             ->withTimestamps();
     }
 

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('club_id')->constrained()->cascadeOnDelete();
             $table->string('role')->default(ClubRole::MEMBER->value);
+            $table->string('term')->nullable();
             $table->string('status')->default('active');
             $table->string('verification')->default('unverified');
             $table->timestamps();
