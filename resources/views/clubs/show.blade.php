@@ -334,7 +334,7 @@
               </div>
 
 <!-- Theme preview -->
-@if (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT->value || auth()->user()->role === \App\Enums\ClubRole::HICOM->value || auth()->user()->is_admin)
+@if (auth()->check() && (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT->value || auth()->user()->role === \App\Enums\ClubRole::HICOM->value || auth()->user()->is_admin))
                 
     <div id="preview-div">
         <div id="theme-menu" style="position: relative;">
