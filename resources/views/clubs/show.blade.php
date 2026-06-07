@@ -510,4 +510,3 @@ function togglePastEvents() {
 
 
 </script>
-@endpush

@@ -67,7 +67,7 @@
                 </form>
             @else
                 <li class="nav-item-wrapper guest-link">
-                    <a href="{{ route('login') }}">Log in</a>
+                    <a href="{{ route('login') }}" >Log in</a>
                 </li>
                 @if (Route::has('register'))
                     <li class="nav-item-wrapper guest-link">
