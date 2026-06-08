@@ -53,6 +53,18 @@ body {
     color: blue;
 }
 
+.btn-unsaved-changes {
+    background: #d97706 !important; /* Warning Amber color */
+    box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.2);
+    animation: pulseHint 2s infinite;
+}
+
+@keyframes pulseHint {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
 .club-title {
     font-size: 32px;
     font-weight: 700;
@@ -103,7 +115,7 @@ body {
     font-size: 16px;
     color: #334155;
     cursor: pointer;
-    list-style: none; /* Removes native HTML arrow */
+    list-style: none;
     position: relative;
     outline: none;
     user-select: none;
@@ -125,6 +137,18 @@ body {
     font-size: 16px;
     color: #94a3b8;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s;
+}
+
+.faq-arrow {
+    font-size: 10px;
+    color: #64748b;
+    transition: transform 0.2s ease;
+    display: inline-block;
+}
+
+.faq-item[open] .faq-arrow {
+    transform: rotate(90deg);
+    color: #2563eb;
 }
 
 /* Rotates and colors the indicator arrow when open */
