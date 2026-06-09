@@ -57,6 +57,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        $club = $post->club;
         return view('posts.show', compact('post'));
     }
 
@@ -67,7 +68,7 @@ class PostController extends Controller
     }
 
     public function update(Request $request, Club $club, Post $post)
-    {
+    {        
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
@@ -80,15 +81,17 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        return redirect()->route('clubs.show', $club->id)
+        return redirect()->route('clubs.show', $post->club->id)
                          ->with('success', 'Post updated successfully!');
     }
 
     public function destroy(Club $club, Post $post)
-    {
+    {   
+        $clubId = $post->club_id;
+
         $post->delete();
 
-        return redirect()->route('clubs.show', $club->id)
+        return redirect()->route('clubs.show', $clubId)
                          ->with('success', 'Post deleted successfully!');
     }
 
