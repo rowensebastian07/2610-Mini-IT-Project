@@ -390,10 +390,11 @@ class ClubController extends Controller
         if (Auth::check()) {
             $membership = $club->users()->where('user_id', Auth::id())->wherePivot('status', 'active')->first();
             
+            // ✨ Fixed: Uses updated role enums instead of deleted COMMITTEE key
             $isCommittee = $membership && in_array(strtolower($membership->pivot->role), [
-                strtolower(\App\Enums\ClubRole::PRESIDENT->value),
-                strtolower(\App\Enums\ClubRole::HICOM->value),
-                strtolower(\App\Enums\ClubRole::SUBCOM->value)
+                strtolower(ClubRole::PRESIDENT->value),
+                strtolower(ClubRole::HICOM->value),
+                strtolower(ClubRole::SUBCOM->value)
             ]);
         }
         
@@ -410,8 +411,7 @@ class ClubController extends Controller
             'faq.*.answer' => 'required|string',
         ]);
 
-        $faqData = $request->input('faq', []);
-        $club->faq = array_values($faqData); 
+        $club->faq = $request->input('faq', []); 
         $club->save();
 
         return redirect()->route('clubs.faq.view', $club->id)->with('success', 'FAQs updated successfully!');
