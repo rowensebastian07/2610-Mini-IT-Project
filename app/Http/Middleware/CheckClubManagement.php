@@ -87,19 +87,17 @@ class CheckClubManagement
 
         // HIGH COMMITTEE LIMITATIONS
         if ($userRole === strtolower(ClubRole::HICOM->value)) {
-            // High comms CANNOT delete clubs under any circumstance
             if ($routeName === 'clubs.destroy') {
                 abort(403, 'Unauthorized action. Only the Club President can delete this club.');
             }
 
             $restrictedRoleRoutes = [
-                'clubs.committee.add', 
-                'clubs.committee.update', 
+                'clubs.committee.add',
+                'clubs.committee.update',
                 'clubs.terms.assign'
             ];
 
-            // High comms CANNOT create or assign other High Comms or Presidents
-            if ($routeName === 'clubs.addCommitteeMember' || $routeName === 'terms.assignMember') {
+            if (in_array($routeName, $restrictedRoleRoutes)) {
                 $targetRole = strtolower($request->input('role'));
                 
                 if ($targetRole === strtolower(ClubRole::HICOM->value) || $targetRole === strtolower(ClubRole::PRESIDENT->value)) {

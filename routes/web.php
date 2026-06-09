@@ -82,17 +82,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //  ISOLATED CLUB MANAGEMENT & AUTHORIZATION ROUTE GROUP
     // =========================================================================
     Route::middleware(['club.management'])->group(function () {
+
+        // President only
+        Route::delete('/clubs/{club}', [ClubController::class, 'destroy'])->name('clubs.destroy');
         
         // 1. Club Properties Management
+        // HICOM n above
         Route::get('/clubs/{club}/edit', [ClubController::class, 'edit'])->name('clubs.edit');
         Route::put('/clubs/{club}', [ClubController::class, 'update'])->name('clubs.update');
         Route::delete('/clubs/{club}', [ClubController::class, 'destroy'])->name('clubs.destroy');
         Route::put('/clubs/{club}/verify', [ClubController::class, 'updateVerify'])->name('clubs.updateVerify');
 
-        // FIXED THEME ROUTE: Distinct URI path to avoid overriding core club edits
+        // HICOM n above
         Route::put('/clubs/{club}/theme', [ClubController::class, 'updateTheme'])->name('clubs.updateTheme');
 
         // 2. Events Creation and Modification
+        // HICOM n above
         Route::get('/clubs/{club}/events/create', [EventController::class, 'create'])->name('events.create');
         Route::post('/clubs/{club}/events', [EventController::class, 'store'])->name('events.store');
         Route::get('/clubs/{club}/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
@@ -102,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/events/{event}/delete-photo', [EventController::class, 'deletePhoto'])->name('events.deletePhoto');
 
         // 3. Posts Creation and Modification
+        // SUBCOM n above
         Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
         Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
         Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
@@ -109,10 +115,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
         // FAQ Management
+        // SUBCOM n above
         Route::get('/clubs/{club}/faq/edit', [ClubController::class, 'faqEdit'])->name('clubs.faq.edit');
         Route::put('/clubs/{club}/faq', [ClubController::class, 'updateFaq'])->name('clubs.faq.update');
 
         // 4. Committee and Terms Assignments
+        // HICOM n above
         Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
         Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
         Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
