@@ -24,6 +24,7 @@ return new class extends Migration
             // System-level roles
             $table->boolean('is_admin')->default(false); // true = Super Admin, false = Regular User
             $table->string('status')->default(UserStatus::ACTIVE->value);      // 'active', 'pending', 'banned'
+            $table->string('term')->nullable(); // 2025/2026 2026/2027
             $table->string('verification')->default(UserVerification::UNVERIFIED->value); // 'verified', 'pending', 'unverified'
 
             // Extra fields

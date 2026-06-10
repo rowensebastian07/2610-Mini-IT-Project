@@ -99,28 +99,28 @@
     }
     
     /*Live preview Image*/
-    #pic_label{
-    margin-top: 1rem;
-    background: url("{{  asset($club->profile_picture) }}") no-repeat center;
-    border: solid black 3px;
-    background-size: cover;
-    display: inline-block;
-    width: 10rem;
-    height: 10rem;
-    text-align: center;
-    border-radius: 50%;
+    #pic_label {
+        margin-top: 1rem;
+        background: url("{{ $club->profile_picture ? asset('storage/' . $club->profile_picture) : '' }}") no-repeat center;
+        border: solid black 3px;
+        background-size: cover;
+        display: inline-block;
+        width: 10rem;
+        height: 10rem;
+        text-align: center;
+        border-radius: 50%;
     }
 
-    #pic_label:hover{
+    #pic_label:hover {
         cursor: pointer;
     }
 
-    #pic_label input[ type = "file" ]{
+    #pic_label input[type="file"] {
         display: none;
     }
     
-    #banner_label{
-        background: url("{{  asset($club->banner_image) }}") no-repeat center;
+    #banner_label {
+        background: url("{{ $club->banner_image ? asset('storage/' . $club->banner_image) : '' }}") no-repeat center;
         background-size: cover;
         display: inline-block;
         width: 25rem;
@@ -128,14 +128,13 @@
         text-align: center;
     }
 
-    #banner_label input[ type = "file" ]{
+    #banner_label input[type="file"] {
         display: none;
     }
 
-    #banner_label:hover{
+    #banner_label:hover {
         cursor: pointer;
     }
-    
 </style>
 
 <div>
@@ -187,7 +186,7 @@
             <div class="form-group">
                 <label for="category">Category</label>
                 <select name="category" id="category">
-                    <option value="Arts Clubs" {{ $club->category == 'Arts Clubs' ? 'selected' : '' }}>Art Clubs</option>
+                    <option value="Arts Clubs" {{ $club->category == 'Arts Clubs' ? 'selected' : '' }}>Arts Clubs</option>
                     <option value="Community Clubs" {{ $club->category == 'Community Clubs' ? 'selected' : '' }}>Community Clubs</option>
                     <option value="Religious Clubs" {{ $club->category == 'Religious Clubs' ? 'selected' : '' }}>Religious Clubs</option>
                     <option value="Games / Entertainment Clubs" {{ $club->category == 'Games / Entertainment Clubs' ? 'selected' : '' }}>Games / Entertainment Clubs</option>
@@ -214,53 +213,43 @@
     </div>
 </div>
 
-  <script>
-            
-            // Declaring variables for profile pic
-            let input_file = document.getElementById('profile_picture');
-            let picDisplay = document.getElementById('pic_label'); 
-        
+<script>
+    // Declaring variables for profile pic
+    let input_file = document.getElementById('profile_picture');
+    let picDisplay = document.getElementById('pic_label'); 
 
-            // Declaring variables for banner
-            let banner_input = document.getElementById('banner_image')
-            let banLabel = document.getElementById('banner_label')
+    // Declaring variables for banner
+    let banner_input = document.getElementById('banner_image')
+    let banLabel = document.getElementById('banner_label')
 
-            // Live preview for profile pic
-            input_file.onchange = (e) => {
-
-            let file = e.target.files[0];
-
-
+    // Live preview for profile pic
+    input_file.onchange = (e) => {
+        let file = e.target.files[0];
+        if (file) {
             let url = URL.createObjectURL(file);
-
             picDisplay.style.background = `url(${url}) center / cover no-repeat`;
 
-            // Free up memory space (better perfomance)
+            // Free up memory space (better performance)
             setTimeout(() => {
                 URL.revokeObjectURL(url);
             }, 100)
-            
         }
+    }
 
-            // Live preview for banner
-
-            banner_input.onchange = (e) => {
-
-            let file = e.target.files[0];
-
-
+    // Live preview for banner
+    banner_input.onchange = (e) => {
+        let file = e.target.files[0];
+        if (file) {
             let url = URL.createObjectURL(file);
-
             banLabel.style.background = `url(${url}) center / cover no-repeat`;
 
-
-            // Free up memory space (better perfomance)
+            // Free up memory space (better performance)
             setTimeout(() => {
                 URL.revokeObjectURL(url);
             }, 100)
         }
-        </script>
-
+    }
+</script>
 @endsection
 
 

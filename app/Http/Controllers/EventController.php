@@ -4,23 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\Club;
-use App\Enums\ClubRole;
 use App\Notifications\ClubNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class EventController extends Controller
 {
-    // ✅ Helper method to verify if the user is a Committee Member
-    private function authorizeCommittee(Club $club)
-    {
-       $membership = $club->users()->where('user_id', Auth::id())->first();
-
-         if (!$membership || $membership->pivot->role !== ClubRole::COMMITTEE->value) {
-           abort(403, 'Unauthorized action. Only committee members can manage events.');
-        }
-    }
+    // Cleaned: The internal authorizeCommittee() method is completely removed 
+    // because the 'club.management' middleware handles it before reaching here.
 
     public function index()
     {
@@ -35,14 +28,11 @@ class EventController extends Controller
 
     public function create(Club $club)
     {
-        $this->authorizeCommittee($club);
         return view('events.create', compact('club'));
     }
 
     public function store(Request $request, Club $club)
     {
-        $this->authorizeCommittee($club);
-
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'date'        => 'required|date',
@@ -53,30 +43,25 @@ class EventController extends Controller
 
         $event = $club->events()->create($validated);
 
-        // ✅ Notify ALL members, including sender
-            foreach ($club->users as $member) {
-                $member->notify(new ClubNotification(
-                    $club,
-                    "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}",
-                    'event' 
-                ));
-            }
+        // Notify ALL members
+        foreach ($club->users as $member) {
+            $member->notify(new ClubNotification(
+                $club,
+                "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}",
+                'event' 
+            ));
+        }
 
         return redirect()->route('clubs.show', $club->id)->with('success', 'Event created and members notified!');
     }
 
-
     public function edit(Club $club, Event $event)
     {
-        $this->authorizeCommittee($club);
-
         return view('events.edit', compact('club', 'event'));
     }
 
     public function update(Request $request, Club $club, Event $event)
     {
-        $this->authorizeCommittee($club);
-
         $validated = $request->validate([
             'title'       => 'required|string|max:255',
             'date'        => 'required|date',
@@ -88,44 +73,30 @@ class EventController extends Controller
 
         $event->update($validated);
 
-        return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Event updated successfully!');
+        return redirect()->route('clubs.show', $club->id)->with('success', 'Event updated successfully!');
     }
 
     public function destroy(Club $club, Event $event)
     {
-        $this->authorizeCommittee($club);
-
         $event->delete();
 
-        return redirect()->route('clubs.show', $club->id)
-                         ->with('success', 'Event deleted successfully!');
+        return redirect()->route('clubs.show', $club->id)->with('success', 'Event deleted successfully!');
     }
 
-  
-
-public function pastEvents(Club $club)
-{
-    $today = Carbon::today();
-
-    $pastEvents = $club->events()
-        ->whereDate('date', '<', $today)
-        ->orderBy('date', 'desc')
-        ->get();
-
-    return view('events.past', compact('club', 'pastEvents'));
-}
-
-
-    // ✅ Multiple file upload handler
-    // ✅ Add Club $club right here
-    public function uploadFiles(Request $request, Club $club, $eventId)
+    public function pastEvents(Club $club)
     {
-        // Now $club is recognized!
-        $this->authorizeCommittee($club);
+        $today = Carbon::today();
 
-        $event = Event::findOrFail($eventId);
+        $pastEvents = $club->events()
+            ->whereDate('date', '<', $today)
+            ->orderBy('date', 'desc')
+            ->get();
 
+        return view('events.past', compact('club', 'pastEvents'));
+    }
+
+    public function uploadFiles(Request $request, Club $club, Event $event)
+    {
         $request->validate([
             'event_files.*' => 'required|file|max:10240',
         ]);
@@ -151,14 +122,13 @@ public function pastEvents(Club $club)
         return view('events.uploads', compact('event', 'files'));
     }
 
-    public function deletePhoto(Request $request, Event $event)
+    //Injected Club $club model context so $event->club handles cleanly without crashing
+    public function deletePhoto(Request $request, Club $club, Event $event)
     {
-        $this->authorizeCommittee($club);
-
         $filePath = $request->input('file_path');
 
         // Remove file from storage
-        \Storage::disk('public')->delete($filePath);
+        Storage::disk('public')->delete($filePath);
 
         // Remove from JSON list
         $files = json_decode($event->uploads, true);
@@ -168,5 +138,4 @@ public function pastEvents(Club $club)
 
         return back()->with('success', 'Photo deleted successfully!');
     }
-
 }

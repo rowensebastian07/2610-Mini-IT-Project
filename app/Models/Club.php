@@ -17,7 +17,7 @@ class Club extends Model
     protected $fillable = [
         'name',
         'description',
-        'category', // need this, otherwise can't mass-assign categories.
+        'category',
         'profile_picture',
         'email',
         'instagram',
@@ -73,12 +73,18 @@ class Club extends Model
      * The users that belong to the club.
      */
     public function users(): BelongsToMany
-{
-    return $this->belongsToMany(User::class, 'memberships', 'club_id', 'user_id')
-                ->withPivot('role', 'status', 'verification')
-                ->withTimestamps();
-}
+    {
+        return $this->belongsToMany(User::class, 'memberships', 'club_id', 'user_id')
+                    ->withPivot('role', 'status', 'verification', 'term')
+                    ->withTimestamps();
+    }
 
+    public function currentMembers()
+    {
+        return $this->belongsToMany(User::class)
+                    ->withPivot('role', 'term', 'status')
+                    ->wherePivot('status', 'active');
+    }
 
     /**
      * Relationship: Events hosted by this club.
@@ -106,23 +112,22 @@ class Club extends Model
     }
     
     public function messages()
-{
-    return $this->hasMany(Message::class);
-}
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function treasurer()
+    {
+        return $this->hasOne(Treasurer::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 
     public function faqs()
     {
         return $this->hasMany(Faq::class); 
     }
-public function treasurer()
-{
-    return $this->hasOne(Treasurer::class);
-}
-
-public function products()
-{
-    return $this->hasMany(Product::class);
-}
-
-
 }

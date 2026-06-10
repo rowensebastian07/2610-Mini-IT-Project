@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+        'club.management' => \App\Http\Middleware\CheckClubManagement::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

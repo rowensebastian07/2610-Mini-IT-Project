@@ -1,156 +1,10 @@
-<x-top-nav></x-top-nav>
-
 @extends('layouts.app')
 
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/committee.css') }}">
+@endpush
+
 @section('content')
-<style>
-    body {
-        background-color: #fff;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .committee-form-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        margin-top: 40px;
-    }
-
-    .committee-form-container {
-        background-color: #5f6368;
-        color: #fff;
-        border-radius: 10px;
-        padding: 25px 30px;
-        width: 85%;
-        max-width: 1100px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        margin: 0 auto;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 8px;
-        border-radius: 5px;
-        border: 1px solid #3c4043;
-        background-color: #292a2d;
-        color: #fff;
-        margin-bottom: 10px;
-    }
-
-    .btn-primary {
-        background-color: #1a73e8;
-        color: #fff;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: opacity 0.2s ease;
-    }
-    .btn-primary:hover { opacity: 0.9; }
-
-    .btn-secondary {
-        background-color: #5f6368;
-        color: #fff;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: opacity 0.2s ease;
-    }
-    .btn-secondary:hover { opacity: 0.9; }
-
-    .popup {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #1a73e8;
-        color: #fff;
-        padding: 12px 20px;
-        border-radius: 6px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        animation: fadeInOut 3s forwards;
-        z-index: 9999;
-    }
-    @keyframes fadeInOut {
-        0% { opacity: 0; transform: translateY(-10px); }
-        10% { opacity: 1; transform: translateY(0); }
-        90% { opacity: 1; }
-        100% { opacity: 0; transform: translateY(-10px); }
-    }
-
-    .profile-card {
-        position: relative;
-        display: flex;
-        background-color: #202124;
-        color: #fff;
-        border-radius: 12px;
-        padding: 25px;
-        margin: 25px auto;
-        width: 90%;
-        max-width: 1200px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.5);
-        transition: transform 0.2s ease;
-    }
-    .profile-card:hover { transform: scale(1.02); }
-
-    .profile-left {
-        flex: 0 0 180px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .profile-img {
-        width: 160px;
-        height: 160px;
-        border-radius: 12px;
-        object-fit: cover;
-        border: 2px solid #5f6368;
-    }
-
-    .profile-right { flex: 1; padding-left: 25px; }
-
-    .icon-bar {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .edit-icon, .delete-icon {
-        background-color: transparent;
-        border: none;
-        font-size: 22px;
-        cursor: pointer;
-        transition: color 0.2s ease;
-    }
-    .edit-icon { color: #1a73e8; }
-    .edit-icon:hover { color: #4dabf7; }
-
-    .delete-icon { color: #e63946; }
-    .delete-icon:hover { color: #ff6b6b; }
-
-    .form-control-inline {
-        background-color: #292a2d;
-        color: #fff;
-        border: 1px solid #3c4043;
-        border-radius: 6px;
-        padding: 8px;
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    /* Grip handle for drag */
-    .drag-handle {
-        position: absolute;
-        left: 15px;
-        top: 15px;
-        font-size: 20px;
-        color: #888;
-        cursor: grab;
-    }
-    .drag-handle:hover { color: #ccc; }
-</style>
 
 @if(session('success'))
     <div id="popup-message" class="popup">
@@ -162,21 +16,28 @@
     <div class="committee-form-container">
         <h3 style="text-align:center;">Assign Committee Member</h3>
 
-        <form action="{{ route('clubs.committee.add', $club->id) }}" method="POST">
+        <form action="{{ route('clubs.terms.assign', $club->id) }}" method="POST">
             @csrf
-            <label>Select Member</label>
-            <select id="member-search" name="user_id" class="form-control">
+            
+            <label for="term">Academic Term Year</label>
+            <input type="text" name="term" id="term" placeholder="e.g., 2026/2027" required class="form-control" style="margin-bottom: 15px;">
+
+            <label for="member-search">Select Member</label>
+            <select id="member-search" name="user_id" class="form-control" required>
                 <option value="">Search by name or email</option>
             </select>
+            
+            <div id="attempts-left" class="text-muted mt-2" style="margin-bottom: 15px;">
+                Attempts left today: {{ $remaining }}
+            </div>
 
-            <!-- ✅ Attempts counter -->
-                <div id="attempts-left" class="text-muted mt-2">
-            Attempts left today: {{ $remaining }}
-        </div>
-
-
-            <label>Role</label>
-            <input type="text" name="role" class="form-control" placeholder="Enter role">
+            <label for="role">Role Hierarchy</label>
+            <select name="role" id="role" class="form-control" required style="margin-bottom: 20px;">
+                <option value="">-- Select Role Hierarchy --</option>
+                <option value="president">President</option>
+                <option value="hicom">High Committee</option>
+                <option value="sub_committee">Sub Committee</option>
+            </select>
 
             <button type="submit" class="btn-primary">Assign Member</button>
         </form>
@@ -260,7 +121,6 @@
     @endforeach
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -270,28 +130,27 @@
 $('#member-search').select2({
     placeholder: 'Search by name or email',
     allowClear: true,
-   ajax: {
-    url: '{{ route("users.search") }}',
-    dataType: 'json',
-    delay: 250,
-    data: params => ({ q: params.term }),
-    processResults: data => {
-        $('#attempts-left').text("Attempts left today: " + data.remaining);
-        return { results: data.results };
+    ajax: {
+        url: '{{ route("users.search") }}',
+        dataType: 'json',
+        delay: 250,
+        data: params => ({ q: params.term }),
+        processResults: data => {
+            $('#attempts-left').text("Attempts left today: " + data.remaining);
+            return { results: data.results };
+        },
+        error: xhr => {
+            if (xhr.status === 429) {
+                const data = xhr.responseJSON;
+                alert(data.error || "Daily search limit reached.");
+                $('#attempts-left').text("Attempts left today: " + (data.remaining || 0));
+                $('#member-search').prop('disabled', true);
+            }
+        },
+        cache: true
     },
-    error: xhr => {
-        if (xhr.status === 429) {
-            const data = xhr.responseJSON;
-            alert(data.error || "Daily search limit reached.");
-            $('#attempts-left').text("Attempts left today: " + (data.remaining || 0));
-            $('#member-search').prop('disabled', true);
-        }
-    },
-    cache: true
-},
     minimumInputLength: 2
 });
-
 
 // Edit toggle
 $('.edit-icon').on('click', function() {

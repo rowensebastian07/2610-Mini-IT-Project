@@ -479,20 +479,9 @@ footer {
 }
 
 .calendar-container {
-    max-width: 900px;
-    margin: 20px auto;
-    background: #f0f0f0;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #fdfbfb, #ebedee);
 }
 
-.calendar-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-}
 
 .nav-btn {
     background: none;
@@ -522,10 +511,9 @@ footer {
 }
 
 .calendar-title {
-    text-align: center;
-    font-weight: bold;
-    font-size: 1.3rem;
-    width: 200px;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .calendar-arrow {
@@ -543,7 +531,7 @@ footer {
 }
 
 .calendar-arrow:hover {
-    color: #0056b3;   
+  color: #ff4081;
 }
 
 #prevMonth {
@@ -578,10 +566,11 @@ footer {
 
 /* Generic hover for all cells */
 .calendar-table td:hover {
-    background-color: red;
-    cursor: pointer;
-    transform: scale(1.05);
+  background-color: #e0f7fa;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+  transform: scale(1.05);
 }
+
 
 /* Today cell default (always blue) */
 .calendar-table td.today-cell {

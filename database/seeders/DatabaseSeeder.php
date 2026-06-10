@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use App\Enums\ClubRole;
+use App\Models\Club; 
+use App\Models\Post; 
 use App\Enums\UserStatus;
 use App\Enums\UserVerification;
+use App\Enums\ClubRole;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -13,7 +15,34 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Create a VERIFIED Admin
+        // =======================================================
+        // 1. RUN EXTERNAL SEEDERS FIRST (Ensures Club ID 1 exists)
+        // =======================================================
+        $this->call(ClubsTableSeeder::class);
+        
+        $club = Club::where('name', 'MMusic Club')->first() ?? Club::find(1);
+
+        if (!$club) {
+        // Ultimate safety shield: Only runs if the database is bone dry
+        $club = Club::create([
+            'name' => 'MMusic Club',
+            'category' => 'Arts & Culture',
+            'theme' => 'default',
+        ]);
+    }
+
+        // =======================================================
+        // 2. CREATE SYSTEM AUTHENTICATION USERS
+        // =======================================================
+
+        $presidentUser = User::UpdateOrCreate([
+            'name' => 'President of Music Club',
+            'email' => 'admin@club.com', 
+            'password' => Hash::make('password'),
+            'email_verified_at' => "2026-05-28 12:00:00"
+        ]);
+
+        // Verified System Admin
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -26,7 +55,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Create an UNVERIFIED User
+        // Unverified Student
         User::updateOrCreate(
             ['email' => 'student@example.com'],
             [
@@ -39,37 +68,75 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Create Committee and Member users
-        $committee = User::create([
+        // =======================================================
+        // 3. CREATE ADDITIONAL CLUB COMMITTEE & MEMBERS
+        // =======================================================
+
+        $committeeLead = User::create([
             'name' => 'Committee Lead',
-            'email' => 'admin@club.com',
+            'email' => 'committee@club.com', 
             'password' => Hash::make('password'),
-            'name' => 'Committee Lead',
-            'is_admin' => true,
+            'is_admin' => false,
             'email_verified_at' => "2026-05-28 12:00:00",
             'status' => UserStatus::ACTIVE->value,
             'verification' => UserVerification::VERIFIED->value,
         ]);
 
-        $member = User::create([
+        $subCom = User::create([
+            'name' => 'sub Committee',
+            'email' => 'subcom@club.com', 
+            'password' => Hash::make('password'),
+            'is_admin' => false,
+            'email_verified_at' => "2026-05-28 12:00:00",
+            'status' => UserStatus::ACTIVE->value,
+            'verification' => UserVerification::VERIFIED->value,
+        ]);
+
+        $regularMember = User::create([
             'name' => 'Regular Student',
             'email' => 'student@club.com',
             'password' => Hash::make('password'),
         ]);
 
-        // 4. Seed clubs via ClubsTableSeeder
-        $this->call(ClubsTableSeeder::class);
+        // =======================================================
+        // 4. ATTACH USERS TO CLUB (Only Once to Prevent SQL Duplicate Errors)
+        // =======================================================
 
-        // 5. Attach committee/member roles to one of the seeded clubs
-        $club = \App\Models\Club::first(); // pick the first seeded club
-        $club->users()->attach($committee->id, ['role' => ClubRole::COMMITTEE->value]);
-        $club->users()->attach($member->id, ['role' => ClubRole::MEMBER->value]);
+        // Attach testing President
+        $club->users()->attach($presidentUser->id, [
+            'role' => ClubRole::PRESIDENT->value,
+            'term' => '2025/2026',
+            'status' => 'active',
+        ]);
 
-        // 6. Create a Post for that club
-        \App\Models\Post::create([
+        // Attach High Committee member
+        $club->users()->attach($committeeLead->id, [
+            'role' => ClubRole::HICOM->value, 
+            'term' => '2025/2026',  
+            'status' => 'active'
+        ]);
+
+        $club->users()->attach($subCom->id, [
+            'role' => ClubRole::SUBCOM->value, 
+            'term' => '2025/2026',  
+            'status' => 'active'
+        ]);
+
+        // Attach Regular Member
+        $club->users()->attach($regularMember->id, [
+            'role' => ClubRole::MEMBER->value,
+            'term' => '2025/2026',
+            'status' => 'active'
+        ]);
+
+        // =======================================================
+        // 5. POST GENERATION
+        // =======================================================
+        
+        Post::create([
             'club_id' => $club->id,
-            'user_id' => $committee->id,
-            'title' => 'Welcome to the Club!',
+            'user_id' => $committeeLead->id,
+            'title' => 'Welcome to MMusic Club!',
             'content' => 'This is our first official post.',
         ]);
     }

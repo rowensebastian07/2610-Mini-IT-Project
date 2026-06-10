@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ClubTermController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,8 +26,9 @@ Keep public viewing routes outside auth
 Keep edit/update/delete inside auth
 */ 
 
-// Homepage – lists posts (and clubs if you want)
+// Homepage
 Route::get('/', [PostController::class, 'index'])->name('home');
+
 Route::get('/calendar', function () {
     $events = Event::all(); 
     return view('calendar.index', compact('events'));
@@ -35,8 +37,7 @@ Route::get('/calendar', function () {
 Route::get('/clubs/search', [ClubController::class, 'search'])->name('clubs.search');
 Route::get('/clubs', [ClubController::class, 'list'])->name('clubs.index');
 Route::get('/clubs/{club}', [ClubController::class, 'show'])->name('clubs.show');
-
-Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
+Route::get('/clubs/{club}/faq', [ClubController::class, 'faqView'])->name('clubs.faq.view');
 
 /*
 |--------------------------------------------------------------------------
@@ -44,17 +45,13 @@ Route::get('/clubs/{id}/faq', [ClubController::class, 'faqView'])->name('clubs.f
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard - shows profile + followed clubs/events
+    // Dashboard & Profile
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::patch('/dashboard', [UserController::class, 'updateProfile'])->name('dashboard.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\UserController::class, 'destroy'])
-    ->name('users.destroy');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    //FAQ SECTION
-    Route::post('/clubs/{club}/contact', [ClubController::class, 'updateContact'])
-    ->name('clubs.updateContact');
+    Route::post('/clubs/{club}/contact', [ClubController::class, 'updateContact'])->name('clubs.updateContact');
 
-    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -64,12 +61,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
     Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    Route::post('/notifications/{id}/read', function ($id) {
-    $notification = auth()->user()->notifications()->findOrFail($id);
-    $notification->markAsRead(); // sets read_at timestamp
-    return response()->json(['success' => true]);
-    
-});
 
     // Notifications/Notify Logic
     Route::get('/clubs/{club}/notify', [ClubController::class, 'showNotifyForm'])->name('clubs.notify.form');
@@ -78,80 +69,84 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Follow Logic
     Route::post('/clubs/{club}/follow', [UserController::class, 'followClub'])->name('clubs.follow');
     Route::delete('/clubs/{club}/unfollow', [UserController::class, 'unfollowClub'])->name('clubs.unfollow');
-        
-    // Nested post routes under clubs (create + store)
+
+    // Club Creation Routes
     Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
     Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
+    Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
 
-    Route::resource('clubs', ClubController::class)->except(['create', 'store']);
-
-    // Events Management
-    Route::get('/clubs/{club}/events/create', [EventController::class, 'create'])->name('events.create');
-    Route::post('/clubs/{club}/events', [EventController::class, 'store'])->name('events.store');
-
-    Route::get('/clubs/{club}/events/{event}', [EventController::class, 'show'])->name('events.show');
-    Route::get('/clubs/{club}/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
-
-    Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update'])->name('events.update');
-    Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
-    Route::post('/events/{event}/upload-files', [EventController::class, 'uploadFiles'])->name('events.uploadFiles');
-    Route::get('/events/{event}/uploads', [EventController::class, 'viewUploads'])
-     ->name('events.viewUploads');
-     // Delete a single photo from an event
-    Route::delete('/events/{event}/delete-photo', [EventController::class, 'deletePhoto'])
-     ->name('events.deletePhoto');
-
-
-// Posts nested under clubs
-Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
-Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
-
-// Other post routes
-Route::resource('posts', PostController::class)->except(['create', 'store']);
-
-// Likes + Comments
+    // Likes + Comments
     Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
     Route::get('/posts/{post}/comments', [PostController::class, 'getComments']);
     Route::post('/posts/{post}/comment', [PostController::class, 'comment'])->name('posts.comment');
 
-    // Route for create clubs
-    Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
-    Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
-
-    // Route for updating club details
-
-    Route::put('/clubs/{club}', [ClubController::class, 'update'])
-    ->name('clubs.update');
-
-    // Route for verifying clubs
-    Route::put('/clubs/{club}/verify', [ClubController::class, 'updateVerify'])
-    ->name('clubs.updateVerify');
-
-
-    // Route for edit club // huh? -lzh
-    Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
-
-//Committee page 
-    Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
-    Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
-    Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
+    // Search & Invites
     Route::get('/users/search', [UserController::class, 'search'])->name('users.search');
     Route::get('/committee/search', [ClubController::class, 'searchCommittee'])->name('committee.search');
     Route::post('/clubs/{club}/invite/respond', [ClubController::class, 'respondToInvite'])->name('committee.invite.respond');
-    Route::put('/clubs/{club}/committee/{id}/update', [App\Http\Controllers\ClubController::class, 'updateCommitteeMember'])->name('clubs.committee.update');
 
- //Club Chatroom Page
-    Route::get('/clubs/{club}/chatroom', [App\Http\Controllers\ClubController::class, 'chatroom'])->name('clubs.chatroom');
-    Route::post('/clubs/{club}/messages', [MessageController::class, 'store']) ->name('clubs.messages.store');
-    Route::put('/messages/{message}', [App\Http\Controllers\MessageController::class, 'update'])->name('messages.update');
-    Route::delete('/messages/{message}', [App\Http\Controllers\MessageController::class, 'destroy']) ->name('messages.destroy');
+    // =========================================================================
+    // ISOLATED CLUB MANAGEMENT & AUTHORIZATION ROUTE GROUP
+    // =========================================================================
+    Route::middleware(['club.management'])->group(function () {
+        // President only
+        Route::delete('/clubs/{club}', [ClubController::class, 'destroy'])->name('clubs.destroy');
 
- //Marketplace
+        // 1. Club Properties Management
+        // HICOM n above
+        Route::get('/clubs/{club}/edit', [ClubController::class, 'edit'])->name('clubs.edit');
+        Route::put('/clubs/{club}', [ClubController::class, 'update'])->name('clubs.update');
+        Route::put('/clubs/{club}/verify', [ClubController::class, 'updateVerify'])->name('clubs.updateVerify');
+        Route::put('/clubs/{club}/theme', [ClubController::class, 'updateTheme'])->name('clubs.updateTheme');
+
+        // 2. Events Creation and Modification
+        // HICOM n above
+        Route::get('/clubs/{club}/events/create', [EventController::class, 'create'])->name('events.create');
+        Route::post('/clubs/{club}/events', [EventController::class, 'store'])->name('events.store');
+        Route::get('/clubs/{club}/events/{event}', [EventController::class, 'show'])->name('events.show');
+        Route::get('/clubs/{club}/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+        Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update'])->name('events.update');
+        Route::delete('/clubs/{club}/events/{event}', [ClubController::class, 'destroy'])->name('events.destroy');
+        Route::post('/events/{event}/upload-files', [EventController::class, 'uploadFiles'])->name('events.uploadFiles');
+        Route::get('/events/{event}/uploads', [EventController::class, 'viewUploads'])->name('events.viewUploads');
+        Route::delete('/events/{event}/delete-photo', [EventController::class, 'deletePhoto'])->name('events.deletePhoto');
+
+        // 3. Posts Creation and Modification
+        // SUBCOM n above
+        Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
+        Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
+        Route::resource('posts', PostController::class)->except(['create', 'store']);
+        Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
+        Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+        Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+        // FAQ Management
+        // SUBCOM n above
+        Route::get('/clubs/{club}/faq/edit', [ClubController::class, 'faqEdit'])->name('clubs.faq.edit');
+        Route::put('/clubs/{club}/faq', [ClubController::class, 'updateFaq'])->name('clubs.faq.update');
+
+        // 4. Committee and Terms Assignments
+        // HICOM n above
+        Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
+        Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
+        Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
+        Route::put('/clubs/{club}/committee/{id}/update', [ClubController::class, 'updateCommitteeMember'])->name('clubs.committee.update');
+        Route::post('/clubs/{club}/terms/assign', [ClubTermController::class, 'assignMember'])->name('clubs.terms.assign');
+    });
+    // =========================================================================
+
+    // Club Chatroom Page
+    Route::get('/clubs/{club}/chatroom', [ClubController::class, 'chatroom'])->name('clubs.chatroom');
+    Route::post('/clubs/{club}/messages', [MessageController::class, 'store'])->name('clubs.messages.store');
+    Route::put('/messages/{message}', [MessageController::class, 'update'])->name('messages.update');
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+
+    // Marketplace
     Route::get('/clubs/{club}/marketplace', [ProductController::class, 'index'])->name('clubs.marketplace');
     Route::get('/clubs/{club}/marketplace/admin', [ProductController::class, 'adminDashboard'])->name('marketplace.admin');
     Route::get('/clubs/{club}/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('/clubs/{club}/products', [ProductController::class, 'store'])->name('products.store');
-    Route::resource('products', ProductController::class)->except(['index','create','store']);
+    Route::resource('products', ProductController::class)->except(['index', 'create', 'store']);
     Route::post('/products/{product}/soldout', [ProductController::class, 'markSoldOut'])->name('products.soldout');
     Route::post('/clubs/{club}/treasurer/update', [ProductController::class, 'updateTreasurer'])->name('treasurer.update');
     Route::resource('cart', CartController::class);
@@ -160,9 +155,6 @@ Route::resource('posts', PostController::class)->except(['create', 'store']);
     Route::post('/products/{product}/payment', [PaymentController::class, 'store'])->name('payment.store');
     Route::get('/products/{product}/sales', [ProductController::class, 'sales'])->name('products.sales');
     Route::post('/orders/{order}/verify', [OrderController::class, 'verify'])->name('orders.verify');
-
-    
-
 });
 
 require __DIR__ . '/auth.php';

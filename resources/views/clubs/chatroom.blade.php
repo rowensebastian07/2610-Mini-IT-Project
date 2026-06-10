@@ -1,4 +1,5 @@
 <x-top-nav></x-top-nav>
+
 @extends('layouts.app')
 
 @section('content')
@@ -8,12 +9,13 @@
   border-radius: 10px;
   width: 90%;
   max-width: 900px;
-  margin: 30px auto;
+  margin: 100px auto 0; 
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
   height: 80vh;
 }
+
 .chatroom-header {
   background-color: #075e54;
   color: #fff;
@@ -22,6 +24,7 @@
   border-top-right-radius: 10px;
   font-weight: 600;
 }
+
 .chat-window {
   flex: 1;
   padding: 20px;
@@ -31,12 +34,14 @@
   display: flex;
   flex-direction: column;
 }
+
 .message-wrapper {
   display: flex;
   align-items: flex-end;
   margin-bottom: 20px;
   position: relative;
 }
+
 .message-wrapper.sent { flex-direction: row-reverse; }
 .profile-pic {
   width: 35px;
@@ -45,6 +50,7 @@
   margin: 0 8px;
   object-fit: cover;
 }
+
 .message {
   max-width: 70%;
   padding: 10px 15px;
@@ -54,6 +60,7 @@
   position: relative;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
+
 .message.sent { background-color: #dcf8c6; align-self: flex-end; }
 .message.received { background-color: #fff; align-self: flex-start; }
 .timestamp {
@@ -63,6 +70,7 @@
   bottom: -15px;
   right: 10px;
 }
+
 .chat-input-area {
   display: flex;
   background-color: #f0f0f0;
@@ -70,6 +78,7 @@
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
 #chat-input {
   flex: 1;
   border: none;
@@ -77,6 +86,7 @@
   padding: 10px 15px;
   outline: none;
 }
+
 .send-btn {
   background-color: #075e54;
   color: #fff;
@@ -88,7 +98,6 @@
   font-size: 1.2rem;
 }
 
-/* ✅ Floating menu */
 .message-menu {
   position: absolute;
   display: none;
@@ -99,6 +108,7 @@
   padding: 6px 0;
   min-width: 120px;
 }
+
 .message-menu button {
   display: block;
   width: 100%;
@@ -109,6 +119,7 @@
   font-size: 0.9rem;
   cursor: pointer;
 }
+
 .message-menu button:hover { background-color: #f5f5f5; }
 </style>
 
@@ -129,20 +140,21 @@
     @endforeach
   </div>
 
-  <form id="chat-form" class="chat-input-area">
+ <form id="chat-form" class="chat-input-area">
     @csrf
-    <input type="text" id="chat-input" name="message" placeholder="Type a message…" autocomplete="off">
+    <input type="text" id="chat-input" name="body" placeholder="Type a message…" autocomplete="off">
     <button type="submit" class="send-btn">➤</button>
-  </form>
+</form>
+
 </div>
 
-<!-- ✅ Floating menu -->
+<!-- Floating menu -->
 <div id="message-menu" class="message-menu">
   <button id="edit-message">✏️ Edit</button>
   <button id="delete-message">🗑️ Delete</button>
 </div>
 
-<!-- ✅ Edit modal -->
+<!-- Edit modal -->
 <div id="edit-modal" style="
   display:none; position:fixed; top:0; left:0; width:100%; height:100%;
   background:rgba(0,0,0,0.4); z-index:2000; justify-content:center; align-items:center;">
@@ -169,6 +181,47 @@
 <script>
 let selectedMessageId = null;
 
+//  Send message
+document.addEventListener('DOMContentLoaded', () => {
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatWindow = document.getElementById('chat-window');
+
+  chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = chatInput.value.trim();
+    if (!body) return;
+
+    try {
+      const res = await fetch("{{ route('clubs.messages.store', $club->id) }}", {
+        method: "POST",
+        headers: {
+          "X-CSRF-TOKEN": "{{ csrf_token() }}",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ body })
+      });
+
+      const data = await res.json();
+
+      chatWindow.insertAdjacentHTML('beforeend', `
+        <div class="message-wrapper sent" data-id="${data.id}">
+          <img src="${data.user.profile_picture}" class="profile-pic">
+          <div class="message sent">
+            <strong>You:</strong> ${data.body}
+            <span class="timestamp">${new Date(data.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+          </div>
+        </div>
+      `);
+
+      chatInput.value = "";
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    } catch (err) {
+      console.error('Send failed:', err);
+    }
+  });
+});
+
 // Right-click menu
 document.addEventListener('contextmenu', function(e) {
   const wrapper = e.target.closest('.message-wrapper.sent');
@@ -178,7 +231,7 @@ document.addEventListener('contextmenu', function(e) {
     const menu = document.getElementById('message-menu');
     const rect = wrapper.getBoundingClientRect();
 
-    // ✅ Position menu near the message bubble itself
+    // Position menu near the message bubble itself
     menu.style.top = (rect.top + window.scrollY + rect.height / 2) + 'px';
     menu.style.left = (rect.right + window.scrollX - menu.offsetWidth - 10) + 'px';
     menu.style.display = 'block';
@@ -187,30 +240,27 @@ document.addEventListener('contextmenu', function(e) {
   }
 });
 
-// ✅ Show modal when Edit clicked
+//  Show modal when Edit clicked
 document.getElementById('edit-message').addEventListener('click', function() {
   document.getElementById('message-menu').style.display = 'none';
 
   const msgDiv = document.querySelector(`.message-wrapper[data-id="${selectedMessageId}"] .message`);
-   // ✅ Extract only message text (exclude timestamp)
+   // Extract only message text (exclude timestamp)
   const timestampEl = msgDiv.querySelector('.timestamp');
   const oldText = timestampEl
     ? msgDiv.innerText.replace(timestampEl.innerText, '').replace(/^\s*[^:]+:\s*/, '').trim()
     : msgDiv.innerText.replace(/^\s*[^:]+:\s*/, '').trim();
   const oldTime = timestampEl ? timestampEl.innerText : '';
 
-
   // Fill modal preview
   document.getElementById('edit-preview-text').innerText = oldText;
   document.getElementById('edit-preview-time').innerText = oldTime;
   document.getElementById('edit-input').value = oldText;
-
-  // Show modal
   document.getElementById('edit-modal').style.display = 'flex';
   document.getElementById('edit-input').focus();
 });
 
-// ✅ Save edit (calls MessageController@update)
+// Save edit (calls MessageController@update)
 document.getElementById('save-edit').addEventListener('click', function() {
   const newText = document.getElementById('edit-input').value.trim();
   if (!newText) return;
@@ -233,7 +283,7 @@ document.getElementById('save-edit').addEventListener('click', function() {
   .catch(err => console.error('Edit failed:', err));
 });
 
-// ✅ Delete message (calls MessageController@destroy)
+// Delete message (calls MessageController@destroy)
 document.getElementById('delete-message').addEventListener('click', function() {
   document.getElementById('message-menu').style.display = 'none';
 
@@ -254,7 +304,7 @@ document.getElementById('delete-message').addEventListener('click', function() {
 });
 
 
-// ✅ Close modal when clicking outside
+// Close modal when clicking outside
 document.getElementById('edit-modal').addEventListener('click', function(e) {
   if (e.target === this) this.style.display = 'none';
 });
@@ -270,31 +320,7 @@ document.addEventListener('click', () => {
 <script>
 let selectedMessageId = null;
 
-// ✅ Send message
-document.getElementById('chat-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  let body = document.getElementById('chat-input').value;
-
-  fetch("{{ route('clubs.messages.store', $club->id) }}", {
-    method: "POST",
-    headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}", "Content-Type": "application/json" },
-    body: JSON.stringify({ body: body })
-  })
-  .then(res => res.json())
-  .then(data => {
-    let msgDiv = `<div class="message-wrapper sent" data-id="${data.id}">
-      <img src="${data.user.profile_picture}" class="profile-pic">
-      <div class="message sent">
-        <strong>You:</strong> ${data.body}
-        <span class="timestamp">${new Date(data.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
-      </div>
-    </div>`;
-    document.getElementById('chat-window').innerHTML += msgDiv;
-    document.getElementById('chat-input').value = "";
-  });
-});
-
-// ✅ Real-time listener
+// Real-time listener
 window.Echo.channel('club.{{ $club->id }}')
   .listen('MessageSent', (e) => {
     let msgDiv = `<div class="message-wrapper received" data-id="${e.message.id}">
@@ -306,3 +332,5 @@ window.Echo.channel('club.{{ $club->id }}')
     </div>`;
     document.getElementById('chat-window').innerHTML += msgDiv;
   });
+
+  

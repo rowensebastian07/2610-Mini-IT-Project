@@ -86,7 +86,7 @@
         <i class="fa-solid fa-cart-shopping cart-icon"></i>
     </a>
 
-    @if(auth()->user()->role === \App\Enums\ClubRole::COMMITTEE || auth()->user()->is_admin)
+    @if(auth()->user()->role === \App\Enums\ClubRole::PRESIDENT || auth()->user()->role === \App\Enums\ClubRole::HICOM || auth()->user()->is_admin)
     <a href="{{ route('marketplace.admin', $club->id) }}" class="btn btn-light btn-sm">
         ⚙️ Manage Marketplace
     </a>
