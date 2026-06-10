@@ -44,9 +44,11 @@
             <input name="description" id="description"></input>
         </div>
 
-        <div class="form-group-clubs">
+        <div class="form-group-clubs div_pic">
             <label for="profile_picture">Profile Picture</label><br>
+            <label id="pic_label">
             <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+            </label>
         </div>
 
         <div class="form-group-clubs">
@@ -77,10 +79,34 @@
         <button type="submit" class="btn-submit-clubs">Create Club</button>
     </form>
 
-</div>
-</div>
+
+
+        </div>
+        </div>
+
+        <script>
+            
+            let input_file = document.querySelector('input[type="file"]');
+            let picDisplay = document.getElementById('pic_label'); 
+            input_file.onchange = (e) => {
+
+            let file = e.target.files[0];
+
+
+            let url = URL.createObjectURL(file);
+
+            picDisplay.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better perfomance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+        }
+        </script>
 </body>
 </html>
+
+
 
 
 

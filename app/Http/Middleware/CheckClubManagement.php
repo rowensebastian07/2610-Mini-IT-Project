@@ -21,6 +21,13 @@ class CheckClubManagement
             abort(401, 'Please log in first.');
         }
 
+        $user = Auth::user();
+
+        // Global Site Admins bypass all club level restrictions completely
+        if ($user->is_admin) {
+            return $next($request);
+        }
+
         // 2. Automatically grab the club object or club ID from the current route URL
         $club = $request->route('club');
         $clubId = is_object($club) ? $club->id : $club;
@@ -46,7 +53,7 @@ class CheckClubManagement
         // 3. Query memberships table 
         $membership = DB::table('memberships')
             ->where('club_id', $clubId)
-            ->where('user_id', Auth::id())
+            ->where('user_id', $user->id)
             ->where('status', 'active')
             ->first();
 
@@ -62,7 +69,46 @@ class CheckClubManagement
             abort(403, 'Unauthorized. Only club management committee members can access this area.');
         }
 
-        // If authorized, let the request proceed to the controller!
+        // =========================================================================
+        // FINE-GRAINED ROLE SPECIFIC CONTROLS ENGINE
+        // =========================================================================
+        $userRole = strtolower($membership->role);
+        $routeName = $request->route()->getName();
+
+        // SUB COMMITEE LIMITATIONS
+        if ($userRole === strtolower(ClubRole::SUBCOM->value)) {
+            // Sub comms are STRICTLY limited to post paths only
+            $allowedPostRoutes = ['posts.create', 'posts.store', 'posts.edit', 'posts.update','posts.destroy', 'clubs.faq.edit', 'clubs.faq.update'];
+            
+            if (!in_array($routeName, $allowedPostRoutes)) {
+                abort(403, 'Unauthorized action. Sub-committee members can\'t access this page');
+            }
+        }
+
+        // HIGH COMMITTEE LIMITATIONS
+        if ($userRole === strtolower(ClubRole::HICOM->value)) {
+            if ($routeName === 'clubs.destroy') {
+                abort(403, 'Unauthorized action. Only the Club President can delete this club.');
+            }
+
+            $restrictedRoleRoutes = [
+                'clubs.committee.add',
+                'clubs.committee.update',
+                'clubs.terms.assign'
+            ];
+
+            if (in_array($routeName, $restrictedRoleRoutes)) {
+                $targetRole = strtolower($request->input('role'));
+                
+                if ($targetRole === strtolower(ClubRole::HICOM->value) || $targetRole === strtolower(ClubRole::PRESIDENT->value)) {
+                    abort(403, 'Unauthorized action. High comm members cannot appoint or promote other High Comm positions.');
+                }
+            }
+        }
+
+        // PRESIDENT LEVEL
+        // Passes through automatically with full administrative rights.
+
         return $next($request);
     }
 }

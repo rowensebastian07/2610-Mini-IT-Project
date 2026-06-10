@@ -20,7 +20,15 @@ use App\Http\Controllers\ClubTermController;
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
+/* 
+Keep public viewing routes outside auth
+Keep edit/update/delete inside auth
+*/ 
+
+// Homepage
 Route::get('/', [PostController::class, 'index'])->name('home');
+
 Route::get('/calendar', function () {
     $events = Event::all(); 
     return view('calendar.index', compact('events'));
@@ -37,7 +45,6 @@ Route::get('/clubs/{club}/faq', [ClubController::class, 'faqView'])->name('clubs
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
-    
     // Dashboard & Profile
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
     Route::patch('/dashboard', [UserController::class, 'updateProfile'])->name('dashboard.update');
@@ -62,8 +69,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Follow Logic
     Route::post('/clubs/{club}/follow', [UserController::class, 'followClub'])->name('clubs.follow');
     Route::delete('/clubs/{club}/unfollow', [UserController::class, 'unfollowClub'])->name('clubs.unfollow');
-        
-    // Club Creation Routes (Before Management Middleware)
+
+    // Club Creation Routes
     Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
     Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
     Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
@@ -79,40 +86,47 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/clubs/{club}/invite/respond', [ClubController::class, 'respondToInvite'])->name('committee.invite.respond');
 
     // =========================================================================
-    //  ISOLATED CLUB MANAGEMENT & AUTHORIZATION ROUTE GROUP
+    // ISOLATED CLUB MANAGEMENT & AUTHORIZATION ROUTE GROUP
     // =========================================================================
     Route::middleware(['club.management'])->group(function () {
-        
+        // President only
+        Route::delete('/clubs/{club}', [ClubController::class, 'destroy'])->name('clubs.destroy');
+
         // 1. Club Properties Management
+        // HICOM n above
         Route::get('/clubs/{club}/edit', [ClubController::class, 'edit'])->name('clubs.edit');
         Route::put('/clubs/{club}', [ClubController::class, 'update'])->name('clubs.update');
-        Route::delete('/clubs/{club}', [ClubController::class, 'destroy'])->name('clubs.destroy');
         Route::put('/clubs/{club}/verify', [ClubController::class, 'updateVerify'])->name('clubs.updateVerify');
-
-        // FIXED THEME ROUTE: Distinct URI path to avoid overriding core club edits
         Route::put('/clubs/{club}/theme', [ClubController::class, 'updateTheme'])->name('clubs.updateTheme');
 
         // 2. Events Creation and Modification
+        // HICOM n above
         Route::get('/clubs/{club}/events/create', [EventController::class, 'create'])->name('events.create');
         Route::post('/clubs/{club}/events', [EventController::class, 'store'])->name('events.store');
+        Route::get('/clubs/{club}/events/{event}', [EventController::class, 'show'])->name('events.show');
         Route::get('/clubs/{club}/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
         Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update'])->name('events.update');
-        Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+        Route::delete('/clubs/{club}/events/{event}', [ClubController::class, 'destroy'])->name('events.destroy');
         Route::post('/events/{event}/upload-files', [EventController::class, 'uploadFiles'])->name('events.uploadFiles');
+        Route::get('/events/{event}/uploads', [EventController::class, 'viewUploads'])->name('events.viewUploads');
         Route::delete('/events/{event}/delete-photo', [EventController::class, 'deletePhoto'])->name('events.deletePhoto');
 
         // 3. Posts Creation and Modification
+        // SUBCOM n above
         Route::get('/clubs/{club}/posts/create', [PostController::class, 'create'])->name('posts.create');
         Route::post('/clubs/{club}/posts', [PostController::class, 'store'])->name('posts.store');
+        Route::resource('posts', PostController::class)->except(['create', 'store']);
         Route::get('/posts/{post}/edit', [PostController::class, 'edit'])->name('posts.edit');
         Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
         Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
         // FAQ Management
+        // SUBCOM n above
         Route::get('/clubs/{club}/faq/edit', [ClubController::class, 'faqEdit'])->name('clubs.faq.edit');
         Route::put('/clubs/{club}/faq', [ClubController::class, 'updateFaq'])->name('clubs.faq.update');
 
         // 4. Committee and Terms Assignments
+        // HICOM n above
         Route::get('/clubs/{club}/committee', [ClubController::class, 'committee'])->name('clubs.committee');
         Route::post('/clubs/{club}/committee', [ClubController::class, 'addCommitteeMember'])->name('clubs.committee.add');
         Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
@@ -120,10 +134,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/clubs/{club}/terms/assign', [ClubTermController::class, 'assignMember'])->name('clubs.terms.assign');
     });
     // =========================================================================
-
-    // Non-Protected View fallbacks inside Dashboard context
-    Route::get('/clubs/{club}/events/{event}', [EventController::class, 'show'])->name('events.show');
-    Route::get('/events/{event}/uploads', [EventController::class, 'viewUploads'])->name('events.viewUploads');
 
     // Club Chatroom Page
     Route::get('/clubs/{club}/chatroom', [ClubController::class, 'chatroom'])->name('clubs.chatroom');

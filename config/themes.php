@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'default' => [
+    'Default' => [
         'bg' => '#fff',
         'text' => '#000',
         'content-box' => 'rgb(245, 245, 245)',

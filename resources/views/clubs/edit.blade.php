@@ -97,6 +97,44 @@
     .btn-submit:hover {
         background-color: #1d4ed8;
     }
+    
+    /*Live preview Image*/
+    #pic_label {
+        margin-top: 1rem;
+        background: url("{{ $club->profile_picture ? asset('storage/' . $club->profile_picture) : '' }}") no-repeat center;
+        border: solid black 3px;
+        background-size: cover;
+        display: inline-block;
+        width: 10rem;
+        height: 10rem;
+        text-align: center;
+        border-radius: 50%;
+    }
+
+    #pic_label:hover {
+        cursor: pointer;
+    }
+
+    #pic_label input[type="file"] {
+        display: none;
+    }
+    
+    #banner_label {
+        background: url("{{ $club->banner_image ? asset('storage/' . $club->banner_image) : '' }}") no-repeat center;
+        background-size: cover;
+        display: inline-block;
+        width: 25rem;
+        height: 10rem;
+        text-align: center;
+    }
+
+    #banner_label input[type="file"] {
+        display: none;
+    }
+
+    #banner_label:hover {
+        cursor: pointer;
+    }
 </style>
 
 <div>
@@ -119,21 +157,19 @@
             </div>
 
             <div class="form-group">
-                <label for="profile_picture">Profile Picture</label>
-                <input type="file" name="profile_picture" id="profile_picture">
-                @if($club->profile_picture)
-                    <p>Current:</p>
-                    <img src="{{ asset('storage/' . $club->profile_picture) }}" alt="Club Picture">
-                @endif
+                <label for="profile_picture">Profile Picture</label><br>
+                <label id="pic_label">
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
+                value="{{ old('profile_picture', $club->profile_picture) }}">
+                </label>
             </div>
 
             <div class="form-group">
                 <label for="banner_image">Banner Image</label><br>
-                <input type="file" name="banner_image" id="banner_image">
-                @if($club->banner_image)
-                    <p>Current banner:</p>
-                    <img src="{{ asset('storage/' . $club->banner_image) }}" alt="Banner" width="300">
-                @endif
+                <label id="banner_label">
+                <input type="file" name="banner_image" id="banner_image" accept="image/*"
+                value="{{ old('banner_image', $club->banner_image) }}">
+                </label>
             </div>
 
             <div class="form-group">
@@ -176,4 +212,45 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Declaring variables for profile pic
+    let input_file = document.getElementById('profile_picture');
+    let picDisplay = document.getElementById('pic_label'); 
+
+    // Declaring variables for banner
+    let banner_input = document.getElementById('banner_image')
+    let banLabel = document.getElementById('banner_label')
+
+    // Live preview for profile pic
+    input_file.onchange = (e) => {
+        let file = e.target.files[0];
+        if (file) {
+            let url = URL.createObjectURL(file);
+            picDisplay.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better performance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+        }
+    }
+
+    // Live preview for banner
+    banner_input.onchange = (e) => {
+        let file = e.target.files[0];
+        if (file) {
+            let url = URL.createObjectURL(file);
+            banLabel.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better performance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+        }
+    }
+</script>
 @endsection
+
+
+   

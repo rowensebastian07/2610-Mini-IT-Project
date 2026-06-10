@@ -14,12 +14,13 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('css/club-content.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/top-nav.css') }}">
     @stack('styles') 
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
         <!-- Global Top Nav -->
-        <x-top-nav />
+        <x-top-nav></x-top-nav>
 
         <!-- Breeze/Jetstream navigation -->
         @include('layouts.navigation')

@@ -1,5 +1,4 @@
 @extends('layouts.app')
-<x-top-nav />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 @section('content')
@@ -8,9 +7,111 @@
     <h1>WELCOME TO MMU's CLUB & SOCIETY OFFICIAL WEBPAGE</h1>
 </div>
 
+@if (auth()->user())
+    <h2>Followed Clubs</h2>
+        @forelse($followedPosts as $post)
+            <div class="post-card" style="position:relative; padding-bottom:40px;">
+                <h3 class="post-title">{{ $post->title }}</h3>
+
+                @if($post->image)
+                    <img src="{{ asset('storage/' . $post->image) }}" class="post-image">
+                @endif
+
+                <p class="post-content">{{ $post->content }}</p>
+                <small class="post-meta">Posted in: {{ $post->club->name }}</small>
+
+                <!-- Likes & Comments -->
+                <div style="position:absolute; bottom:10px; right:10px; display:flex; gap:15px;">
+                    <button type="button" class="like-btn {{ $post->likedByUser ? 'liked' : '' }}" data-id="{{ $post->id }}">
+                        <i class="{{ $post->likedByUser ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                        <span id="like-count-{{ $post->id }}">{{ $post->likes_count }}</span>
+                    </button>
+
+                    <button type="button" class="comment-toggle" data-id="{{ $post->id }}">
+                        <i class="fa-regular fa-comment"></i> 
+                        <span id="comment-count-{{ $post->id }}">{{ $post->comments_count }}</span>
+                    </button>
+                </div>
+            </div>
+        @empty
+            @if($clubIds == null)
+            <div class="null-div">
+                <h3 class="null-h3">No followed clubs yet? Why don't you discover some new clubs to keep up to date with?</h3>
+                <a href="{{ url('/clubs') }}" class="discover-btn">
+                    <span class="discover-span"></span>
+                    <span class="discover-span"></span>
+                    <p class="discover-text">Find New Clubs</p>
+                </a>
+            </div>
+            @else
+                <p>No posts yet.</p>
+            @endif
+        @endforelse
+
+        <!-- Floating mini comment popup -->
+        <div id="commentPopup" class="comment-popup" style="display:none;">
+            <div class="popup-content">
+                <span class="close">&times;</span>
+                <div id="popupComments" class="popup-comments"></div>
+                <form id="popupForm">
+                    @csrf
+                    <textarea name="body" placeholder="Write a comment..." required></textarea>
+                    <button type="submit">Post</button>
+                </form>
+            </div>
+        </div>
+
+
+    <h2>Other Clubs</h2>
+        @forelse($otherPosts as $post)
+        
+        <div class="post-card" style="position:relative; padding-bottom:40px;">
+            <h3 class="post-title">{{ $post->title }}</h3>
+
+            @if($post->image)
+                <img src="{{ asset('storage/' . $post->image) }}" class="post-image">
+            @endif
+
+            <p class="post-content">{{ $post->content }}</p>
+            <small class="post-meta">Posted in: {{ $post->club->name }}</small>
+
+            <!-- Likes & Comments -->
+            <div style="position:absolute; bottom:10px; right:10px; display:flex; gap:15px;">
+                <button type="button" class="like-btn {{ $post->likedByUser ? 'liked' : '' }}" data-id="{{ $post->id }}">
+                    <i class="{{ $post->likedByUser ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                    <span id="like-count-{{ $post->id }}">{{ $post->likes_count }}</span>
+                </button>
+
+                <button type="button" class="comment-toggle" data-id="{{ $post->id }}">
+                    <i class="fa-regular fa-comment"></i> 
+                    <span id="comment-count-{{ $post->id }}">{{ $post->comments_count }}</span>
+                </button>
+            </div>
+        </div>
+    @empty
+        <p>No posts yet.</p>
+    @endforelse
+
+    <!-- Floating mini comment popup -->
+    <div id="commentPopup" class="comment-popup" style="display:none;">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <div id="popupComments" class="popup-comments"></div>
+            <form id="popupForm">
+                @csrf
+                <textarea name="body" placeholder="Write a comment..." required></textarea>
+                <button type="submit">Post</button>
+            </form>
+        </div>
+    </div>
+
+        
+
+@else
+
 <h2>Latest Posts</h2>
 
-@forelse($posts as $post)
+    @forelse($posts as $post)
     <div class="post-card" style="position:relative; padding-bottom:40px;">
         <h3 class="post-title">{{ $post->title }}</h3>
 
@@ -50,6 +151,9 @@
         </form>
     </div>
 </div>
+
+
+@endif
 
 <!-- Scroll-to-top button -->
 <button id="scrollTopBtn" class="hidden">
@@ -234,3 +338,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 @endpush
+
+
+

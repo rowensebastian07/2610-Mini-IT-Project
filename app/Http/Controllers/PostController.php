@@ -14,10 +14,33 @@ use App\Events\CommentPosted;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Club $club)
     {
+        
+        $user = Auth::user();
+
+        $clubIds = $user->followed_clubs ?? [];
         $posts = Post::with('club')->latest()->get();
-        return view('welcome', compact('posts'));
+
+
+        $followedPosts = Post::with('club')
+            ->whereIn('club_id', $clubIds)
+            ->latest()
+            ->get();
+
+        $otherPosts = Post::with('club')
+            ->whereNotIn('club_id', $clubIds)
+            ->latest()
+            ->get();
+
+            return view('welcome', [
+            'clubIds' => $clubIds,
+            'followedPosts' => $followedPosts,
+            'otherPosts' => $otherPosts
+        ],
+        compact('posts')
+        );
+
     }
 
     public function create(Club $club)
@@ -57,6 +80,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
+        $club = $post->club;
         return view('posts.show', compact('post'));
     }
 
@@ -67,7 +91,7 @@ class PostController extends Controller
     }
 
     public function update(Request $request, Club $club, Post $post)
-    {
+    {        
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
@@ -80,15 +104,17 @@ class PostController extends Controller
 
         $post->update($validated);
 
-        return redirect()->route('clubs.show', $club->id)
+        return redirect()->route('clubs.show', $post->club->id)
                          ->with('success', 'Post updated successfully!');
     }
 
     public function destroy(Club $club, Post $post)
-    {
+    {   
+        $clubId = $post->club_id;
+
         $post->delete();
 
-        return redirect()->route('clubs.show', $club->id)
+        return redirect()->route('clubs.show', $clubId)
                          ->with('success', 'Post deleted successfully!');
     }
 

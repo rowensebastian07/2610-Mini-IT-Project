@@ -68,7 +68,7 @@ class ClubController extends Controller
     public function update(Request $request, Club $club)
     {
         $data = $request->validate([
-            'name'              => 'required|string|max:255',
+            'name'              => 'nullable|string|max:255',
             'description'       => 'nullable|string',
             'profile_picture'   => 'nullable|image',
             'category'          => 'required|string',
@@ -186,7 +186,13 @@ class ClubController extends Controller
         if ($request->hasFile('profile_picture')) {
             $validated['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
         } else {
-            $validated['profile_picture'] = "images/1.png";
+            $validated['profile_picture'] = "images/mmu.png";
+        }
+
+        if ($request->hasFile('banner_image')) {
+            $validated['banner_imagae'] = $request->file('banner_image')->store('clubs', 'public');
+        } else {
+            $validated['banner_image'] = "images/mmu.png";
         }
 
         $validated['owner_id'] = Auth::id();
@@ -381,6 +387,29 @@ class ClubController extends Controller
                          'selectedTheme' => $selectedTheme 
                      ]);
     }
+    
+    // --------------------------
+    // Add committee member
+    // --------------------------
+
+    public function updateVerify(Request $request, Club $club)
+    {
+        $club->is_Verified = true;
+        $club->save();
+
+        $user = \App\Models\User::find($club->owner_id);
+
+        $user->notify(new ClubNotification(
+            $club,
+            "Your club {$club->name} has been verified by admins and your page is available. 
+            Congratulations!  "
+            ));
+    
+        
+
+        return redirect()->route('clubs.show', $club->id)
+                         ->with('success', 'Club updated successfully and members notified!');
+    }
 
     public function faqView($id)
     {
@@ -390,11 +419,10 @@ class ClubController extends Controller
         if (Auth::check()) {
             $membership = $club->users()->where('user_id', Auth::id())->wherePivot('status', 'active')->first();
             
-            // ✨ Fixed: Uses updated role enums instead of deleted COMMITTEE key
             $isCommittee = $membership && in_array(strtolower($membership->pivot->role), [
-                strtolower(ClubRole::PRESIDENT->value),
-                strtolower(ClubRole::HICOM->value),
-                strtolower(ClubRole::SUBCOM->value)
+                strtolower(\App\Enums\ClubRole::PRESIDENT->value),
+                strtolower(\App\Enums\ClubRole::HICOM->value),
+                strtolower(\App\Enums\ClubRole::SUBCOM->value)
             ]);
         }
         
@@ -411,7 +439,8 @@ class ClubController extends Controller
             'faq.*.answer' => 'required|string',
         ]);
 
-        $club->faq = $request->input('faq', []); 
+        $faqData = $request->input('faq', []);
+        $club->faq = array_values($faqData); 
         $club->save();
 
         return redirect()->route('clubs.faq.view', $club->id)->with('success', 'FAQs updated successfully!');

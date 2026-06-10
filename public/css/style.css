@@ -63,6 +63,77 @@ header {
     z-index: 1000; /* keeps header above content */
 }
 
+.null-div{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.null-h3{
+    text-align: center;
+    text-transform: uppercase;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.discover-btn{
+    margin: 0 auto;
+    width: 50px;
+    height: 50px;
+    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    text-align: center;
+    position: relative;
+    transition: 0.5s ease;
+}
+
+.discover-btn:hover{
+    border-radius: 2em;
+    width:300px;
+    transition: 0.3s ease;
+}
+
+.discover-btn:hover > .discover-span{
+    display: none;
+}
+
+.discover-btn:hover > .discover-text{
+    opacity: 1;
+    transition: 0.5s ease;
+}
+
+.discover-span{
+    content: "";
+    height: 3px;
+    width: 20px;
+    position: absolute;
+    display: flex;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+
+
+.discover-span:last-of-type{
+    height: 20px;
+    width: 3px;
+}
+
+.discover-text{
+    color: white;
+    opacity: 0;
+    transition: 0.1s ease;
+}
+
 .sub-header {
     background-color: grey; 
     padding: 20px;

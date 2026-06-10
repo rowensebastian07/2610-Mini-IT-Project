@@ -112,19 +112,19 @@ class Club extends Model
     }
     
     public function messages()
-{
-    return $this->hasMany(Message::class);
-}
+    {
+        return $this->hasMany(Message::class);
+    }
 
-public function treasurer()
-{
-    return $this->hasOne(Treasurer::class);
-}
+    public function treasurer()
+    {
+        return $this->hasOne(Treasurer::class);
+    }
 
-public function products()
-{
-    return $this->hasMany(Product::class);
-}
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 
     public function faqs()
     {
