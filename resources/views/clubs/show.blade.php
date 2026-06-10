@@ -1,5 +1,3 @@
-<x-top-nav></x-top-nav>
-
 @php
     $membership = Auth::user()
         ? Auth::user()->clubs()->where('club_id', $club->id)->wherePivot('status', 'active')->first()
@@ -39,7 +37,7 @@
     <!-- Sub-header -->
     <div class="club-banner">
         @if($club->banner_image)
-            <img src="{{ asset($club->banner_image) }}" alt="{{ $club->name }} Banner" class="banner-img">
+            <img src="{{ asset('storage/' . $club->banner_image) }}" alt="{{ $club->name }} Banner" class="banner-img">
         @else
             <div class="club-banner-placeholder">
                 <h2>{{ $club->name }}</h2>
@@ -76,13 +74,14 @@
 
     <!-- Club card -->
     <div class="club-card-header">
-        <img src="{{  asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
+        <img src="{{ asset('images/' . $club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
         <p class="club-description">{{ $club->description }}</p>
 
         @php
             $isPresident = auth()->check() && auth()->user()->role === \App\Enums\ClubRole::PRESIDENT->value;
         @endphp
-        
+
+        @if($isCommittee)
             <div class="club-actions-toolbar">
                 <a href="{{ route('posts.create', $club->id) }}" class="btn-blue">Create Post</a>
                 <a href="{{ route('events.create', ['club' => $club->id]) }}" class="btn-green">Add Event</a>
@@ -119,7 +118,7 @@
                             <p>{{ $post->content }}</p>
 
                             @if($post->image)
-                                @if(auth()->user()->id == $club->owner_id || $isCommittee)<img src="{{ asset('storage/' . $post->image) }}" class="post-image" alt="Post image">
+                                <img src="{{ asset('storage/' . $post->image) }}" class="post-image" alt="Post image">
                             @endif
 
                             @if($isCommittee)
@@ -342,7 +341,7 @@
                 <div id="preview-div">
                     <div id="theme-menu" style="position: relative;">
                         <div>
-                            <form action="{{ route('clubs.update', $club->id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('clubs.updateTheme', $club->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 
