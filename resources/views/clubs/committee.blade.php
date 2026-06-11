@@ -12,6 +12,12 @@
     </div>
 @endif
 
+
+<div class="committee-page" 
+     style="background-image: url('{{ asset('storage/' . $club->committee_background) }}'); 
+            background-size: cover; background-position: center; min-height: 100vh;">
+
+
 <div class="committee-form-wrapper">
     <div class="committee-form-container">
         <h3 style="text-align:center;">Assign Committee Member</h3>
@@ -120,6 +126,20 @@
         @endif
     @endforeach
 </div>
+
+<div style="position:fixed; bottom:20px; right:20px;">
+    <form action="{{ route('clubs.committee.background', $club->id) }}" 
+          method="POST" enctype="multipart/form-data">
+        @csrf
+        <label for="background-upload" class="btn btn-secondary" 
+               style="cursor:pointer; background-color:#075e54; color:#fff; border:none; border-radius:6px; padding:10px 16px;">
+            Upload Background
+        </label>
+        <input type="file" id="background-upload" name="background" 
+               accept="image/*" style="display:none;" onchange="this.form.submit()">
+    </form>
+</div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />

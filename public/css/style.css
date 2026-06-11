@@ -762,4 +762,15 @@ footer {
     animation: heartbeat 0.6s infinite;
 }
 
+.committee-page {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+
+}
 
