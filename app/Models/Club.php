@@ -28,6 +28,7 @@ class Club extends Model
         'theme',
         'is_Verified',
         'owner_id',
+          'committee_background', 
     ];
 
     protected $casts = [

@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ClubTermController;
+use App\Http\Controllers\CommitteeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +133,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/clubs/{club}/committee/{id}', [ClubController::class, 'removeCommitteeMember'])->name('clubs.committee.remove');
         Route::put('/clubs/{club}/committee/{id}/update', [ClubController::class, 'updateCommitteeMember'])->name('clubs.committee.update');
         Route::post('/clubs/{club}/terms/assign', [ClubTermController::class, 'assignMember'])->name('clubs.terms.assign');
+        Route::post('/clubs/{club}/committee/background', [CommitteeController::class, 'updateBackground'])->name('clubs.committee.background');
+        Route::post('/clubs/{club}/committee/background', [CommitteeController::class, 'updateBackground'])->name('clubs.committee.background');
+        Route::post('/clubs/{club}/committee/theme',  [CommitteeController::class, 'updateCommitteeTheme'])->name('clubs.committee.theme');
+        Route::post('/clubs/{club}/committee/theme', [CommitteeController::class, 'updateCommitteeTheme'])->name('clubs.committee.theme');
+
     });
     // =========================================================================
 

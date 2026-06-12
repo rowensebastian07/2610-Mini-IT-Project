@@ -582,7 +582,7 @@ footer {
 
 /* Today cell hover (override red) */
 .calendar-table td.today-cell:hover {
-    background-color: #1e40af; /* darker blue */
+    background-color: #1e40af; 
     cursor: pointer;
     transform: scale(1.05);
     transition: all 0.2s ease;
@@ -654,7 +654,6 @@ footer {
     outline: none;
 }
 
-/* Button */
 .btn-event {
     display: inline-block;
     width: 100%;
@@ -762,4 +761,78 @@ footer {
     animation: heartbeat 0.6s infinite;
 }
 
+.committee-page {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    z-index: -1;
+}
+ 
+/* Committee Theme */
+.yellow-theme .profile-card {
+    background-color: #fff8dc;
+    border: 1px solid #f1c40f;
+    color: #333;
+}
 
+.blue-theme .profile-card {
+    background-color: #e8f4fd;
+    border: 1px solid #3498db;
+    color: #222;
+}
+
+.dark-theme .profile-card {
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    color: #f5f5f5;
+}
+
+.purple-theme .profile-card {
+    background-color: #462C7D;
+    border: 1px solid #831C91;
+    color: #fff;
+}
+
+.green-theme .profile-card {
+    background-color: #9AB17A;
+    border: 1px solid #C3CC9B;
+    color: #000;
+}
+
+.maroon-theme .profile-card {
+    background-color: #810B38;
+    border: 1px solid #541A1A;
+    color: #fff;
+}
+
+.orange-theme .profile-card {
+    background-color: #FF7043;
+    border: 1px solid #D84315;
+    color: #fff;
+}
+
+.teal-theme .profile-card {
+    background-color: #26A69A;
+    border: 1px solid #004D40;
+    color: #fff;
+}
+
+.pink-theme .profile-card {
+    background-color: #FFC0CB; 
+    border: 1px solid #FF69B4;   
+    color: #4A4A4A;              
+}
+
+.white-theme .profile-card {
+    background-color: #ffffff;  
+    border: 1px solid #ddd;     
+    color: #333;                 
+}
