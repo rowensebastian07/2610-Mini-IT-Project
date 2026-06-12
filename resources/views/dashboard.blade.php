@@ -1,142 +1,18 @@
-<x-top-nav></x-top-nav>
+
 
 @extends('layouts.app')
 
 @section('content')
-<style>
-    main {
-        padding-top: 20px;
-    }
 
-    .club-card,
-    .event-card {
-        background: grey;
-        border-radius: 8px;
-        padding: 20px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        transition: box-shadow 0.2s ease;
-    }
+<link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 
-    .club-card:hover,
-    .event-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .btn {
-        display: inline-block;
-        background: #2563eb;
-        color: #fff;
-        padding: 8px 16px;
-        border-radius: 6px;
-        text-decoration: none;
-    }
-
-    .btn:hover { background: #1e40af; }
-
-    .profile-container {
-        max-width: 600px;
-        margin: 10px auto;
-        background: grey;
-        border-radius: 10px;
-        padding: 30px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        text-align: center;
-        position: relative;
-    }
-
-    .profile-container img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 20px;
-    }
-
-    .profile-container h2 {
-        font-size: 1.8rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .profile-container p {
-        color: white;
-        margin-bottom: 20px;
-    }
-
-    .profile-container input {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 12px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-    }
-
-    .profile-container .btn {
-        background: #2563eb;
-        padding: 10px 18px;
-        margin: 5px;
-    }
-
-    .profile-container .btn:hover { background: #1e40af; }
-
-    .logout-btn { background: #dc2626; }
-    .logout-btn:hover { background: #b91c1c; }
-    
-    .sub-header {
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        margin-top:10px;
-        margin-bottom:15px;
-    }
-
-    .sub-header h1 {
-        font-size: 2rem;
-        font-weight: bold;
-        margin:0;
-    }
-
-    .icon-bar {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .edit-icon,
-    .delete-icon {
-        background-color: transparent;
-        border: none;
-        font-size: 22px;
-        cursor: pointer;
-        transition: color 0.2s ease;
-    }
-
-    .edit-icon { color: #1a73e8; }
-    .edit-icon:hover { color: #4dabf7; }
-
-.event-upcoming {
-    background-color: #a7f3d0; 
-    color: black;
-}
-
-.event-passed {
-    background-color: #f87171; 
-    color: black;
-}
-
-    .delete-icon { color: #e63946; }
-    .delete-icon:hover { color: #ff6b6b; }
-</style>
-
-<div class="min-h-screen bg-gray-100 flex flex-col">
+<div class="settings-div">
 
     <!-- Sub-header -->
-    <div class="sub-header">
         <h1>Your Profile</h1>
-    </div>
 
+
+    <div class="profile-content">
     <!-- Profile Card -->
     <div class="profile-container">
         <div class="icon-bar">
@@ -179,7 +55,7 @@
 
     <!-- Main Dashboard Content -->
     <main>
-        <div class="max-w-6xl mx-auto p-8 space-y-10">
+        <div class="club-and-events">
             
             <!-- Clubs Section -->
             <section>
@@ -187,9 +63,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($followedClubs as $club)
                         <div class="club-card">
+                            <img src="{{ asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
+                            <div class="club-section">
                             <h3 class="text-xl font-bold">{{ $club->name }}</h3>
                             <p class="text-gray-600">{{ $club->description }}</p>
                             <a href="{{ route('clubs.show', $club->id) }}" class="btn mt-4">View Club</a>
+                            </div>
                         </div>
                     @empty
                         <div class="club-card text-gray-600">
@@ -224,6 +103,7 @@
             </section>
         </div>
     </main>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

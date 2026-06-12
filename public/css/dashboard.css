@@ -1,0 +1,181 @@
+    .club-and-events {
+        margin-bottom: 20px;
+        padding: 2rem;
+        background-color: #F0F0F0;
+        box-shadow: 0px 3px 5px #808080;
+        border-radius: 1rem;
+
+    }
+
+    .profile-content{
+        background-color: whitesmoke;
+        display: flex;
+         flex-wrap: wrap;
+         gap: 3rem;
+         width: 95%;
+         margin: 0 auto;
+         border-radius: 1rem;
+         padding:3rem 0;
+         margin-bottom: 15px;
+       
+         
+    }
+
+    .club-card{
+        display: flex;
+        flex-wrap: wrap;
+        width: 400px;
+        height: 100px;
+
+    }
+
+    .club-card img{
+        border-radius: 100%;
+        width: 75px;
+        height: 75px;
+        margin: 0;
+    }
+
+    .club-section p{
+        margin: 0;
+    }
+
+    .club-section{
+        display: flex;
+        flex-direction: column;
+        border: none;
+        gap: 0;
+        padding: 0;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .club-card,
+    .event-card {
+        background: grey;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        transition: box-shadow 0.2s ease;
+    }
+
+    .club-card:hover,
+    .event-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn {
+        display: inline-block;
+        background: #2563eb;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+    }
+
+    .btn:hover { background: #1e40af; }
+
+    .profile-container {
+        flex-grow: 0.9;
+        background-color: #F0F0F0;
+        box-shadow: 0px 3px 5px #808080;
+        border-radius: 10px;
+        margin-left: 20px;
+        margin-bottom: 20px;
+        padding: 30px;
+        text-align: center;
+        position: relative;
+    }
+
+    .profile-container img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+    }
+
+    .profile-container h2 {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .profile-container p {
+        color: black;
+        margin-bottom: 20px;
+    }
+
+    .profile-container input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+    }
+
+    .profile-container .btn {
+        background: #2563eb;
+        padding: 10px 18px;
+        margin: 5px;
+    }
+
+    .profile-container .btn:hover { background: #1e40af; }
+
+    .logout-btn { background: #dc2626; }
+    .logout-btn:hover { background: #b91c1c; }
+  
+ .settings-div{
+    background-color: rgb(211, 205, 205);
+     box-shadow: 0px 3px 5px #808080;
+    height: 100%;
+    border-radius: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+}   
+
+    h1 {
+        width: 100%;
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 0;
+        color: black;
+    }
+
+
+
+    .icon-bar {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .edit-icon,
+    .delete-icon {
+        background-color: transparent;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .edit-icon { color: #1a73e8; }
+    .edit-icon:hover { color: #4dabf7; }
+
+.event-upcoming {
+    background-color: #a7f3d0; 
+    color: black;
+}
+
+.event-passed {
+    background-color: #f87171; 
+    color: black;
+}
+
+    .delete-icon { color: #e63946; }
+    .delete-icon:hover { color: #ff6b6b; }
+
+
