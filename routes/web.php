@@ -73,7 +73,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Club Creation Routes
     Route::get('/create-clubs', [ClubController::class, 'create'])->name('create-clubs.create');
     Route::post('/create-clubs', [ClubController::class, 'store'])->name('create-clubs.store');
-    Route::get('/create-clubs/{club}/edit', [ClubController::class, 'edit'])->name('create-clubs.edit');
+    Route::put('/clubs/{club}', [ClubController::class, 'update'])
+    ->name('clubs.update');
 
     // Likes + Comments
     Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
