@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Notifications\ClubNotification;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-
+use App\Models\CommitteeMember;
 class CommitteeController extends Controller
 {
     // --------------------------
@@ -130,4 +130,33 @@ class CommitteeController extends Controller
         return redirect()->route('committee.index', ['club' => $club->id])
                          ->with('success', 'Member removed successfully!');
     }
+public function updateBackground(Request $request, Club $club)
+{
+    $request->validate([
+        'background' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+    ]);
+
+    $path = $request->file('background')->store('committee_backgrounds', 'public');
+
+    // Save into clubs table
+    $club->committee_background = $path;
+    $club->save();
+
+    return back()->with('success', 'Background updated successfully!');
 }
+
+
+ public function updateCommitteeTheme(Request $request, Club $club)
+    {
+        $request->validate([
+            'theme' => 'required|string',
+        ]);
+
+        $club->committee_theme = $request->input('theme');
+        $club->save();
+
+        return back()->with('success', 'Committee theme updated successfully!');
+    }
+
+}
+

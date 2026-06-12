@@ -374,6 +374,24 @@ class ClubController extends Controller
         return view('clubs.chatroom', compact('club', 'messages'));
     }
 
+    // Update themes
+    public function updateTheme(Request $request, Club $club)
+    {
+        $data = $request->validate([
+            'theme' => 'required|string'
+        ]);
+
+        $club->update($data);
+
+        $themes = config('themes');
+        $selectedTheme = $themes[$club->theme] ?? $themes['default'];
+
+        return redirect()->route('clubs.show', $club->id)
+                     ->with([
+                         'success' => 'Club theme updated successfully!',
+                         'selectedTheme' => $selectedTheme 
+                     ]);
+    }
     
     // --------------------------
     // Add committee member

@@ -1,7 +1,16 @@
-<x-top-nav></x-top-nav>
-
 @php
-    $isCommittee = Auth::user() && Auth::user()->clubs()->where('club_id', $club->id)->first()?->pivot->role === \App\Enums\ClubRole::HICOM->value;
+    $membership = Auth::user()
+        ? Auth::user()->clubs()->where('club_id', $club->id)->wherePivot('status', 'active')->first()
+        : null;
+
+    $managementRoles = [
+        \App\Enums\ClubRole::PRESIDENT->value,
+        \App\Enums\ClubRole::HICOM->value,
+        \App\Enums\ClubRole::SUBCOM->value,
+    ];
+
+    $isCommittee = $membership && in_array(strtolower($membership->pivot->role), $managementRoles);
+
     $themes = config('themes');
     $selectedTheme = $themes[$club->theme] ?? $themes['default'];
 @endphp
@@ -10,13 +19,25 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/club-content.css') }}">
+
+    @if(isset($selectedTheme))
+        <style>
+            :root {
+                --bg: {{ $selectedTheme['bg'] ?? '#ffffff' }};
+                --text: {{ $selectedTheme['text'] ?? '#000000' }};
+                --content-box: {{ $selectedTheme['content-box'] ?? '#ffffff' }};
+                --shadow-color: {{ $selectedTheme['shadow-color'] ?? 'rgba(0,0,0,0.1)' }};
+                --post-colour: {{ $selectedTheme['post-colour'] ?? '#ffffff' }};
+            }
+        </style>
+    @endif
 @endpush
 
 @section('content')
     <!-- Sub-header -->
     <div class="club-banner">
         @if($club->banner_image)
-            <img src="{{ asset($club->banner_image) }}" alt="{{ $club->name }} Banner" class="banner-img">
+            <img src="{{ asset('storage/' . $club->banner_image) }}" alt="{{ $club->name }} Banner" class="banner-img">
         @else
             <div class="club-banner-placeholder">
                 <h2>{{ $club->name }}</h2>
@@ -53,10 +74,14 @@
 
     <!-- Club card -->
     <div class="club-card-header">
-        <img src="{{  asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
+        <img src="{{ asset('images/' . $club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
         <p class="club-description">{{ $club->description }}</p>
 
-        @if(auth()->user()->id == $club->owner_id || $isCommittee)
+        @php
+            $isPresident = auth()->check() && auth()->user()->role === \App\Enums\ClubRole::PRESIDENT->value;
+        @endphp
+
+        @if($isCommittee)
             <div class="club-actions-toolbar">
                 <a href="{{ route('posts.create', $club->id) }}" class="btn-blue">Create Post</a>
                 <a href="{{ route('events.create', ['club' => $club->id]) }}" class="btn-green">Add Event</a>
@@ -65,7 +90,7 @@
         @endif
 
         @auth
-            @if (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT || auth()->user()->is_admin)
+            @if(auth()->user()->is_admin || $isPresident)
                 <form action="{{ route('clubs.destroy', $club->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this club?')">
                     @csrf
                     @method('DELETE')
@@ -150,8 +175,8 @@
                                                         @endif
 
                                                         @if($event->uploads)
-                                                            <a href="{{ route('events.viewUploads', ['club' => $club->id, 'event' => $event->id]) }}" 
-                                                            class="btn-green" style="margin-left:5px;" target="_blank">
+                                                            <a href="{{ route('events.viewUploads', ['club' => $club->id, 'event' => $event->id]) }}"
+                                                               class="btn-green" style="margin-left:5px;" target="_blank">
                                                                 View Photos
                                                             </a>
                                                         @endif
@@ -198,7 +223,7 @@
                                                     <td>{{ $event->time }}</td>
                                                     <td>
                                                         @if($event->uploads)
-                                                            <a href="{{ route('events.viewUploads', ['club' => $club->id, 'event' => $event->id]) }}" class="btn-green" target="_blank">View Photos</a>
+                                                            <a href="{{ route('events.viewUploads', $event->id) }}" class="btn-green" target="_blank">View Photos</a>
                                                         @else
                                                             <span class="text-muted">No photos yet</span>
                                                         @endif
@@ -263,7 +288,7 @@
                     <p><strong>Email:</strong> {{ $club->email ?? 'N/A' }}</p>
                     <p><strong>Instagram:</strong> {{ $club->instagram ?? 'N/A' }}</p>
                     <p><strong>Website:</strong> {{ $club->website ?? 'N/A' }}</p>
-                    
+
                     <a href="/clubs/{{ $club->id }}/faq" class="link-text">Frequently Asked Questions</a>
                 </div>
 
@@ -284,17 +309,17 @@
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
-            $(document).ready(function() {
-                $('#edit-contact').on('click', function() {
-                    $('#contact-view').hide();
-                    $('#contact-edit').show();
-                });
+                $(document).ready(function() {
+                    $('#edit-contact').on('click', function() {
+                        $('#contact-view').hide();
+                        $('#contact-edit').show();
+                    });
 
-                $('#cancel-contact').on('click', function() {
-                    $('#contact-edit').hide();
-                    $('#contact-view').show();
+                    $('#cancel-contact').on('click', function() {
+                        $('#contact-edit').hide();
+                        $('#contact-view').show();
+                    });
                 });
-            });
             </script>
 
             <!-- CLUB CHATROOM CARD -->
@@ -304,7 +329,7 @@
                 <a href="{{ route('clubs.chatroom', $club->id) }}" class="btn btn-primary">Open Chatroom</a>
             </div>
 
-             <!-- CLUB MARKETPLACE CARD -->
+            <!-- CLUB MARKETPLACE CARD -->
             <div class="info-card marketplace-card">
                 <h4>Club Marketplace</h4>
                 <p>Browse and purchase items offered by this club.</p>
@@ -312,29 +337,31 @@
             </div>
 
             <!-- Theme preview -->
-
+            @if (auth()->check() && (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT->value || auth()->user()->role === \App\Enums\ClubRole::HICOM->value || auth()->user()->is_admin))
                 <div id="preview-div">
-                    <div id="theme-menu" style="position: relative; display: none;">
+                    <div id="theme-menu" style="position: relative;">
                         <div>
-                            <form action="{{ route('clubs.update', $club->id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ route('clubs.updateTheme', $club->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
-                                
-                                <input type="hidden" name="theme" id="theme" value="{{ $club->theme }}">
+
+                                <input type="hidden" name="theme" id="form-themes" value="{{ $club->theme }}">
                                 @foreach($themes as $themeName => $theme)
-                                    <button type="button" onclick="changeTheme()" name="btn-preview-theme" class="btn-preview-theme" 
-                                    data-value="{{ $themeName }}" 
-                                    data-bg="{{ $theme['bg'] }}"
-                                    data-text="{{ $theme['text'] }}"
-                                    data-context="{{ $theme['content-box'] }}"
-                                    data-shadow="{{ $theme['shadow-color'] }}"
-                                    data-post="{{ $theme['post-colour'] }}"
-                                    style="width:40px; height:40px; border:black solid 1px; border-radius: 2em;
-                                    margin:1em 0.5em; background:linear-gradient({{ $theme['bg'] }}, {{ $theme['content-box'] }});">
+                                    <button type="button"
+                                            onclick="changeTheme()"
+                                            name="btn-preview-theme"
+                                            class="btn-preview-theme"
+                                            data-value="{{ $themeName }}"
+                                            data-bg="{{ $theme['bg'] }}"
+                                            data-text="{{ $theme['text'] }}"
+                                            data-context="{{ $theme['content-box'] }}"
+                                            data-shadow="{{ $theme['shadow-color'] }}"
+                                            data-post="{{ $theme['post-colour'] }}"
+                                            style="width:40px; height:40px; border:black solid 1px; border-radius:2em; margin:1em 0.5em; background:linear-gradient({{ $theme['bg'] }}, {{ $theme['content-box'] }});">
                                     </button>
                                 @endforeach
 
-                                <button type="submit" class="btn-submit" style="position: absolute; bottom:1em; right:0em; transform:scale(0.9);">Update Theme</button>
+                                <button type="submit" class="btn-submit" style="position:absolute; bottom:1em; right:0em; transform:scale(0.9);">Update Theme</button>
                             </form>
                         </div>
                     </div>
@@ -346,72 +373,68 @@
         
         </div>
     </div>
-
-    <!-- Theme styles -->
-    <style>
-    :root{
-        --bg: {{ $selectedTheme['bg'] }};
-        --text: {{ $selectedTheme['text'] }};
-        --content-box: {{ $selectedTheme['content-box'] }};
-        --shadow-color: {{ $selectedTheme['shadow-color'] }};
-        --post-colour: {{ $selectedTheme['post-colour'] }};
-    }
-    </style>
-
-    @push('scripts')
-    <script>
-    function updateDriveLink(eventId, link) {
-        fetch(`/events/${eventId}/drive-link`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
-            body: JSON.stringify({ drive_link: link })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log("Drive link updated:", data);
-        })
-        .catch(err => console.error("Error updating drive link:", err));
-    }
-
-    var div = document.getElementById('theme-menu');
-    function openTheme(){
-        if(div.style.display == 'block'){
-            div.style.display = 'none';
-        } else {
-            div.style.display = 'block';
-        }
-    }
-
-    document.querySelectorAll('.btn-preview-theme').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.getElementById('theme').value = btn.dataset.value;
-            document.documentElement.style.setProperty('--bg', btn.dataset.bg);
-            document.documentElement.style.setProperty('--text', btn.dataset.text);
-            document.documentElement.style.setProperty('--content-box', btn.dataset.context);
-            document.documentElement.style.setProperty('--shadow-color', btn.dataset.shadow);
-            document.documentElement.style.setProperty('--post-colour', btn.dataset.post);
-        });
-    });
-
-    const links = document.querySelectorAll('.jump-anchor');
-    links.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                targetElement.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-    });
-
-    function togglePastEvents() {
-        const section = document.getElementById('past-events');
-        section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    }
-    </script>
-    @endpush
 @endsection
+
+<!-- script for JSON photo collection for events -->
+@push('scripts')
+<script>
+function updateDriveLink(eventId, link) {
+    fetch(`/events/${eventId}/drive-link`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ drive_link: link })
+    })
+    .then(res => res.json())
+    .then(data => {
+        console.log("Drive link updated:", data);
+    })
+    .catch(err => console.error("Error updating drive link:", err));
+}
+
+// theme preview button
+var div = document.getElementById('theme-menu');
+function openTheme(){
+    if(div.style.display == 'block'){
+        div.style.display = 'none';
+    } else {
+        div.style.display = 'block';
+    }
+}
+
+document.querySelectorAll('.btn-preview-theme').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('theme').value = btn.dataset.value;
+        document.documentElement.style.setProperty('--bg', btn.dataset.bg);
+        document.documentElement.style.setProperty('--text', btn.dataset.text);
+        document.documentElement.style.setProperty('--content-box', btn.dataset.context);
+        document.documentElement.style.setProperty('--shadow-color', btn.dataset.shadow);
+        document.documentElement.style.setProperty('--post-colour', btn.dataset.post);
+    });
+});
+
+// 1. Select all matching links
+const links = document.querySelectorAll('.jump-anchor');
+
+// 2. Loop through each link in the list
+links.forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+});
+
+function togglePastEvents() {
+    const section = document.getElementById('past-events');
+    section.style.display = section.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+@endpush

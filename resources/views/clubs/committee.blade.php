@@ -12,6 +12,21 @@
     </div>
 @endif
 
+<div class="committee-page {{ strtolower($club->committee_theme ?? 'white') }}-theme"
+     style="
+        @if($club->committee_background)
+            background-image: url('{{ asset('storage/' . $club->committee_background) }}');
+        @else
+            background-color: #ffffff; 
+        @endif
+        background-size: cover;
+        background-position: center;
+        min-height: 100vh;
+
+<div class="committee-page {{ strtolower($club->committee_theme ?? 'white') }}-theme"
+     style="background-image: url('{{ asset('storage/' . $club->committee_background) }}');
+            background-size: cover; background-position: center; min-height: 100vh;">
+
 <div class="committee-form-wrapper">
     <div class="committee-form-container">
         <h3 style="text-align:center;">Assign Committee Member</h3>
@@ -44,7 +59,9 @@
     </div>
 </div>
 
+
 <div id="committee-list">
+
     {{-- Default card for president --}}
     <div class="profile-card" id="card-president" data-id="president">
         <span class="drag-handle">⋮⋮</span>
@@ -121,6 +138,45 @@
     @endforeach
 </div>
 
+<div style="position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:10px;">
+
+    <!-- Background upload -->
+    <form action="{{ route('clubs.committee.background', $club->id) }}" 
+          method="POST" enctype="multipart/form-data">
+        @csrf
+        <label for="background-upload" class="btn btn-secondary" 
+               style="cursor:pointer; background-color:#075e54; color:#fff; border:none; border-radius:6px; padding:10px 16px;">
+            Upload Background
+        </label>
+        <input type="file" id="background-upload" name="background" 
+               accept="image/*" style="display:none;" onchange="this.form.submit()">
+    </form>
+
+    <!-- Theme selection -->
+    <form action="{{ route('clubs.committee.theme', $club->id) }}" method="POST">
+        @csrf
+       <select name="theme" class="form-select" style="border-radius:6px; padding:8px; margin-bottom:6px;">
+    <option value="white" {{ ($club->committee_theme ?? 'white') === 'white' ? 'selected' : '' }}>White</option>
+    <option value="yellow" {{ $club->committee_theme === 'yellow' ? 'selected' : '' }}>Yellow</option>
+    <option value="blue" {{ $club->committee_theme === 'blue' ? 'selected' : '' }}>Blue</option>
+    <option value="dark" {{ $club->committee_theme === 'dark' ? 'selected' : '' }}>Dark</option>
+    <option value="purple" {{ $club->committee_theme === 'purple' ? 'selected' : '' }}>Purple</option>
+    <option value="green" {{ $club->committee_theme === 'green' ? 'selected' : '' }}>Green</option>
+    <option value="maroon" {{ $club->committee_theme === 'maroon' ? 'selected' : '' }}>Maroon</option>
+    <option value="orange" {{ $club->committee_theme === 'orange' ? 'selected' : '' }}>Orange</option>
+    <option value="teal" {{ $club->committee_theme === 'teal' ? 'selected' : '' }}>Teal</option>
+    <option value="pink" {{ $club->committee_theme === 'pink' ? 'selected' : '' }}>Pink</option>
+</select>
+
+        <button type="submit" class="btn btn-secondary" 
+                style="background-color:#128C7E; color:#fff; border:none; border-radius:6px; padding:10px 16px;">
+            Apply Theme
+        </button>
+    </form>
+
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -175,5 +231,12 @@ Sortable.create(document.getElementById('committee-list'), {
         evt.preventDefault();
     }
 });
+
+//Theme function
+document.querySelector('select[name="theme"]').addEventListener('change', function() {
+    const page = document.querySelector('.committee-page');
+    page.classList.remove('yellow-theme','blue-theme','dark-theme');
+    page.classList.add(this.value + '-theme');
+})
 </script>
 @endsection
