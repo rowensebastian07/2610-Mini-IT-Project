@@ -134,7 +134,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/clubs/{club}/committee/{id}/update', [ClubController::class, 'updateCommitteeMember'])->name('clubs.committee.update');
         Route::post('/clubs/{club}/terms/assign', [ClubTermController::class, 'assignMember'])->name('clubs.terms.assign');
         Route::post('/clubs/{club}/committee/background', [CommitteeController::class, 'updateBackground'])->name('clubs.committee.background');
-        
+        Route::post('/clubs/{club}/committee/background', [CommitteeController::class, 'updateBackground'])->name('clubs.committee.background');
+        Route::post('/clubs/{club}/committee/theme',  [CommitteeController::class, 'updateCommitteeTheme'])->name('clubs.committee.theme');
+        Route::post('/clubs/{club}/committee/theme', [CommitteeController::class, 'updateCommitteeTheme'])->name('clubs.committee.theme');
 
     });
     // =========================================================================
