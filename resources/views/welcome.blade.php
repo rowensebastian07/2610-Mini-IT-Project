@@ -245,19 +245,17 @@
 
 /* Hearts that rain down */
 .heart {
-    position: fixed;
-    top: -20px;
-    font-size: 24px;
-    color: #e0245e;
-    animation: fall 3s linear forwards;
-    pointer-events: none;
+  position: fixed;
+  top: -20px;
+  font-size: 40px;            /* larger hearts */
+  animation: fall 6s linear forwards; /* longer duration */
+  pointer-events: none;
 }
 
 @keyframes fall {
-    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-    100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
 }
-
 
 </style>
 @endpush
@@ -295,17 +293,18 @@ document.addEventListener("DOMContentLoaded", function() {
                     icon.classList.add('fa-solid');
 
                     // Raining hearts effect
-                    for (let i = 0; i < 10; i++) {
-                        const heart = document.createElement('i');
-                        heart.className = 'fa-solid fa-heart heart';
-                        heart.style.left = Math.random() * window.innerWidth + 'px';
-                        heart.style.fontSize = (16 + Math.random() * 20) + 'px';
-                        heart.style.color = ['#e0245e', '#ff69b4', '#ff1493'][Math.floor(Math.random()*3)];
-                        heart.style.animationDelay = (Math.random() * 1) + 's';
-                        document.body.appendChild(heart);
+                   for (let i = 0; i < 100; i++) {   
+                    const heart = document.createElement('i');
+                    heart.className = 'fa-solid fa-heart heart';
+                    heart.style.left = Math.random() * window.innerWidth + 'px';
+                    heart.style.fontSize = (30 + Math.random() * 20) + 'px'; // bigger
+                    heart.style.color = ['#e0245e', '#ff69b4', '#ff1493'][Math.floor(Math.random()*3)];
+                    heart.style.animationDelay = (Math.random() * 1.5) + 's';
+                    document.body.appendChild(heart);
 
-                        setTimeout(() => heart.remove(), 3000);
-                    }
+                    setTimeout(() => heart.remove(), 6000); // match animation duration
+                }
+
 
                 } else {
                     btn.classList.remove('liked');
@@ -318,7 +317,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(err => console.error('Like error:', err));
         });
     });
-    
+
     // ✅ Open popup
     document.querySelectorAll('.comment-toggle').forEach(btn => {
         btn.addEventListener('click', e => {
