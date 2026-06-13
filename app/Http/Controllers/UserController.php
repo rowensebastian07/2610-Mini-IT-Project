@@ -32,11 +32,12 @@ class UserController extends Controller
         return view('dashboard', [
             'followedClubs' => $followedClubs,
             'events'        => $events,
+            'user' => $user,
         ]);
     }
 
     /**
-     * Register/store new user with default mmu.png picture.
+     * Register/store new user with default picture.
      */
     public function store(Request $request)
     {
@@ -50,7 +51,7 @@ class UserController extends Controller
             'name'            => $data['name'],
             'email'           => $data['email'],
             'password'        => Hash::make($data['password']),
-            'profile_picture' => 'images/mmu.png', 
+            'profile_picture' => 'images/default_pp.png', 
         ]);
 
         Auth::login($user);
@@ -123,7 +124,7 @@ class UserController extends Controller
             $user->profile_picture = $path;
         } elseif (!$user->profile_picture) {
             // ✅ Fallback if user never had a picture
-            $user->profile_picture = 'images/mmu.png';
+            $user->profile_picture = 'images/default_pp.png';
         }
 
         $user->save();

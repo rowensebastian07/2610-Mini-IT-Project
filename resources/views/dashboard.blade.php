@@ -4,15 +4,58 @@
 
 @section('content')
 
+<style>
+    /*Live preview Image*/
+    #pic_label{
+    margin-top: 1rem;
+    background: url("{{  asset($user->profile_picture) }}") no-repeat center;
+    border: solid black 3px;
+    background-size: cover;
+    display: inline-block;
+    width: 10rem;
+    height: 10rem;
+    text-align: center;
+    border-radius: 50%;
+    }
+
+    #pic_label:hover{
+        cursor: pointer;
+    }
+
+    #pic_label input[ type = "file" ]{
+        display: none;
+    }
+</style>
+
 <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
 
 <div class="settings-div">
 
+    
     <!-- Sub-header -->
         <h1>Your Profile</h1>
 
 
     <div class="profile-content">
+    <div class="edit-div">
+        <!-- Edit Form (hidden by default) -->
+        <form id="profile-edit" method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data">
+            @csrf
+            @method('PATCH')
+            <label for="name" id="name-lbl">Display Name</label>
+            <input type="text" name="name" value="{{ Auth::user()->name }}" placeholder="Your Name" required>
+            <label for="email" id="email-lbl">Email</label>
+            <input type="email" name="email" value="{{ Auth::user()->email }}" placeholder="Your Email" required>
+            <label for="profile_picture">Profile Picture</label><br>
+                <label id="pic_label">
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
+                value="{{ old('profile_picture', $user->profile_picture) }}">
+                </label>
+            <button type="submit" class="btn">Save Changes</button>
+            <button type="button" class="btn logout-btn" id="cancel-edit">Cancel</button>
+        </form>
+        </div>
     <!-- Profile Card -->
     <div class="profile-container">
         <div class="icon-bar">
@@ -27,24 +70,13 @@
 
         <!-- Public View -->
         <div id="profile-view">
-          <img src="{{ Auth::user()->profile_picture ?? asset('images/mmu.png') }}" alt="Profile Picture">
+          <img src="{{ Auth::user()->profile_picture ?? asset('images/default_pp.png') }}" alt="Profile Picture">
 
             <h2>{{ Auth::user()->name }}</h2>
             <p>{{ Auth::user()->email }}</p>
         </div>
 
-        <!-- Edit Form (hidden by default) -->
-        <form id="profile-edit" method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data" style="display:none;">
-            @csrf
-            @method('PATCH')
-
-            <input type="text" name="name" value="{{ Auth::user()->name }}" placeholder="Your Name" required>
-            <input type="email" name="email" value="{{ Auth::user()->email }}" placeholder="Your Email" required>
-            <input type="file" name="profile_picture">
-
-            <button type="submit" class="btn">Save Changes</button>
-            <button type="button" class="btn logout-btn" id="cancel-edit">Cancel</button>
-        </form>
+        
 
         <!-- Logout -->
         <form method="POST" action="{{ route('logout') }}" style="display:inline;">
@@ -119,6 +151,29 @@ $(document).ready(function() {
         $('#profile-view').show();
     });
 });
+
+ // Declaring variables for profile pic
+            let input_file = document.getElementById('profile_picture');
+            let picDisplay = document.getElementById('pic_label'); 
+        
+
+            // Live preview for profile pic
+            input_file.onchange = (e) => {
+
+            let file = e.target.files[0];
+
+
+            let url = URL.createObjectURL(file);
+
+            picDisplay.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better perfomance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+            
+        }
+
 </script>
 @endsection
 
