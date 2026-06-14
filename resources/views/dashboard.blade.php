@@ -41,9 +41,12 @@
     <div class="edit-div">
     <nav>
         <a>Personal Information</a>
+        <a>Liked Posts</a>
+        <a >Followed Clubs</a>
+        <a>Followed Events</a>
     </nav>
         <!-- Edit Form (hidden by default) -->
-        <form id="profile-edit" method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data">
+        <form id="profile-edit" method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data" style="width: 400%">
             @csrf
             @method('PATCH')
             <label for="name" id="name-lbl">Display Name</label>

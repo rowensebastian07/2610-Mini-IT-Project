@@ -18,11 +18,18 @@
     }
 
     .edit-div nav{
-        margin: 0 auto;
+        width: 100%;
+        background-color: white;
+        text-align: center;
+        
     }
 
     .edit-div nav a{
+        padding: 2rem 0;
+        display: block;
+        height: 1.2rem;
         text-align: center;
+        border-bottom: solid rgb(134, 134, 134) 2px;
     }
 
     #profile-edit {
@@ -32,7 +39,6 @@
         flex-direction: column;
         background-color: #F0F0F0;
         border-left: 2px rgb(134, 134, 134) solid;
-        margin-left: 20px;
         margin-bottom: 20px;
         text-align: center;
         position: relative;
