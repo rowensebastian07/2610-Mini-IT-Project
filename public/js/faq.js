@@ -7,10 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const container = document.getElementById('faq-fields-container');
     const hasDragHandles = document.querySelector('.drag-handle') !== null;
     
-    //initial database count baseline
-    window.initialFaqCount = container ? container.querySelectorAll('.faq-item').length : 0;
-
-    // 1. Initialize SortableJS
+    // 1. Initialize SortableJS perfectly (Consolidated from duplicate blocks)
     if (container && hasDragHandles && typeof Sortable !== 'undefined') {
         new Sortable(container, {
             animation: 150,
@@ -21,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ghostClass: 'sortable-ghost',
             onEnd: function() {
                 updateFormIndexes();
-                markAsUnsaved(); // Reordering always triggers an unsaved change status
+                markAsUnsaved(); 
             }
         });
     }
@@ -30,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (container) {
         container.addEventListener('input', function(e) {
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-                markAsUnsaved(); // Typing instantly activates the save indicator button
+                markAsUnsaved();
             }
         });
     }
@@ -43,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Mark application setup complete to enable save-change checking flags
+    // Mark application setup complete to enable save-change state checking mechanics
     window.faqSetupComplete = true;
 });
 
@@ -80,7 +77,7 @@ function addNewFaqRow() {
             </div>
             
             <button type="button" 
-                    onclick="event.stopPropagation(); this.closest('.faq-item').remove(); updateFormIndexes(); handleCardDeletion();" 
+                    onclick="event.stopPropagation(); this.closest('.faq-item').remove(); updateFormIndexes(); markAsUnsaved();" 
                     style="background: transparent; color: #ef4444; border: none; padding: 6px; border-radius: 6px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; z-index: 11; transition: background 0.2s;"
                     title="Delete FAQ Item">
                 🗑️
@@ -89,7 +86,7 @@ function addNewFaqRow() {
         <div class="faq-answer-edit-panel" style="padding: 20px; background: #ffffff; border-top: 1px solid #e2e8f0;">
             <div style="margin-bottom: 15px;">
                 <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">QUESTION</label>
-                <input type="text" name="faq[${index}][question]" placeholder="Type your question here..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" required>
+                <input type="text" name="faq[${index}][question]" placeholder="Type your question here..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
             </div>
             <div>
                 <label style="display:block; font-size:12px; font-weight:700; color:#64748b; margin-bottom:5px;">ANSWER</label>
@@ -99,7 +96,7 @@ function addNewFaqRow() {
     `;
 
     container.appendChild(newRow);
-    updateFormIndexes(); // Updates array field name structures silently
+    updateFormIndexes();
 }
 
 /**
@@ -120,7 +117,7 @@ function updateFormIndexes() {
         if (answerTextarea) answerTextarea.setAttribute('name', `faq[${idx}][answer]`);
     });
 
-    // 2. Fallback State Management placeholder box injection check
+    // 2. Fallback State Management check
     if (items.length === 0) {
         if (!container.querySelector('.fallback-box')) {
             const fallbackHTML = `
@@ -132,20 +129,24 @@ function updateFormIndexes() {
             container.insertAdjacentHTML('beforeend', fallbackHTML);
         }
     }
-}
 
-/**
- * Explicit change tracking trigger for item deletion cleanup loops
- */
-function handleCardDeletion() {
-    const container = document.getElementById('faq-fields-container');
-    if (!container || !window.faqSetupComplete) return;
+    // 3. Automated check for context configuration changes
+    const saveBtn = document.getElementById('faqSaveBtn');
+    if (saveBtn && !saveBtn.classList.contains('btn-unsaved-changes')) {
+        // Only trigger if setup is complete AND there are actual valid items remaining
+        // This prevents a freshly added (and then immediately deleted) blank card from locking the button to amber
+        if (window.faqSetupComplete) {
+            // Let's see if any remaining item has actual text typed in
+            const hasContent = Array.from(items).some(item => {
+                const q = item.querySelector('input[type="text"]')?.value.trim();
+                const a = item.querySelector('textarea')?.value.trim();
+                return (q && q !== 'New Frequently Asked Question') || a;
+            });
 
-    const currentCount = container.querySelectorAll('.faq-item').length;
-
-    // Turn button amber ONLY if the deletion left us with a different count than our database starting point
-    if (currentCount !== window.initialFaqCount) {
-        markAsUnsaved();
+            if (hasContent || items.length === 0) {
+                markAsUnsaved();
+            }
+        }
     }
 }
 
