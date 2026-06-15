@@ -53,7 +53,7 @@ body {
 }
 .btn-secondary:hover { opacity: 0.9; }
 
-/* 🛠️ IMPROVED: Made the popup clickable-pass-through using pointer-events */
+/*Made the popup clickable-pass-through using pointer-events */
 .popup {
     position: fixed;
     top: 20px;

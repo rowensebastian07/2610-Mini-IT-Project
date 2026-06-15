@@ -22,157 +22,153 @@
         background-size: cover;
         background-position: center;
         min-height: 100vh;
+        padding-top: 40px; /* Adjust this value if your navbar is taller */
+        box-sizing: border-box;
+     ">
 
-<div class="committee-page {{ strtolower($club->committee_theme ?? 'white') }}-theme"
-     style="background-image: url('{{ asset('storage/' . $club->committee_background) }}');
-            background-size: cover; background-position: center; min-height: 100vh;">
+    <div class="committee-form-wrapper">
+        <div class="committee-form-container">
+            <h3 style="text-align:center;">Assign Committee Member</h3>
 
-<div class="committee-form-wrapper">
-    <div class="committee-form-container">
-        <h3 style="text-align:center;">Assign Committee Member</h3>
+            <form action="{{ route('committee.store', $club->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                
+                <label for="term">Academic Term Year</label>
+                <input type="text" name="term" id="term" placeholder="e.g., 2026/2027" required class="form-control" style="margin-bottom: 15px;">
 
-        <form action="{{ route('committee.store', $club->id) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            
-            <label for="term">Academic Term Year</label>
-            <input type="text" name="term" id="term" placeholder="e.g., 2026/2027" required class="form-control" style="margin-bottom: 15px;">
+                <label for="member-search">Select Member</label>
+                <select id="member-search" name="user_id" class="form-control" required>
+                    <option value="">Search by name or email</option>
+                </select>
+                
+                <div id="attempts-left" class="text-muted mt-2" style="margin-bottom: 15px;">
+                    Attempts left today: {{ $remaining }}
+                </div>
 
-            <label for="member-search">Select Member</label>
-            <select id="member-search" name="user_id" class="form-control" required>
-                <option value="">Search by name or email</option>
-            </select>
-            
-            <div id="attempts-left" class="text-muted mt-2" style="margin-bottom: 15px;">
-                Attempts left today: {{ $remaining }}
+                <label for="role">Role Hierarchy</label>
+                <select name="role" id="role" class="form-control" required style="margin-bottom: 20px;">
+                    <option value="">-- Select Role Hierarchy --</option>
+                    <option value="president">President</option>
+                    <option value="hicom">High Committee</option>
+                    <option value="sub_committee">Sub Committee</option>
+                </select>
+
+                <button type="submit" class="btn-primary">Assign Member</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="committee-list">
+        {{-- Default card for president --}}
+        <div class="profile-card" id="card-president" data-id="president">
+            <span class="drag-handle">⋮⋮</span>
+            <div class="icon-bar">
+                <button class="edit-icon" data-id="president">✏️</button>
+                <form action="{{ route('clubs.committee.remove', [$club->id, 'president']) }}" 
+                      method="POST" onsubmit="return confirm('Are you sure you want to remove the president?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="delete-icon">🗑️</button>
+                </form>
             </div>
+            <div class="profile-left">
+                <img src="{{ asset('images/mmu.png') }}" alt="Default Profile" class="profile-img">
+            </div>
+            <div class="profile-right">
+                <div class="profile-view" id="view-president">
+                    <h3>{{ $club->owner->name ?? 'N/A' }}</h3>
+                    <p><strong>Role:</strong> President</p>
+                    <p>N/A</p>
+                </div>
+                <form action="{{ route('clubs.committee.update', [$club->id, 'president']) }}" 
+                      method="POST" enctype="multipart/form-data" 
+                      class="profile-edit" id="edit-president" style="display:none;">
+                    @csrf
+                    @method('PUT')
+                    <input type="text" name="role" value="President" class="form-control-inline">
+                    <textarea name="description" class="form-control-inline" rows="3">N/A</textarea>
+                    <input type="file" name="profile_picture" class="form-control-inline">
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="button" class="btn-secondary cancel-btn" data-id="president">Cancel</button>
+                </form>
+            </div>
+        </div>
 
-            <label for="role">Role Hierarchy</label>
-            <select name="role" id="role" class="form-control" required style="margin-bottom: 20px;">
-                <option value="">-- Select Role Hierarchy --</option>
-                <option value="president">President</option>
-                <option value="hicom">High Committee</option>
-                <option value="sub_committee">Sub Committee</option>
+        {{-- Cards for accepted committee members --}}
+        @foreach($committee as $member)
+            @if($member->status === 'accepted')
+                <div class="profile-card" id="card-{{ $member->id }}" data-id="{{ $member->id }}">
+                    <span class="drag-handle">⋮⋮</span>
+                    <div class="icon-bar">
+                        <button class="edit-icon" data-id="{{ $member->id }}">✏️</button>
+                        <form action="{{ route('clubs.committee.remove', [$club->id, $member->id]) }}" 
+                              method="POST" onsubmit="return confirm('Are you sure you want to remove this member?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="delete-icon">🗑️</button>
+                        </form>
+                    </div>
+                    <div class="profile-left">
+                        <img src="{{ asset($member->profile_picture ?? 'images/mmu.png') }}" 
+                             alt="Profile Picture" class="profile-img">
+                    </div>
+                    <div class="profile-right">
+                        <div class="profile-view" id="view-{{ $member->id }}">
+                            <h3>{{ $member->name }}</h3>
+                            <p><strong>Role:</strong> {{ $member->role }}</p>
+                            <p>{{ $member->description ?? 'No description provided.' }}</p>
+                        </div>
+                        <form action="{{ route('clubs.committee.update', [$club->id, $member->id]) }}" 
+                              method="POST" enctype="multipart/form-data" 
+                              class="profile-edit" id="edit-{{ $member->id }}" style="display:none;">
+                            @csrf
+                            @method('PUT')
+                            <input type="text" name="role" value="{{ $member->role }}" class="form-control-inline">
+                            <textarea name="description" class="form-control-inline" rows="3">{{ $member->description ?? '' }}</textarea>
+                            <input type="file" name="profile_picture" class="form-control-inline">
+                            <button type="submit" class="btn-primary" style="margin-top:10px;">Save Changes</button>
+                            <button type="button" class="btn-secondary cancel-btn" data-id="{{ $member->id }}">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+    </div>
+
+    <div style="position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999;">
+
+        <form action="{{ route('clubs.committee.background', $club->id) }}" 
+            method="POST" enctype="multipart/form-data" style="margin: 0;">
+            @csrf
+            <label for="background-upload" class="btn btn-secondary" 
+                style="cursor:pointer; background-color:#075e54; color:#fff; border:none; border-radius:6px; padding:10px 16px; display: block; text-align: center;">
+                Upload Background
+            </label>
+            <input type="file" id="background-upload" name="background" 
+                accept="image/*" style="display:none;" onchange="this.form.submit()">
+        </form>
+
+        <form action="{{ route('clubs.committee.theme', $club->id) }}" method="POST" style="margin: 0; display: flex; flex-direction: column; gap: 4px;">
+            @csrf
+            <select name="theme" class="form-select" style="border-radius:6px; padding:8px; width: 100%;">
+                <option value="white" {{ ($club->committee_theme ?? 'white') === 'white' ? 'selected' : '' }}>White</option>
+                <option value="yellow" {{ $club->committee_theme === 'yellow' ? 'selected' : '' }}>Yellow</option>
+                <option value="blue" {{ $club->committee_theme === 'blue' ? 'selected' : '' }}>Blue</option>
+                <option value="dark" {{ $club->committee_theme === 'dark' ? 'selected' : '' }}>Dark</option>
+                <option value="purple" {{ $club->committee_theme === 'purple' ? 'selected' : '' }}>Purple</option>
+                <option value="green" {{ $club->committee_theme === 'green' ? 'selected' : '' }}>Green</option>
+                <option value="maroon" {{ $club->committee_theme === 'maroon' ? 'selected' : '' }}>Maroon</option>
+                <option value="orange" {{ $club->committee_theme === 'orange' ? 'selected' : '' }}>Orange</option>
+                <option value="teal" {{ $club->committee_theme === 'teal' ? 'selected' : '' }}>Teal</option>
+                <option value="pink" {{ $club->committee_theme === 'pink' ? 'selected' : '' }}>Pink</option>
             </select>
 
-            <button type="submit" class="btn-primary">Assign Member</button>
+            <button type="submit" class="btn btn-secondary" 
+                    style="background-color:#128C7E; color:#fff; border:none; border-radius:6px; padding:10px 16px;">
+                Apply Theme
+            </button>
         </form>
     </div>
-</div>
-
-
-<div id="committee-list">
-
-    {{-- Default card for president --}}
-    <div class="profile-card" id="card-president" data-id="president">
-        <span class="drag-handle">⋮⋮</span>
-        <div class="icon-bar">
-            <button class="edit-icon" data-id="president">✏️</button>
-            <form action="{{ route('clubs.committee.remove', [$club->id, 'president']) }}" 
-                  method="POST" onsubmit="return confirm('Are you sure you want to remove the president?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="delete-icon">🗑️</button>
-            </form>
-        </div>
-        <div class="profile-left">
-            <img src="{{ asset('images/mmu.png') }}" alt="Default Profile" class="profile-img">
-        </div>
-        <div class="profile-right">
-            <div class="profile-view" id="view-president">
-                <h3>{{ $club->owner->name ?? 'N/A' }}</h3>
-                <p><strong>Role:</strong> President</p>
-                <p>N/A</p>
-            </div>
-            <form action="{{ route('clubs.committee.update', [$club->id, 'president']) }}" 
-                  method="POST" enctype="multipart/form-data" 
-                  class="profile-edit" id="edit-president" style="display:none;">
-                @csrf
-                @method('PUT')
-                <input type="text" name="role" value="President" class="form-control-inline">
-                <textarea name="description" class="form-control-inline" rows="3">N/A</textarea>
-                <input type="file" name="profile_picture" class="form-control-inline">
-                <button type="submit" class="btn-primary">Save Changes</button>
-                <button type="button" class="btn-secondary cancel-btn" data-id="president">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    {{-- Cards for accepted committee members --}}
-    @foreach($committee as $member)
-        @if($member->status === 'accepted')
-            <div class="profile-card" id="card-{{ $member->id }}" data-id="{{ $member->id }}">
-                <span class="drag-handle">⋮⋮</span>
-                <div class="icon-bar">
-                    <button class="edit-icon" data-id="{{ $member->id }}">✏️</button>
-                    <form action="{{ route('clubs.committee.remove', [$club->id, $member->id]) }}" 
-                          method="POST" onsubmit="return confirm('Are you sure you want to remove this member?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="delete-icon">🗑️</button>
-                    </form>
-                </div>
-                <div class="profile-left">
-                    <img src="{{ asset($member->profile_picture ?? 'images/mmu.png') }}" 
-                         alt="Profile Picture" class="profile-img">
-                </div>
-                <div class="profile-right">
-                    <div class="profile-view" id="view-{{ $member->id }}">
-                        <h3>{{ $member->name }}</h3>
-                        <p><strong>Role:</strong> {{ $member->role }}</p>
-                        <p>{{ $member->description ?? 'No description provided.' }}</p>
-                    </div>
-                    <form action="{{ route('clubs.committee.update', [$club->id, $member->id]) }}" 
-                          method="POST" enctype="multipart/form-data" 
-                          class="profile-edit" id="edit-{{ $member->id }}" style="display:none;">
-                        @csrf
-                        @method('PUT')
-                        <input type="text" name="role" value="{{ $member->role }}" class="form-control-inline">
-                        <textarea name="description" class="form-control-inline" rows="3">{{ $member->description ?? '' }}</textarea>
-                        <input type="file" name="profile_picture" class="form-control-inline">
-                        <button type="submit" class="btn-primary" style="margin-top:10px;">Save Changes</button>
-                        <button type="button" class="btn-secondary cancel-btn" data-id="{{ $member->id }}">Cancel</button>
-                    </form>
-                </div>
-            </div>
-        @endif
-    @endforeach
-</div>
-
-<div style="position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:10px;">
-
-    <!-- Background upload -->
-    <form action="{{ route('clubs.committee.background', $club->id) }}" 
-          method="POST" enctype="multipart/form-data">
-        @csrf
-        <label for="background-upload" class="btn btn-secondary" 
-               style="cursor:pointer; background-color:#075e54; color:#fff; border:none; border-radius:6px; padding:10px 16px;">
-            Upload Background
-        </label>
-        <input type="file" id="background-upload" name="background" 
-               accept="image/*" style="display:none;" onchange="this.form.submit()">
-    </form>
-
-    <!-- Theme selection -->
-    <form action="{{ route('clubs.committee.theme', $club->id) }}" method="POST">
-        @csrf
-       <select name="theme" class="form-select" style="border-radius:6px; padding:8px; margin-bottom:6px;">
-    <option value="white" {{ ($club->committee_theme ?? 'white') === 'white' ? 'selected' : '' }}>White</option>
-    <option value="yellow" {{ $club->committee_theme === 'yellow' ? 'selected' : '' }}>Yellow</option>
-    <option value="blue" {{ $club->committee_theme === 'blue' ? 'selected' : '' }}>Blue</option>
-    <option value="dark" {{ $club->committee_theme === 'dark' ? 'selected' : '' }}>Dark</option>
-    <option value="purple" {{ $club->committee_theme === 'purple' ? 'selected' : '' }}>Purple</option>
-    <option value="green" {{ $club->committee_theme === 'green' ? 'selected' : '' }}>Green</option>
-    <option value="maroon" {{ $club->committee_theme === 'maroon' ? 'selected' : '' }}>Maroon</option>
-    <option value="orange" {{ $club->committee_theme === 'orange' ? 'selected' : '' }}>Orange</option>
-    <option value="teal" {{ $club->committee_theme === 'teal' ? 'selected' : '' }}>Teal</option>
-    <option value="pink" {{ $club->committee_theme === 'pink' ? 'selected' : '' }}>Pink</option>
-</select>
-
-        <button type="submit" class="btn btn-secondary" 
-                style="background-color:#128C7E; color:#fff; border:none; border-radius:6px; padding:10px 16px;">
-            Apply Theme
-        </button>
-    </form>
 
 </div>
 
