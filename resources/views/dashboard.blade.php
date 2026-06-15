@@ -40,13 +40,13 @@
     
     <div class="edit-div">
     <nav>
-        <a>Personal Information</a>
-        <a>Liked Posts</a>
-        <a >Followed Clubs</a>
-        <a>Followed Events</a>
+        <a class="tab" onclick="tabs(0)">Personal Information</a>
+        <a class="tab" onclick="tabs(1)">Liked Posts</a>
+        <a class="tab" onclick="tabs(2)">Followed Clubs</a>
+        <a class="tab" onclick="tabs(3)">Followed Events</a>
     </nav>
         <!-- Edit Form (hidden by default) -->
-        <form id="profile-edit" method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data" style="width: 400%">
+        <form id="profile-edit" method="POST" action="{{ route('dashboard.update') }}" enctype="multipart/form-data" style="width: 400%; display:none;" class="tabShow">
             @csrf
             @method('PATCH')
             <label for="name" id="name-lbl">Display Name</label>
@@ -71,7 +71,37 @@
             
             
         </form>
+        <div class="tabShow" style="width: 400%">
+            
+             @forelse($likedPosts as $post)
+             
+            <div class="post-card" style="position:relative; padding-bottom:40px;">
+                <h3 class="post-title">{{ $post->title }}</h3>
+
+                @if($post->image)
+                    <img src="{{ asset('storage/' . $post->image) }}" class="post-image">
+                @endif
+
+                <p class="post-content">{{ $post->content }}</p>
+                <small class="post-meta">Posted in: {{ $post->club->name }}</small>
+
+                <!-- Likes & Comments -->
+                <div style="position:absolute; bottom:10px; right:10px; display:flex; gap:15px;">
+                    <button type="button" class="like-btn {{ $post->likedByUser ? 'liked' : '' }}" data-id="{{ $post->id }}">
+                        <i class="{{ $post->likedByUser ? 'fa-solid' : 'fa-regular' }} fa-heart"></i>
+                        <span id="like-count-{{ $post->id }}">{{ $post->likes_count }}</span>
+                    </button>
+
+                    <button type="button" class="comment-toggle" data-id="{{ $post->id }}">
+                        <i class="fa-regular fa-comment"></i> 
+                        <span id="comment-count-{{ $post->id }}">{{ $post->comments_count }}</span>
+                    </button>
+                </div>
+            </div>
+        @empty
+        @endforelse
         </div>
+</div>
     <!-- Profile Card -->
     <div class="profile-container">
         <div class="icon-bar">

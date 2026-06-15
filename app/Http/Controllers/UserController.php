@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\Post;
 
 
 
@@ -17,9 +18,11 @@ class UserController extends Controller
     /**
      * Dashboard: show only clubs/events the user follows.
      */
-    public function dashboard()
+    public function dashboard(Post $posts)
     {
         $user = Auth::user();
+
+        $likedUsers = $user->liked_users ?? [];
 
         $clubIds = $user->followed_clubs ?? [];
 
@@ -29,12 +32,19 @@ class UserController extends Controller
             ->with(['posts', 'events'])
             ->get();
 
+        $likedPosts = Post::whereIn('id', $likedUsers)
+            ->latest()
+            ->get();
+
+            dd($likedPosts);
+
         $events = $followedClubs->pluck('events')->flatten();
 
         return view('dashboard', [
             'followedClubs' => $followedClubs,
             'events'        => $events,
             'user' => $user,
+            'likedPosts' => $likedPosts,
             'profile_picture' => $profile_picture,
 
         ]);
