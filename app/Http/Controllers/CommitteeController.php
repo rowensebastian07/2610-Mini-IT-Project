@@ -26,7 +26,7 @@ class CommitteeController extends Controller
             ->where('role', 'President')
             ->first();
 
-        // ✅ Calculate remaining attempts for logged-in user
+        // Calculate remaining attempts for logged-in user
         $user = Auth::user();
         $searchCount = DB::table('search_logs')
             ->where('user_id', $user->id)
