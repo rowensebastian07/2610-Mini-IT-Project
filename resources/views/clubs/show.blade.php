@@ -9,6 +9,12 @@
         \App\Enums\ClubRole::SUBCOM->value,
     ];
 
+    $manageThemes = [
+        \App\Enums\ClubRole::PRESIDENT->value,
+        \App\Enums\ClubRole::HICOM->value,
+    ];
+
+    $ishighmember = $membership && in_array(strtolower($membership->pivot->role), $manageThemes);
     $isCommittee = $membership && in_array(strtolower($membership->pivot->role), $managementRoles);
 
     $themes = config('themes');
@@ -337,7 +343,7 @@
             </div>
 
             <!-- Theme preview -->
-            @if (auth()->check() && (auth()->user()->role === \App\Enums\ClubRole::PRESIDENT->value || auth()->user()->role === \App\Enums\ClubRole::HICOM->value || auth()->user()->is_admin))
+            @if($ishighmember) && auth()->user()->is_admin
                 <div id="preview-div">
                     <div id="theme-menu" style="position: relative;">
                         <div>
