@@ -1,5 +1,5 @@
     .club-and-events {
-        display: none;
+        display: block;
         margin-bottom: 20px;
         padding: 2rem;
         background-color: #F0F0F0;
@@ -9,7 +9,7 @@
     }
 
     .edit-div{
-        display: flex;
+        display: none;
         justify-content: end;
         width: 100%;
         padding: 0;
@@ -62,6 +62,10 @@
         padding-left: 2rem;
     }
 
+    #profile-edit label:first-of-type{
+        margin-top: 0;
+    }
+
     .button-edit button{
         width: 150px;
         height: 40px;
@@ -78,6 +82,7 @@
         display: block;
         position: absolute;
         top: 5rem;
+        left: 0;
         background: red;
         color: #fff;
         padding: 8px 16px;
@@ -99,7 +104,7 @@
          width: 95%;
          margin: 0 auto;
          border-radius: 1rem;
-        padding: 0;
+        padding: 3rem 0;
          margin-bottom: 15px;
        
          
@@ -160,7 +165,7 @@
     .btn:hover { background: #1e40af; }
 
     .profile-container {
-        display: none;
+        display: block;
         flex-grow: 0.9;
         background-color: #F0F0F0;
         box-shadow: 0px 3px 5px #808080;
@@ -207,8 +212,6 @@
 
     .profile-container .btn:hover { background: #1e40af; }
 
-    .logout-btn { background: #dc2626; }
-    .logout-btn:hover { background: #b91c1c; }
   
  .settings-div{
     background-color: rgb(211, 205, 205);
@@ -252,3 +255,21 @@
     color: black;
 }
 
+.post-card{
+    margin-top: 2rem;
+    outline: black solid 1px;
+}
+
+.settings-h2{
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.tabShow{
+    display: none;
+    transition: all .5s ease-in;
+}
+
+.tab:hover{
+    cursor: pointer;
+}

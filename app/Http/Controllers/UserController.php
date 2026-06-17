@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Models\Post;
+use App\Models\PostLike;
 
 
 
@@ -22,8 +23,6 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        $likedUsers = $user->liked_users ?? [];
-
         $clubIds = $user->followed_clubs ?? [];
 
         $profile_picture = $user->profile_picture;
@@ -32,7 +31,10 @@ class UserController extends Controller
             ->with(['posts', 'events'])
             ->get();
 
-        $likedPosts = Post::whereIn('id', $likedUsers)
+        $likedPostIds = \App\Models\PostLike::where('user_id', $user->id)
+        ->pluck('post_id');
+
+        $likedPosts = Post::whereIn('id', $likedPostIds)
             ->latest()
             ->get();
 
