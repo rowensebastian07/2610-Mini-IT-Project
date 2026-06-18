@@ -15,7 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
 
-#[Fillable(['name', 'email', 'password', 'is_admin', 'status', 'verification'])]
+#[Fillable(['name', 'email', 'password', 'is_admin', 'status', 'verification', 'profile_picture'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -75,9 +75,9 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
    public function getProfilePictureAttribute($value)
-    {
-        return $value ? asset('storage/' . $value) : asset('images/mmu.png');
-    }
+{
+    return $value ? asset($value) : asset('images/default_pp.png');
+}
 
     public function sendEmailVerificationNotification()
     {
@@ -93,4 +93,5 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $this->notify(new VerifyEmail);
     }
+    
 }

@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\Post;
+use App\Models\PostLike;
 
 
 
@@ -17,14 +19,23 @@ class UserController extends Controller
     /**
      * Dashboard: show only clubs/events the user follows.
      */
-    public function dashboard()
+    public function dashboard(Post $posts)
     {
         $user = Auth::user();
 
         $clubIds = $user->followed_clubs ?? [];
 
+        $profile_picture = $user->profile_picture;
+
         $followedClubs = Club::whereIn('id', $clubIds)
             ->with(['posts', 'events'])
+            ->get();
+
+        $likedPostIds = \App\Models\PostLike::where('user_id', $user->id)
+        ->pluck('post_id');
+
+        $likedPosts = Post::whereIn('id', $likedPostIds)
+            ->latest()
             ->get();
 
         $events = $followedClubs->pluck('events')->flatten();
@@ -32,11 +43,15 @@ class UserController extends Controller
         return view('dashboard', [
             'followedClubs' => $followedClubs,
             'events'        => $events,
+            'user' => $user,
+            'likedPosts' => $likedPosts,
+            'profile_picture' => $profile_picture,
+
         ]);
     }
 
     /**
-     * Register/store new user with default mmu.png picture.
+     * Register/store new user with default picture.
      */
     public function store(Request $request)
     {
@@ -50,7 +65,7 @@ class UserController extends Controller
             'name'            => $data['name'],
             'email'           => $data['email'],
             'password'        => Hash::make($data['password']),
-            'profile_picture' => 'images/mmu.png', 
+            'profile_picture' => 'images/default_pp.png', 
         ]);
 
         Auth::login($user);
@@ -123,7 +138,7 @@ class UserController extends Controller
             $user->profile_picture = $path;
         } elseif (!$user->profile_picture) {
             // ✅ Fallback if user never had a picture
-            $user->profile_picture = 'images/mmu.png';
+            $user->profile_picture = 'images/default_pp.png';
         }
 
         $user->save();

@@ -39,7 +39,8 @@ class DatabaseSeeder extends Seeder
             'name' => 'President of Music Club',
             'email' => 'admin@club.com', 
             'password' => Hash::make('password'),
-            'email_verified_at' => "2026-05-28 12:00:00"
+            'email_verified_at' => "2026-05-28 12:00:00",
+            'profile_picture' => 'images/default_pp.png',
         ]);
 
         // Verified System Admin
@@ -52,6 +53,7 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => now(),
                 'status' => UserStatus::ACTIVE->value,
                 'verification' => UserVerification::VERIFIED->value,
+                'profile_picture' => 'images/default_pp.png',
             ]
         );
 
@@ -65,6 +67,7 @@ class DatabaseSeeder extends Seeder
                 'email_verified_at' => null,
                 'status' => UserStatus::ACTIVE->value,
                 'verification' => UserVerification::UNVERIFIED->value,
+                'profile_picture' => 'images/default_pp.png',
             ]
         );
 
@@ -80,6 +83,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => "2026-05-28 12:00:00",
             'status' => UserStatus::ACTIVE->value,
             'verification' => UserVerification::VERIFIED->value,
+            'profile_picture' => 'images/default_pp.png',
         ]);
 
         $subCom = User::create([
@@ -90,12 +94,14 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => "2026-05-28 12:00:00",
             'status' => UserStatus::ACTIVE->value,
             'verification' => UserVerification::VERIFIED->value,
+            'profile_picture' => 'images/default_pp.png',
         ]);
 
         $regularMember = User::create([
             'name' => 'Regular Student',
             'email' => 'student@club.com',
             'password' => Hash::make('password'),
+            'profile_picture' => 'images/default_pp.png',
         ]);
 
         // =======================================================
