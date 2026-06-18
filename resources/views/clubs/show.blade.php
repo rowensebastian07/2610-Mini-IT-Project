@@ -361,7 +361,7 @@
             </div>
 
             <!-- Theme preview -->
-            @if($ishighmember) && auth()->user()->is_admin
+            @if(auth()->user()->is_admin)
                 <div id="preview-div">
                     <div id="theme-menu" style="position: relative;">
                         <div>
@@ -425,6 +425,8 @@ function openTheme(){
     } else {
         div.style.display = 'block';
     }
+
+    
 }
 
 document.querySelectorAll('.btn-preview-theme').forEach(btn => {

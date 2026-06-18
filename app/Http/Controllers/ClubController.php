@@ -67,11 +67,12 @@ class ClubController extends Controller
     // --------------------------
     public function update(Request $request, Club $club)
     {
+        
         $data = $request->validate([
             'name'              => 'nullable|string|max:255',
             'description'       => 'nullable|string',
             'profile_picture'   => 'nullable|image',
-            'category'          => 'required|string',
+            'category'          => 'nullable|string',
             'email'             => 'nullable|email',
             'banner_image'      => 'nullable|image',
             'registration_link' => 'nullable|url',
@@ -100,6 +101,8 @@ class ClubController extends Controller
                 'club'
             ));
         }
+
+        
 
         return redirect()->route('clubs.show', $club->id)
                          ->with(['success', 'Club updated successfully and members notified!',
