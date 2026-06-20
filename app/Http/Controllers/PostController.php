@@ -13,7 +13,7 @@ use App\Events\CommentPosted;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Club $clubs)
     {
         $user = Auth::user();
         $clubIds = $user ? $user->followed_clubs ?? [] : [];
@@ -23,6 +23,13 @@ class PostController extends Controller
             ->whereIn('club_id', $clubIds)
             ->latest()
             ->get();
+
+        $followedClubs = Club::whereIn('id', $clubIds)
+            ->with(['posts', 'events'])
+            ->get();
+
+
+         $events = $followedClubs->pluck('events')->flatten();
 
         $otherPosts = Post::with(['club', 'media', 'comments.user'])
             ->withCount(['likes', 'comments'])
@@ -35,7 +42,7 @@ class PostController extends Controller
             ->latest()
             ->get();
 
-        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts'));
+        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts', 'events'));
     }
 
     public function create(Club $club)
