@@ -121,25 +121,27 @@
     <h3>{{ $post->title }}</h3>
     <p>{{ $post->content }}</p>
 
-    <div class="post-gallery-wrapper" data-index="0">
-      <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+    {{-- ✅ Show gallery only if media exists --}}
+    @if($post->media->count() > 0)
+      <div class="post-gallery-wrapper" data-index="0">
+        <div class="post-gallery">
+          @foreach($post->media as $index => $media)
+            <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
+              <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+            </div>
+          @endforeach
+        </div>
 
-      <div class="post-gallery">
-        @foreach($post->media as $media)
-          <div class="media-item" style="display:none;">
-            {{-- ✅ Only images now --}}
-            <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+        {{-- ✅ Show arrows + counter only if more than one image --}}
+        @if($post->media->count() > 1)
+          <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+          <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
+          <div class="media-counter">
+            <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
           </div>
-        @endforeach
+        @endif
       </div>
-
-      <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
-    </div>
-
-    <!-- ✅ Counter display -->
-    <div class="media-counter">
-      <span class="current-index">1</span>/<span class="total-count">{{ count($post->media) }}</span>
-    </div>
+    @endif
 
     @if($isCommittee)
       <div class="mt-2">
@@ -417,7 +419,7 @@ function updateDriveLink(eventId, link) {
     .catch(err => console.error("Error updating drive link:", err));
 }
 
-// theme preview button
+// ✅ Theme preview button
 var div = document.getElementById('theme-menu');
 function openTheme(){
     if(div.style.display == 'block'){
@@ -425,13 +427,10 @@ function openTheme(){
     } else {
         div.style.display = 'block';
     }
-
-    
 }
 
 document.querySelectorAll('.btn-preview-theme').forEach(btn => {
     btn.addEventListener('click', () => {
-        console.log('Button has the active style applied.');
         document.getElementById('form-themes').value = btn.dataset.value;
         document.documentElement.style.setProperty('--bg', btn.dataset.bg);
         document.documentElement.style.setProperty('--text', btn.dataset.text);
@@ -441,59 +440,65 @@ document.querySelectorAll('.btn-preview-theme').forEach(btn => {
     });
 });
 
-// 1. Select all matching links
+// ✅ Smooth scroll for jump anchors
 const links = document.querySelectorAll('.jump-anchor');
-
-// 2. Loop through each link in the list
 links.forEach(link => {
     link.addEventListener('click', function(e) {
         e.preventDefault();
-
         const targetId = this.getAttribute('href');
         const targetElement = document.querySelector(targetId);
-
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth' });
         }
     });
 });
 
+// ✅ Toggle past events section
 function togglePastEvents() {
     const section = document.getElementById('past-events');
     section.style.display = section.style.display === 'none' ? 'block' : 'none';
 }
 
+// ✅ Image carousel setup
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".post-gallery-wrapper").forEach(wrapper => {
+  document.querySelectorAll(".post-card").forEach(card => {
+    const wrapper = card.querySelector(".post-gallery-wrapper");
+    if (!wrapper) return;
+
     const gallery = wrapper.querySelector(".post-gallery");
     const items = gallery.querySelectorAll(".media-item");
-    const counter = wrapper.nextElementSibling.querySelector(".current-index");
-    const total = wrapper.nextElementSibling.querySelector(".total-count");
+    const counter = card.querySelector(".media-counter .current-index");
+    const total = card.querySelector(".media-counter .total-count");
+    let index = 0;
 
     if (items.length > 0) {
-      items[0].style.display = "block";
+      items.forEach((item, i) => item.style.display = i === 0 ? "block" : "none");
       if (counter) counter.textContent = 1;
       if (total) total.textContent = items.length;
+      wrapper.dataset.index = 0;
     }
+
+    wrapper.querySelectorAll(".scroll-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const direction = btn.classList.contains("left") ? -1 : 1;
+
+        // Hide current image
+        items[index].style.display = "none";
+
+        // Calculate next index
+        index = (index + direction + items.length) % items.length;
+
+        // Show next image
+        items[index].style.display = "block";
+
+        // Update counter
+        if (counter) counter.textContent = index + 1;
+
+        // Save index in dataset
+        wrapper.dataset.index = index;
+      });
+    });
   });
 });
-
-function changeMedia(button, direction) {
-  const wrapper = button.closest(".post-gallery-wrapper");
-  const gallery = wrapper.querySelector(".post-gallery");
-  const items = gallery.querySelectorAll(".media-item");
-  const counter = wrapper.nextElementSibling.querySelector(".current-index");
-  let index = parseInt(wrapper.dataset.index);
-
-  items[index].style.display = "none";
-  index = (index + direction + items.length) % items.length;
-  items[index].style.display = "block";
-  wrapper.dataset.index = index;
-
-  if (counter) counter.textContent = index + 1;
-}
-
-
-
 </script>
 @endpush

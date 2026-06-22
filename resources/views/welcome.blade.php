@@ -13,22 +13,27 @@
             <h3>{{ $post->title }}</h3>
             <p>{{ $post->content }}</p>
 
-            {{-- ✅ Image gallery with arrows --}}
-            <div class="post-gallery-wrapper" data-index="0">
-                <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
-                <div class="post-gallery">
-                    @foreach($post->media as $index => $media)
-                        <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
-                            <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
-                        </div>
-                    @endforeach
-                </div>
-                <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
-            </div>
+            {{-- ✅ Gallery only if media exists --}}
+            @if($post->media->count() > 0)
+                <div class="post-gallery-wrapper" data-index="0">
+                    <div class="post-gallery">
+                        @foreach($post->media as $index => $media)
+                            <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+                            </div>
+                        @endforeach
+                    </div>
 
-            <div class="media-counter">
-                <span class="current-index">1</span>/<span class="total-count">{{ count($post->media) }}</span>
-            </div>
+                    {{-- ✅ Arrows + counter only if more than one image --}}
+                    @if($post->media->count() > 1)
+                        <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+                        <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
+                        <div class="media-counter">
+                            <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
+                        </div>
+                    @endif
+                </div>
+            @endif
 
             <small class="post-meta">Posted by: {{ $post->club->name }}</small>
 
@@ -44,7 +49,6 @@
             </div>
         </div>
     @empty
-        {{-- ✅ Always show discover button when no followed posts --}}
         <div class="null-div">
             <h3 class="null-h3">NO FOLLOWED CLUBS YET? WHY DON'T YOU DISCOVER SOME NEW CLUBS TO KEEP UP TO DATE WITH?</h3>
             <a href="{{ url('/clubs') }}" class="discover-btn">
@@ -62,21 +66,25 @@
             <h3>{{ $post->title }}</h3>
             <p>{{ $post->content }}</p>
 
-            <div class="post-gallery-wrapper" data-index="0">
-                <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
-                <div class="post-gallery">
-                    @foreach($post->media as $index => $media)
-                        <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
-                            <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
-                        </div>
-                    @endforeach
-                </div>
-                <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
-            </div>
+            @if($post->media->count() > 0)
+                <div class="post-gallery-wrapper" data-index="0">
+                    <div class="post-gallery">
+                        @foreach($post->media as $index => $media)
+                            <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+                            </div>
+                        @endforeach
+                    </div>
 
-            <div class="media-counter">
-                <span class="current-index">1</span>/<span class="total-count">{{ count($post->media) }}</span>
-            </div>
+                    @if($post->media->count() > 1)
+                        <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+                        <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
+                        <div class="media-counter">
+                            <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
+                        </div>
+                    @endif
+                </div>
+            @endif
 
             <small class="post-meta">Posted in: {{ $post->club->name }}</small>
 
@@ -102,21 +110,25 @@
             <h3>{{ $post->title }}</h3>
             <p>{{ $post->content }}</p>
 
-            <div class="post-gallery-wrapper" data-index="0">
-                <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
-                <div class="post-gallery">
-                    @foreach($post->media as $index => $media)
-                        <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
-                            <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
-                        </div>
-                    @endforeach
-                </div>
-                <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
-            </div>
+            @if($post->media->count() > 0)
+                <div class="post-gallery-wrapper" data-index="0">
+                    <div class="post-gallery">
+                        @foreach($post->media as $index => $media)
+                            <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+                            </div>
+                        @endforeach
+                    </div>
 
-            <div class="media-counter">
-                <span class="current-index">1</span>/<span class="total-count">{{ count($post->media) }}</span>
-            </div>
+                    @if($post->media->count() > 1)
+                        <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+                        <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
+                        <div class="media-counter">
+                            <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
+                        </div>
+                    @endif
+                </div>
+            @endif
 
             <small class="post-meta">Posted in: {{ $post->club->name }}</small>
 
@@ -230,6 +242,7 @@
 </button>
 
 @endsection
+
 
 
 @push('styles')
@@ -517,24 +530,36 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // ✅ Image carousel logic
-    document.querySelectorAll(".post-gallery-wrapper").forEach(wrapper => {
+    document.querySelectorAll(".post-card").forEach(card => {
+        const wrapper = card.querySelector(".post-gallery-wrapper");
+        if (!wrapper) return;
+
         const items = wrapper.querySelectorAll(".media-item");
-        const counter = wrapper.nextElementSibling.querySelector(".current-index");
-        const total = wrapper.nextElementSibling.querySelector(".total-count");
+        const counter = card.querySelector(".media-counter .current-index");
+        const total = card.querySelector(".media-counter .total-count");
         let currentIndex = 0;
 
         if (items.length > 0) {
-            items[0].style.display = "block";
-            total.textContent = items.length;
+            items.forEach((item, i) => item.style.display = i === 0 ? "block" : "none");
+            if (total) total.textContent = items.length;
+            if (counter) counter.textContent = 1;
         }
 
         wrapper.querySelectorAll(".scroll-btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 const direction = btn.classList.contains("left") ? -1 : 1;
+
+                // Hide current image
                 items[currentIndex].style.display = "none";
+
+                // Calculate next index
                 currentIndex = (currentIndex + direction + items.length) % items.length;
+
+                // Show next image
                 items[currentIndex].style.display = "block";
-                counter.textContent = currentIndex + 1;
+
+                // Update counter
+                if (counter) counter.textContent = currentIndex + 1;
             });
         });
     });
