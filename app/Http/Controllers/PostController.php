@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PostComment;
 use App\Events\CommentPosted;
+use App\Models\Event;
 
 class PostController extends Controller
 {
@@ -27,10 +28,7 @@ class PostController extends Controller
         $followedClubs = Club::whereIn('id', $clubIds)
             ->with(['posts', 'events'])
             ->get();
-
-
-         $events = $followedClubs->pluck('events')->flatten();
-
+    
         $otherPosts = Post::with(['club', 'media', 'comments.user'])
             ->withCount(['likes', 'comments'])
             ->whereNotIn('club_id', $clubIds)
@@ -42,7 +40,14 @@ class PostController extends Controller
             ->latest()
             ->get();
 
-        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts', 'events'));
+        $events = $followedClubs->pluck('events')->flatten();
+         
+         $otherEvents = Event::all()
+         ->whereNotIn('club_id', $clubIds);
+
+        $allEvents = Event::all();
+
+        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts', 'events','otherEvents', 'allEvents'));
     }
 
     public function create(Club $club)
