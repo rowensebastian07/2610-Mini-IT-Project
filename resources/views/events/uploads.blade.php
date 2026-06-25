@@ -13,14 +13,15 @@
                  onclick="openLightbox({{ $index }})">
 
             {{-- Delete button (visible to all for now) --}}
-            <form action="{{ route('events.deletePhoto', ['event' => $event->id]) }}" 
-                  method="POST" 
-                  onsubmit="return confirm('Delete this photo?')">
-                @csrf
-                @method('DELETE')
-                <input type="hidden" name="file_path" value="{{ $file }}">
-                <button type="submit" class="btn-red">Delete</button>
-            </form>
+           <form action="{{ route('events.deletePhoto', ['club' => $club->id, 'event' => $event->id]) }}" 
+            method="POST" 
+            onsubmit="return confirm('Delete this photo?')">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="file_path" value="{{ $file }}">
+            <button type="submit" class="btn-red">Delete</button>
+        </form>
+
         </div>
     @endforeach
 </div>

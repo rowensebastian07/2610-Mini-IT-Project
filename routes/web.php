@@ -109,9 +109,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/clubs/{club}/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
         Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::delete('/clubs/{club}/events/{event}', [ClubController::class, 'destroy'])->name('events.destroy');
-        Route::post('/events/{event}/upload-files', [EventController::class, 'uploadFiles'])->name('events.uploadFiles');
-        Route::get('/events/{event}/uploads', [EventController::class, 'viewUploads'])->name('events.viewUploads');
-        Route::delete('/events/{event}/delete-photo', [EventController::class, 'deletePhoto'])->name('events.deletePhoto');
+   // Upload event files
+Route::post('/clubs/{club}/events/{event}/upload-files', [EventController::class, 'uploadFiles'])
+    ->name('events.uploadFiles');
+
+// View event uploads
+Route::get('/clubs/{club}/events/{event}/uploads', [EventController::class, 'viewUploads'])
+    ->name('events.viewUploads');
+
+// Delete event photo
+Route::delete('/clubs/{club}/events/{event}/delete-photo', [EventController::class, 'deletePhoto'])
+    ->name('events.deletePhoto');
+
 
         // 3. Posts Creation and Modification
         // SUBCOM n above

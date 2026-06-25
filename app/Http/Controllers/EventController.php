@@ -12,9 +12,6 @@ use Carbon\Carbon;
 
 class EventController extends Controller
 {
-    // Cleaned: The internal authorizeCommittee() method is completely removed 
-    // because the 'club.management' middleware handles it before reaching here.
-
     public function index()
     {
         $events = Event::all();
@@ -43,16 +40,17 @@ class EventController extends Controller
 
         $event = $club->events()->create($validated);
 
-        // Notify ALL members
+        // Notify all members
         foreach ($club->users as $member) {
             $member->notify(new ClubNotification(
                 $club,
                 "New Event Scheduled: {$event->title} on {$event->date} at {$event->time}",
-                'event' 
+                'event'
             ));
         }
 
-        return redirect()->route('clubs.show', $club->id)->with('success', 'Event created and members notified!');
+        return redirect()->route('clubs.show', $club->id)
+            ->with('success', 'Event created and members notified!');
     }
 
     public function edit(Club $club, Event $event)
@@ -73,14 +71,16 @@ class EventController extends Controller
 
         $event->update($validated);
 
-        return redirect()->route('clubs.show', $club->id)->with('success', 'Event updated successfully!');
+        return redirect()->route('clubs.show', $club->id)
+            ->with('success', 'Event updated successfully!');
     }
 
     public function destroy(Club $club, Event $event)
     {
         $event->delete();
 
-        return redirect()->route('clubs.show', $club->id)->with('success', 'Event deleted successfully!');
+        return redirect()->route('clubs.show', $club->id)
+            ->with('success', 'Event deleted successfully!');
     }
 
     public function pastEvents(Club $club)
@@ -116,21 +116,19 @@ class EventController extends Controller
         return back()->with('success', 'Files uploaded successfully!');
     }
 
-    public function viewUploads(Event $event)
+    // ✅ Fixed: include Club $club for proper route model binding
+    public function viewUploads(Club $club, Event $event)
     {
         $files = $event->uploads ? json_decode($event->uploads, true) : [];
-        return view('events.uploads', compact('event', 'files'));
+        return view('events.uploads', compact('club', 'event', 'files'));
     }
 
-    //Injected Club $club model context so $event->club handles cleanly without crashing
     public function deletePhoto(Request $request, Club $club, Event $event)
     {
         $filePath = $request->input('file_path');
 
-        // Remove file from storage
         Storage::disk('public')->delete($filePath);
 
-        // Remove from JSON list
         $files = json_decode($event->uploads, true);
         $files = array_filter($files, fn($path) => $path !== $filePath);
         $event->uploads = json_encode(array_values($files));
