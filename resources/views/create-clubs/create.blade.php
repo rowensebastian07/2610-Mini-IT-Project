@@ -30,6 +30,16 @@
     <h2 id = "create-club-h2">Create Club</h2>
     <p>Fill in the details below</p>
 
+@if ($errors->any())
+    <div style="background:#fee;border:1px solid red;padding:10px;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="create-club-form">
     <form action="{{ route('create-clubs.store') }}" method="POST" enctype="multipart/form-data">
         @csrf

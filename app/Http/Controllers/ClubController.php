@@ -179,6 +179,7 @@ class ClubController extends Controller
     // --------------------------
     public function store(Request $request, Club $clubs)
     {
+        
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required',
@@ -188,8 +189,11 @@ class ClubController extends Controller
             'banner_image' => 'nullable|image',
             'registration_link' => 'nullable|url',
             'registration_open' => 'sometimes',
-            'theme' => 'required|string'
+            'theme' => 'required|string',
         ]);
+
+
+       
 
         if ($request->hasFile('profile_picture')) {
             $validated['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
@@ -197,12 +201,14 @@ class ClubController extends Controller
             $validated['profile_picture'] = "images/mmu.png";
         }
 
+        
         if ($request->hasFile('banner_image')) {
-            $validated['banner_image'] = $request->file('banner_image')->store('clubs', 'public');
+            $validated['banner_image'] = $request->file('banner_image')->store('banners', 'public');
         } else {
             $validated['banner_image'] = "images/mmu.png";
         }
 
+        
         $validated['owner_id'] = Auth::id();
 
         Club::create($validated);
@@ -221,6 +227,8 @@ class ClubController extends Controller
                 "There is a new club to review"
             ));
         }
+
+
 
         return redirect()->route('clubs.index')
                          ->with('success', 'Club created successfully!');
