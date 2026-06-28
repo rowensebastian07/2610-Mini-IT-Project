@@ -144,6 +144,7 @@ Route::delete('/clubs/{club}/events/{event}/delete-photo', [EventController::cla
         Route::post('/clubs/{club}/terms/assign', [ClubTermController::class, 'assignMember'])->name('clubs.terms.assign');
         Route::post('/clubs/{club}/committee/background', [CommitteeController::class, 'updateBackground'])->name('clubs.committee.background');
         Route::post('/clubs/{club}/committee/theme', [CommitteeController::class, 'updateCommitteeTheme'])->name('clubs.committee.theme');
+        Route::get('/clubs/{club}/committee', [ClubController::class, 'committee']) ->name('clubs.committee');
 
     });
     // =========================================================================

@@ -178,53 +178,79 @@ class ClubController extends Controller
     // Create new club (Fixed payload signatures)
     // --------------------------
     public function store(Request $request, Club $clubs)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category' => 'required',
-            'profile_picture' => 'nullable|image|max:2048',
-            'description' => 'nullable|string',
-            'email' => 'nullable|string',
-            'banner' => 'nullable|image',
-            'registration_link' => 'nullable|url',
-            'registration_open' => 'sometimes',
-            'theme' => 'required|string'
-        ]);
+{
+    $validated = $request->validate([
+        'name'              => 'required|string|max:255',
+        'category'          => 'required',
+        'profile_picture'   => 'nullable|image|max:2048',
+        'description'       => 'nullable|string',
+        'email'             => 'nullable|string',
+        'banner_image'      => 'nullable|image',   // corrected field name
+        'registration_link' => 'nullable|url',
+        'registration_open' => 'sometimes',
+        'theme'             => 'required|string'
+    ]);
 
-        if ($request->hasFile('profile_picture')) {
-            $validated['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
-        } else {
-            $validated['profile_picture'] = "images/mmu.png";
-        }
-
-        if ($request->hasFile('banner_image')) {
-            $validated['banner_image'] = $request->file('banner_image')->store('clubs', 'public');
-        } else {
-            $validated['banner_image'] = "images/mmu.png";
-        }
-
-        $validated['owner_id'] = Auth::id();
-
-        Club::create($validated);
-
-        if ($user = auth()->user()) {
-            $user->notify(new ClubNotification(
-                $club,
-                "Your club {$club->name} has been submitted for review. The admins will review your club and determine if it's official."
-            ));
-        }
-
-        $admins = User::where('is_admin', true)->get();
-        foreach ($admins as $admin) {
-            $admin->notify(new ClubNotification(
-                $club,
-                "There is a new club to review"
-            ));
-        }
-
-        return redirect()->route('clubs.index')
-                         ->with('success', 'Club created successfully!');
+    // Handle profile picture
+    if ($request->hasFile('profile_picture')) {
+        $validated['profile_picture'] = $request->file('profile_picture')->store('clubs', 'public');
+    } else {
+        $validated['profile_picture'] = "images/mmu.png";
     }
+
+    // Handle banner image
+    if ($request->hasFile('banner_image')) {
+        $validated['banner_image'] = $request->file('banner_image')->store('clubs', 'public');
+    } else {
+        $validated['banner_image'] = "images/mmu.png";
+    }
+
+    // Assign owner
+    $validated['owner_id'] = Auth::id();
+
+    // Create the club and capture the instance
+    $club = Club::create($validated);
+
+    // 🔑 Automatically assign the creator as President
+    $exists = DB::table('committee_members')
+        ->where('club_id', $club->id)
+        ->where('role', 'President')
+        ->exists();
+
+    if (!$exists) {
+        DB::table('committee_members')->insert([
+            'club_id'        => $club->id,
+            'name'           => Auth::user()->name,
+            'role'           => 'President',
+            'description'    => 'N/A',
+            'profile_picture'=> 'images/mmu.png',
+            'status'         => 'accepted',
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
+    }
+
+    // Notify the club owner
+    if ($user = auth()->user()) {
+        $user->notify(new ClubNotification(
+            $club,
+            "Your club {$club->name} has been submitted for review. The admins will review your club and determine if it's official."
+        ));
+    }
+
+    // Notify admins
+    $admins = User::where('is_admin', true)->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new ClubNotification(
+            $club,
+            "There is a new club to review."
+        ));
+    }
+
+    return redirect()->route('clubs.index')
+                     ->with('success', 'Club created successfully with President assigned!');
+}
+
 
     // --------------------------
     // Search clubs
@@ -250,121 +276,158 @@ class ClubController extends Controller
     // --------------------------
     // Committee page
     // --------------------------
-    public function committee(Club $club)
-    {
-        $committee = DB::table('committee_members')
-            ->where('club_id', $club->id)
-            ->get();
+  public function committee(Club $club)
+{
+    // Exclude President from committee list to avoid duplicate cards
+    $committee = DB::table('committee_members')
+        ->where('club_id', $club->id)
+        ->where('role', '!=', 'President')
+        ->get();
 
-        $president = DB::table('committee_members')
-            ->where('club_id', $club->id)
-            ->where('role', 'President')
-            ->first();
+    // Fetch President separately
+    $president = DB::table('committee_members')
+        ->where('club_id', $club->id)
+        ->where('role', 'President')
+        ->first();
 
-        $user = auth()->user();
-        $searchCount = DB::table('search_logs')
+    $user = auth()->user();
+    $searchCount = $user
+        ? DB::table('search_logs')
             ->where('user_id', $user->id)
             ->whereDate('created_at', now()->toDateString())
-            ->count();
+            ->count()
+        : 0;
 
-        $remaining = max(0, 10 - $searchCount);
+    $remaining = max(0, 10 - $searchCount);
 
-        return view('clubs.committee', compact('club', 'committee', 'president', 'remaining'));
-    }
+    return view('clubs.committee', compact('club', 'committee', 'president', 'remaining'));
+}
 
-    // --------------------------
-    // Add committee member
-    // --------------------------
-    public function addCommitteeMember(Request $request, Club $club)
-    {
-        $data = $request->validate([
-            'user_id'       => 'required|exists:users,id',
-            'role'          => 'required|string|max:255',
-            'profile_picture' => 'nullable|image',
-        ]);
+// --------------------------
+// Add committee member
+// --------------------------
+public function addCommitteeMember(Request $request, Club $club)
+{
+    $data = $request->validate([
+        'user_id'       => 'required|exists:users,id',
+        'role'          => 'required|string|max:255',
+        'profile_picture' => 'nullable|image',
+    ]);
 
-        if ($request->hasFile('profile_picture')) {
-            $data['profile_picture'] = $request->file('profile_picture')->store('committee', 'public');
-        } else {
-            $data['profile_picture'] = 'images/mmu.png';
+    // Prevent duplicate President
+    if ($data['role'] === 'President') {
+        $exists = DB::table('committee_members')
+            ->where('club_id', $club->id)
+            ->where('role', 'President')
+            ->exists();
+
+        if ($exists) {
+            return back()->with('error', 'President already assigned.');
         }
-
-        $user = User::find($data['user_id']);
-
-        DB::table('committee_members')->insert([
-            'club_id'         => $club->id,
-            'name'            => $user->name,
-            'role'            => $data['role'],
-            'profile_picture'=> $data['profile_picture'],
-            'status'          => 'pending',
-            'created_at'      => now(),
-            'updated_at'      => now(),
-        ]);
-
-        $user->notify(new ClubNotification(
-            $club,
-            "You've been invited to join {$club->name} committee as {$data['role']}.",
-            'committee'
-        ));
-
-        return redirect()->route('clubs.committee', $club->id)
-                         ->with('success', 'Invitation sent successfully!');
     }
 
-    // --------------------------
-    // Respond to committee invite
-    // --------------------------
-    public function respondToInvite(Request $request, Club $club)
-    {
-        $action = $request->input('action');
+    $data['profile_picture'] = $request->hasFile('profile_picture')
+        ? $request->file('profile_picture')->store('committee', 'public')
+        : 'images/mmu.png';
 
+    $user = User::find($data['user_id']);
+
+    DB::table('committee_members')->insert([
+        'club_id'         => $club->id,
+        'name'            => $user->name,
+        'role'            => $data['role'],
+        'profile_picture' => $data['profile_picture'],
+        'status'          => 'pending',
+        'created_at'      => now(),
+        'updated_at'      => now(),
+    ]);
+
+    $user->notify(new ClubNotification(
+        $club,
+        "You've been invited to join {$club->name} committee as {$data['role']}.",
+        'committee'
+    ));
+
+    return redirect()->route('clubs.committee', $club->id)
+                     ->with('success', 'Invitation sent successfully!');
+}
+
+// --------------------------
+// Respond to committee invite
+// --------------------------
+public function respondToInvite(Request $request, Club $club)
+{
+    $action = $request->input('action');
+
+    DB::table('committee_members')
+        ->where('club_id', $club->id)
+        ->where('name', Auth::user()->name)
+        ->update([
+            'status'     => $action === 'accept' ? 'accepted' : 'declined',
+            'updated_at' => now(),
+        ]);
+
+    return redirect()->route('clubs.committee', $club->id)
+                     ->with('success', 'Your response has been recorded.');
+}
+
+// --------------------------
+// Update committee member
+// --------------------------
+public function updateCommitteeMember(Request $request, Club $club, $id)
+{
+    $data = $request->validate([
+        'role' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'profile_picture' => 'nullable|image|max:2048',
+    ]);
+
+    $updateData = [
+        'role' => $data['role'],
+        'description' => $data['description'] ?? null,
+        'updated_at' => now(),
+    ];
+
+    if ($request->hasFile('profile_picture')) {
+        $updateData['profile_picture'] = $request->file('profile_picture')->store('committee', 'public');
+    }
+
+    if ($id === 'president') {
         DB::table('committee_members')
             ->where('club_id', $club->id)
-            ->where('name', Auth::user()->name)
-            ->update([
-                'status'     => $action === 'accept' ? 'accepted' : 'declined',
-                'updated_at' => now(),
-            ]);
-
-        return redirect()->route('clubs.committee', $club->id)
-                         ->with('success', 'Your response has been recorded.');
-    }
-
-    public function updateCommitteeMember(Request $request, Club $club, $id)
-    {
-        $data = $request->validate([
-            'role' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'profile_picture' => 'nullable|image|max:2048',
-        ]);
-
-        $updateData = [
-            'role' => $data['role'],
-            'description' => $data['description'] ?? null,
-            'updated_at' => now(),
-        ];
-
-        if ($request->hasFile('profile_picture')) {
-            $updateData['profile_picture'] = $request->file('profile_picture')->store('committee', 'public');
-        }
-
+            ->where('role', 'President')
+            ->update($updateData);
+    } else {
         DB::table('committee_members')
             ->where('id', $id)
             ->where('club_id', $club->id)
             ->update($updateData);
-
-        return redirect()->route('clubs.committee', $club->id)
-                         ->with('success', 'Profile updated successfully!');
     }
 
-    // --------------------------
-    // Remove committee member
-    // --------------------------
-    public function removeCommitteeMember(Club $club, $id)
-    {
-        DB::table('committee_members')->where('id', $id)->delete();
-        return redirect()->route('clubs.committee', $club->id);
+    return redirect()->route('clubs.committee', $club->id)
+                     ->with('success', 'Profile updated successfully!');
+}
+
+// --------------------------
+// Remove committee member
+// --------------------------
+public function removeCommitteeMember(Club $club, $id)
+{
+    if ($id === 'president') {
+        DB::table('committee_members')
+            ->where('club_id', $club->id)
+            ->where('role', 'President')
+            ->delete();
+    } else {
+        DB::table('committee_members')
+            ->where('id', $id)
+            ->delete();
     }
+
+    return redirect()->route('clubs.committee', $club->id)
+                     ->with('success', 'Member removed successfully!');
+}
+
 
     // Chatroom function 
     public function chatroom(Club $club)
@@ -376,11 +439,6 @@ class ClubController extends Controller
 
         return view('clubs.chatroom', compact('club', 'messages'));
     }
-
-    
-    // --------------------------
-    // Add committee member
-    // --------------------------
 
     public function updateVerify(Request $request, Club $club)
     {

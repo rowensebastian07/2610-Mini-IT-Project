@@ -99,9 +99,10 @@
             </div>
             <div class="profile-right">
                 <div class="profile-view" id="view-president">
-                    <h3>{{ $club->owner->name ?? 'N/A' }}</h3>
-                    <p><strong>Role:</strong> President</p>
-                    <p>N/A</p>
+                   <h3>{{ $president->name ?? 'N/A' }}</h3>
+<p><strong>Role:</strong> {{ $president->role ?? 'President' }}</p>
+<p>{{ $president->description ?? 'N/A' }}</p>
+
                 </div>
                 @if($isCommittee)
                     <form action="{{ route('clubs.committee.update', [$club->id, 'president']) }}" 
