@@ -11,10 +11,13 @@
 </head>
 
 <body>
+    <div class="login-page">
     <div class="auth-decor">
         <h1>MMU Clubs & Societies</h1><br>
+        <div class="img-auth-decor">
         <img src="/images/csrw-placeholder-1.jpeg" style="z-index: 999">
-        <img src="/images/csrw-placeholder-2.jpeg" style="left:300; top:250;">
+        <img src="/images/csrw-placeholder-2.jpeg" >
+        </div>
     </div>
     
 
@@ -66,5 +69,6 @@
             </x-primary-button>
         
     </form>
+    </div>
 </body>
 </html>

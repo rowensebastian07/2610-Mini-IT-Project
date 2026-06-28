@@ -31,13 +31,6 @@
 
 <div class="committee-page {{ strtolower($club->committee_theme ?? 'white') }}-theme"
      style="
-        @if($club->committee_background)
-            background-image: url('{{ asset('storage/' . $club->committee_background) }}');
-        @else
-            background-color: #ffffff; 
-        @endif
-        background-size: cover;
-        background-position: center;
         min-height: 100vh;
         padding-top: 40px; 
         box-sizing: border-box;
