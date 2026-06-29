@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
     && curl https://cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem \
        -o /usr/local/share/ca-certificates/DigiCertGlobalRootCA.crt.pem \
-    && update-ca-certificates
+    && update-ca-certificates \
+    && ln -sf /usr/local/share/ca-certificates/DigiCertGlobalRootCA.crt.pem /etc/ssl/certs/DigiCertGlobalRootCA.pem
 
 # Copy project files
 COPY . /var/www/html
