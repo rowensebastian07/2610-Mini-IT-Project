@@ -10,7 +10,7 @@ use App\Notifications\ClubNotification;
 
 class OrderController extends Controller
 {
-    // 🟠 Show user orders
+    //  Show user orders
     public function index()
     {
         $orders = Order::where('user_id', auth()->id())
@@ -20,24 +20,24 @@ class OrderController extends Controller
         return view('marketplace.index', compact('orders'));
     }
 
-    // 🟢 Checkout (store order)
+    //  Checkout (store order)
    public function store(Request $request)
 {
-    // ✅ Get cart from session
+    //  Get cart from session
     $cart = session('cart', []);
     if (empty($cart)) {
         return back()->with('error', 'Your cart is empty.');
     }
 
-    // ✅ Calculate total
+    //  Calculate total
     $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
 
-    // ✅ Get first product safely
+    //  Get first product safely
     $firstItem = reset($cart);
     $firstProductId = $firstItem['id'];
     $clubId = Product::find($firstProductId)->club_id;
 
-    // ✅ Create order
+    //  Create order
     $order = Order::create([
         'user_id'    => auth()->id(),
         'club_id'    => $clubId,
@@ -46,7 +46,7 @@ class OrderController extends Controller
         'status'     => 'pending',
     ]);
 
-    // ✅ Create order items
+    //  Create order items
     foreach ($cart as $item) {
         OrderItem::create([
             'order_id'   => $order->id,
@@ -56,27 +56,27 @@ class OrderController extends Controller
         ]);
     }
 
-    // ✅ Clear cart after checkout
+    //  Clear cart after checkout
     session()->forget('cart');
 
-    // 🟢 Notify buyer of purchase
+    //  Notify buyer of purchase
     $club = $order->club;
     $purchaseMessage = "Your purchase is successful. Please wait for us to review your payment and we will get back to you in 2 days time.";
     $order->user->notify(new ClubNotification($club, $purchaseMessage, 'purchase'));
     $treasurer = $club->treasurer;
 
-    // ✅ Show payment page directly with order + treasurer
+    //  Show payment page directly with order + treasurer
     return view('marketplace.payment', compact('order', 'treasurer'))
            ->with('success', 'Order placed! Proceed to payment.');
 }
 
-    // 🔵 Show single order
+    //  Show single order
     public function show(Order $order)
     {
         return view('orders.show', compact('order'));
     }
 
-    // 🟣 Verify payment and notify buyer
+    //  Verify payment and notify buyer
     public function verify(Request $request, Order $order)
     {
         $order->update([

@@ -12,7 +12,7 @@
             <input type="text" id="title" name="title" placeholder="Chess Club AGM" required>
         </div>
 
-        <div class="form-group"> <!-- may need this for clubs/{club}/events -->
+        <div class="form-group"> 
             <label for="title">Description</label>
             <input type="description" id="description" name="description" nullable>
         </div>

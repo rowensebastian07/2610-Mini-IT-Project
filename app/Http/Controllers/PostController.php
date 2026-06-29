@@ -62,12 +62,12 @@ class PostController extends Controller
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
-            // ✅ Only allow images
+            //  Only allow images
             'media.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:51200',
         ]);
 
         $validated['user_id'] = Auth::id();
-        $validated['club_id'] = $club->id; // ✅ ensure club_id is set
+        $validated['club_id'] = $club->id;
 
         // Create the post
         $post = Post::create($validated);
@@ -121,7 +121,7 @@ class PostController extends Controller
             foreach ($request->file('media') as $file) {
                 $path = $file->store('posts', 'public');
                 $post->media()->create([
-                    'type' => 'image', // always image now
+                    'type' => 'image', 
                     'path' => $path,
                 ]);
             }

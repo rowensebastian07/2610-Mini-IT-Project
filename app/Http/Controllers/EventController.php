@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class EventController extends Controller
+
+// Calander main page
+
 {
     public function index()
     {
@@ -23,6 +26,7 @@ class EventController extends Controller
         return view('events.show', compact('club', 'event'));
     }
 
+    // Create Event
     public function create(Club $club)
     {
         return view('events.create', compact('club'));
@@ -83,6 +87,7 @@ class EventController extends Controller
             ->with('success', 'Event deleted successfully!');
     }
 
+    // Past events toggle
     public function pastEvents(Club $club)
     {
         $today = Carbon::today();
@@ -94,7 +99,7 @@ class EventController extends Controller
 
         return view('events.past', compact('club', 'pastEvents'));
     }
-
+// Json file upload for event album
     public function uploadFiles(Request $request, Club $club, Event $event)
     {
         $request->validate([
@@ -116,7 +121,7 @@ class EventController extends Controller
         return back()->with('success', 'Files uploaded successfully!');
     }
 
-    // ✅ Fixed: include Club $club for proper route model binding
+    // include Club $club for proper route model binding
     public function viewUploads(Club $club, Event $event)
     {
         $files = $event->uploads ? json_decode($event->uploads, true) : [];

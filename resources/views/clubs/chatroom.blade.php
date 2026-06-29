@@ -123,6 +123,8 @@
 .message-menu button:hover { background-color: #f5f5f5; }
 </style>
 
+<!--Chatroom Body -->
+
 <div class="chatroom-wrapper">
   <div class="chatroom-header">
     <h3>{{ $club->name }} Chatroom 💬</h3>

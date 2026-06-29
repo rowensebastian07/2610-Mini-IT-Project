@@ -48,7 +48,7 @@ class MessageController extends Controller
         ],
     ]);
 }
-
+// Delete message
 
     public function destroy(Message $message)
     {

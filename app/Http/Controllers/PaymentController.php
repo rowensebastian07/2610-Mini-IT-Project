@@ -35,6 +35,7 @@ class PaymentController extends Controller
         return view('marketplace.payment', compact('product', 'club', 'treasurer'));
     }
 
+    // Store recipent info in admin page of marketplace
   public function store(Request $request, Product $product)
 {
     $request->validate([
