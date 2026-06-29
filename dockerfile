@@ -1,8 +1,11 @@
 # Use official PHP image with Apache
 FROM php:8.4-apache
 
-# Enable required PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql
+# Install system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y \
+    unzip \
+    libzip-dev \
+    && docker-php-ext-install pdo pdo_mysql zip
 
 # Copy project files
 COPY . /var/www/html
