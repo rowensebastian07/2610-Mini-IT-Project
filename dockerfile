@@ -9,7 +9,8 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     curl \
     && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip \
-    && curl https://cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem -o /usr/local/share/ca-certificates/DigiCertGlobalRootCA.crt.pem \
+    && curl https://cacerts.digicert.com/DigiCertGlobalRootCA.crt.pem \
+       -o /usr/local/share/ca-certificates/DigiCertGlobalRootCA.crt.pem \
     && update-ca-certificates
 
 # Copy project files
@@ -29,8 +30,9 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/lo
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear Laravel caches during build (since you don’t have Render shell)
-RUN php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear || true
+# Remove artisan cache commands (Render injects env vars at runtime)
+# Avoid SQLite fallback during build
+# If you ever need to clear caches, do it manually via Render shell or Start Command
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
