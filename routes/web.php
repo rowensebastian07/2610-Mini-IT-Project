@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ClubTermController;
 use App\Http\Controllers\CommitteeController;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,15 @@ use App\Http\Controllers\CommitteeController;
 Keep public viewing routes outside auth
 Keep edit/update/delete inside auth
 */ 
+
+Route::get('/db-test', function () {
+    try {
+        DB::connection()->getPdo();
+        return '✅ Database connection successful';
+    } catch (\Exception $e) {
+        return '❌ Connection failed: ' . $e->getMessage();
+    }
+});
 
 // Homepage
 Route::get('/', [PostController::class, 'index'])->name('home');
