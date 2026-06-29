@@ -81,9 +81,27 @@
             <div class="post-card" style="position:relative; padding-bottom:40px;">
                 <h3 class="post-title">{{ $post->title }}</h3>
 
-                @if($post->image)
-                    <img src="{{ asset('storage/' . $post->image) }}" class="post-image">
-                @endif
+               {{-- ✅ Gallery only if media exists --}}
+            @if($post->media->count() > 0)
+                <div class="post-gallery-wrapper" data-index="0">
+                    <div class="post-gallery">
+                        @foreach($post->media as $index => $media)
+                            <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- ✅ Arrows + counter only if more than one image --}}
+                    @if($post->media->count() > 1)
+                        <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+                        <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
+                        <div class="media-counter">
+                            <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
+                        </div>
+                    @endif
+                </div>
+            @endif
 
                 <p class="post-content">{{ $post->content }}</p>
                 <small class="post-meta">Posted in: {{ $post->club->name }}</small>
@@ -99,10 +117,9 @@
             <h2 class="settings-h2">Followed Clubs</h2>
             @forelse($followedClubs as $club)
                         <div class="club-card">
-                            <img src="{{ asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
+                            <img src="{{ asset($club->profile_picture) }}" class="club-image-dashboard" alt="{{ $club->name }}">
                             <div class="club-section">
                             <h3 class="text-xl font-bold">{{ $club->name }}</h3>
-                            <p class="text-gray-600">{{ $club->description }}</p>
                             <a href="{{ route('clubs.show', $club->id) }}" class="btn mt-4">View Club</a>
                             </div>
                         </div>
@@ -116,16 +133,16 @@
             <h2 class="settings-h2">Your Events</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($events as $event)
-                        <div class="event-card 
-                            {{ \Carbon\Carbon::parse($event->date)->isPast() && !\Carbon\Carbon::parse($event->date)->isToday() 
-                                ? 'event-passed' 
-                                : 'event-upcoming' }}">
+                        <div class="event-card" style="width: 400px; margin:1rem;">
+                            <img src="{{ asset($event->club->profile_picture) }}" class="event-profile-picture" alt="{{ $event->club->name }}">
+                            <div class="event-card-text">
                             <h3 class="text-xl font-bold">{{ $event->title }}</h3>
                             <p class="text-gray-600">
                                 {{ \Carbon\Carbon::parse($event->date)->format('d M Y') }}
                                 @if($event->time) at {{ $event->time }} @endif
                             </p>
-                            <p class="text-gray-500">{{ $event->location ?? 'No location set' }}</p>
+                            <p class="text-gray-500">Location: {{ $event->location ?? 'No location set' }}</p>
+                            </div>
                         </div>
                     @empty
                         <div class=" ">
@@ -168,10 +185,9 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($followedClubs as $club)
                         <div class="club-card">
-                            <img src="{{ asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
+                            <img src="{{ asset($club->profile_picture) }}" class="club-image-dashboard" alt="{{ $club->name }}">
                             <div class="club-section">
                             <h3 class="text-xl font-bold">{{ $club->name }}</h3>
-                            <p class="text-gray-600">{{ $club->description }}</p>
                             <a href="{{ route('clubs.show', $club->id) }}" class="btn mt-4">View Club</a>
                             </div>
                         </div>
@@ -188,16 +204,16 @@
                 <h2 class="text-xl font-bold mb-4">Your Events</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($events as $event)
-                        <div class="event-card 
-                            {{ \Carbon\Carbon::parse($event->date)->isPast() && !\Carbon\Carbon::parse($event->date)->isToday() 
-                                ? 'event-passed' 
-                                : 'event-upcoming' }}">
+                        <div class="event-card-white">
+                            <img src="{{ asset($event->club->profile_picture) }}" class="event-profile-picture" alt="{{ $event->club->name }}">
+                            <div class="event-card-text">
                             <h3 class="text-xl font-bold">{{ $event->title }}</h3>
                             <p class="text-gray-600">
                                 {{ \Carbon\Carbon::parse($event->date)->format('d M Y') }}
                                 @if($event->time) at {{ $event->time }} @endif
                             </p>
-                            <p class="text-gray-500">{{ $event->location ?? 'No location set' }}</p>
+                            <p class="text-gray-500">Location: {{ $event->location ?? 'No location set' }}</p>
+                            </div>
                         </div>
                     @empty
                         <div class="event-card text-gray-600">
@@ -276,6 +292,40 @@ function openSettings(){
             
         }
 
+    // ✅ Image carousel logic
+    document.querySelectorAll(".post-card").forEach(card => {
+        const wrapper = card.querySelector(".post-gallery-wrapper");
+        if (!wrapper) return;
+
+        const items = wrapper.querySelectorAll(".media-item");
+        const counter = card.querySelector(".media-counter .current-index");
+        const total = card.querySelector(".media-counter .total-count");
+        let currentIndex = 0;
+
+        if (items.length > 0) {
+            items.forEach((item, i) => item.style.display = i === 0 ? "block" : "none");
+            if (total) total.textContent = items.length;
+            if (counter) counter.textContent = 1;
+        }
+
+        wrapper.querySelectorAll(".scroll-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const direction = btn.classList.contains("left") ? -1 : 1;
+
+                // Hide current image
+                items[currentIndex].style.display = "none";
+
+                // Calculate next index
+                currentIndex = (currentIndex + direction + items.length) % items.length;
+
+                // Show next image
+                items[currentIndex].style.display = "block";
+
+                // Update counter
+                if (counter) counter.textContent = currentIndex + 1;
+            });
+        });
+    });
 </script>
 @endsection
 

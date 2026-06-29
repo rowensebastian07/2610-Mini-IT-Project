@@ -5,6 +5,62 @@ body {
     padding: 20px;
     padding-top: 100px;
     padding-bottom: 60px;
+    
+}
+
+.body-section{
+    display: flex;
+    gap: 1em;
+}
+
+.post-div{
+    border-radius: 2em;
+    background-color: #e6efda;
+    padding: 2rem;
+    flex-grow: 0.9;
+}
+
+.post-div h2{
+    text-align: center;
+    
+}
+
+.event-div{
+    border-radius: 2em;
+    background-color: #f2dcef;
+    padding: 2rem;
+    flex-grow: 0.1;
+}
+
+.event-div h2{
+    text-align: center;
+    
+}
+
+.event-card-white{
+    background-color: whitesmoke;
+    border: solid 1px black;
+    border-radius: 1rem;
+    display: flex;
+    padding: 1rem;
+    text-align: center;
+    align-items: center;
+}
+
+.event-card-text{
+    margin:0 auto;
+}
+
+.event-profile-picture{
+    width: 8rem;
+    height: 8rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+
+.post-div h2:last-of-type{
+    margin:4rem 0;
 }
 
 .club-grid {
@@ -46,11 +102,10 @@ body {
 
 .club-card:hover {
     box-shadow: 0 8px 12px rgba(0,0,0,0.2);
-    background: yellow;
 }
 
 .post-card {
-    background-color: grey; 
+    border: 1px solid ;
     padding: 20px;
     margin: 20px auto;
     border-radius: 8px;
@@ -609,6 +664,7 @@ footer {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
+    table-layout: fixed;
 }
 
 .calendar-table th {
@@ -754,6 +810,7 @@ footer {
 .events-table td {
     border: 1px solid #ccc;
     padding: 10px;
+
 }
 
 .events-table th {
@@ -843,7 +900,7 @@ footer {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin: 15px 0;
+    margin: 15px auto;
 }
 
 /* Image container */

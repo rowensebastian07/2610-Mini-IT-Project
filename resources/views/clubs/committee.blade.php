@@ -31,13 +31,6 @@
 
 <div class="committee-page {{ strtolower($club->committee_theme ?? 'white') }}-theme"
      style="
-        @if($club->committee_background)
-            background-image: url('{{ asset('storage/' . $club->committee_background) }}');
-        @else
-            background-color: #ffffff; 
-        @endif
-        background-size: cover;
-        background-position: center;
         min-height: 100vh;
         padding-top: 40px; 
         box-sizing: border-box;
@@ -99,9 +92,10 @@
             </div>
             <div class="profile-right">
                 <div class="profile-view" id="view-president">
-                    <h3>{{ $club->owner->name ?? 'N/A' }}</h3>
-                    <p><strong>Role:</strong> President</p>
-                    <p>N/A</p>
+                   <h3>{{ $president->name ?? 'N/A' }}</h3>
+<p><strong>Role:</strong> {{ $president->role ?? 'President' }}</p>
+<p>{{ $president->description ?? 'N/A' }}</p>
+
                 </div>
                 @if($isCommittee)
                     <form action="{{ route('clubs.committee.update', [$club->id, 'president']) }}" 

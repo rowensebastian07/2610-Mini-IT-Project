@@ -14,22 +14,22 @@ class Club extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'description',
-        'category',
-        'profile_picture',
-        'email',
-        'instagram',
-        'website',
-        'banner_image',
-        'registration_link',
-        'registration_open',
-        'theme',
-        'is_Verified',
-        'owner_id',
-        'committee_background', 
-    ];
+        protected $fillable = [
+            'name',
+            'description',
+            'category',
+            'profile_picture',
+            'email',
+            'instagram',
+            'website',
+            'banner_image',
+            'registration_link',
+            'registration_open',
+            'theme',
+            'is_Verified',
+            'owner_id',
+            'committee_theme', 
+        ];
 
     protected $casts = [
         'registration_open' => 'boolean',

@@ -36,7 +36,7 @@
             <button type="button" id="next-btn" class="nav-btn">→</button>
         </div>
 
-        <button type="submit" class="btn-submit">Save Post</button>
+        <button type="submit" class="btn-submit" style="margin-top: 2rem;">Save Post</button>
     </form>
 </div>
 @endsection
@@ -75,6 +75,8 @@
   font-size: 14px;
   color: #555;
 }
+
+
 </style>
 @endpush
 

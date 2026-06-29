@@ -41,11 +41,6 @@
                            @method('DELETE')
                            <button type="submit" class="btn-red">Delete Club</button>
                        </form>
-                       <form action="{{ route('clubs.destroy', $club->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this club?')" >
-                           @csrf
-                           @method('DELETE')
-                           <button type="submit" class="btn-red">Delete Club</button>
-                       </form>
                    @endif
                </a>
            @endforeach

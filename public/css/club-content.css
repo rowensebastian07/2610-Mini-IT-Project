@@ -203,20 +203,26 @@ body{
 
 /* 4. CLUB HEADER & PROFILE SECTION */
 .club-card-header {
-    background: var(--content-box);     
+    background: transparent;     
     padding: 2rem;
     text-align: center;
     margin-bottom: 2rem;  
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 0px;
+    box-shadow: none;
 }
 
 .club-image-rect {
-    max-width: 300px;
-    height: auto;
+    position: absolute;
+    width: 150px;
+    height: 150px;
     object-fit: cover;
     margin-bottom: 1rem;
     border-radius: 6px;
+    z-index: 999;
+    top: 14rem;
+    border-radius: 50%;
+    left: 3rem;
+    border: 2px black solid;
 }
 
 .club-description {
@@ -280,8 +286,8 @@ body{
 
 /* Yellow Button */
 .btn-yellow {
-    background-color: #ffd900;
-    color: #605816;
+    background-color: #b69b00;
+    color: white;
 }
 
 .btn-yellow:hover {

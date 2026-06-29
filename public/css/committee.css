@@ -89,6 +89,10 @@ body {
     box-shadow: 0 6px 16px rgba(0,0,0,0.5);
     transition: transform 0.2s ease;
 }
+
+.profile-card:first-of-type{
+    margin-top: 4rem;
+}
 .profile-card:hover { transform: scale(1.02); }
 
 .profile-left {

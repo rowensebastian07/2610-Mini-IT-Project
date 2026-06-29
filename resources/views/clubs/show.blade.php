@@ -13,7 +13,12 @@
         \App\Enums\ClubRole::PRESIDENT->value,
         \App\Enums\ClubRole::HICOM->value,
     ];
+    
+    $deleteClub = [
+        \App\Enums\ClubRole::PRESIDENT->value,
+    ];
 
+    $isPresident = $membership && in_array(strtolower($membership->pivot->role), $deleteClub);
     $ishighmember = $membership && in_array(strtolower($membership->pivot->role), $manageThemes);
     $isCommittee = $membership && in_array(strtolower($membership->pivot->role), $managementRoles);
 
@@ -51,36 +56,14 @@
         @endif
     </div>
 
-    <div class="sub-header" style="display:flex; justify-content:space-between; align-items:center; background-color:var(--content-box);">
+    <img src="{{ asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}" style="width: 150px; height:150px;">
+
+    <div class="sub-header" style="display:flex; justify-content:space-between; align-items:center; background-color:var(--content-box); border:none;">
         <div style="flex:1;"></div>
-        <h1 style="flex:1; text-align:center; margin:0; color:var(--text);">{{ $club->name }}</h1>
-        <div class="follow-section" style="flex:1; text-align:right;">
-            @auth
-                @if(in_array($club->id, auth()->user()->followed_clubs ?? []))
-                    <span style="color:green; font-weight:bold; margin-right:10px;">Following</span>
-                    <form method="POST" action="{{ route('clubs.unfollow', $club->id) }}" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-red">Unfollow</button>
-                    </form>
-                @else
-                    <span style="color:var(--text); font-weight:bold; margin-right:10px;">Not Following</span>
-                    <form method="POST" action="{{ route('clubs.follow', $club->id) }}" style="display:inline;">
-                        @csrf
-                        <button type="submit" class="btn-green">Follow</button>
-                    </form>
-                @endif
-            @endauth
-
-            <div style="margin-top:5px; font-weight:bold;">
-                Followers: {{ $club->followersCount() }}
-            </div>
-        </div>
-    </div>
-
-    <!-- Club card -->
-    <div class="club-card-header">
-        <img src="{{ asset($club->profile_picture) }}" class="club-image-rect" alt="{{ $club->name }}">
+       
+            <!-- Club card -->
+    <div class="club-card-header" style="margin: 0 auto; width:100%;">
+         <h1 style="flex:1; text-align:center; margin:0; color:var(--text);">{{ $club->name }}</h1>
         <p class="club-description">{{ $club->description }}</p>
 
         @php
@@ -105,62 +88,91 @@
             @endif
         @endauth
     </div>
+        <div class="follow-section" style="flex:1; text-align:right; position: absolute; right:2rem; align-self:start;">
+            @auth
+                @if(in_array($club->id, auth()->user()->followed_clubs ?? []))
+                    <span style="color:green; font-weight:bold; margin-right:10px;">Following</span>
+                    <form method="POST" action="{{ route('clubs.unfollow', $club->id) }}" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn-red">Unfollow</button>
+                    </form>
+                @else
+                    <span style="color:var(--text); font-weight:bold; margin-right:10px;">Not Following</span>
+                    <form method="POST" action="{{ route('clubs.follow', $club->id) }}" style="display:inline;">
+                        @csrf
+                        <button type="submit" class="btn-green">Follow</button>
+                    </form>
+                @endif
+            @endauth
+
+            <div style="margin-top:5px; font-weight:bold;">
+                Followers: {{ $club->followersCount() }}
+            </div>
+        </div>
+
+    
+    </div>
+
+    
 
     <!-- Club Content -->
     <div class="club-container">
         <div class="club-main">
-            <section class="club-section">
-                <h3>About Us</h3>
-                <p>{{ $club->description }}</p>
-            </section>
 
-            
-            
- @forelse($club->posts as $post)
-  <div class="post-card">
-    <h3>{{ $post->title }}</h3>
-    <p>{{ $post->content }}</p>
 
-    {{-- ✅ Show gallery only if media exists --}}
-    @if($post->media->count() > 0)
-      <div class="post-gallery-wrapper" data-index="0">
-        <div class="post-gallery">
-          @foreach($post->media as $index => $media)
-            <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
-              <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+
+<section class="club-section">
+            <div class="posts-section" style="margin-top:20px; display:block; width:100%;" id="posts-section">
+            <h2 class="posts-title">Posts</h2>
+
+
+            @forelse($club->posts as $post)
+            <div class="post-card">
+                <h3>{{ $post->title }}</h3>
+                <p>{{ $post->content }}</p>
+
+                {{-- ✅ Show gallery only if media exists --}}
+                @if($post->media->count() > 0)
+                <div class="post-gallery-wrapper" data-index="0">
+                    <div class="post-gallery">
+                    @foreach($post->media as $index => $media)
+                        <div class="media-item" style="{{ $index === 0 ? '' : 'display:none;' }}">
+                        <img src="{{ asset('storage/' . $media->path) }}" class="post-image" alt="Post image">
+                        </div>
+                    @endforeach
+                    </div>
+
+                    {{-- ✅ Show arrows + counter only if more than one image --}}
+                    @if($post->media->count() > 1)
+                    <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
+                    <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
+                    <div class="media-counter">
+                        <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
+                    </div>
+                    @endif
+                </div>
+                @endif
+
+                @if($isCommittee)
+                <div class="mt-2" style="margin: 0 auto;">
+                    <a href="{{ route('posts.edit', [$club->id, $post->id]) }}" class="btn-green">Edit</a>
+                    <form action="{{ route('posts.destroy', $post->id) }}" 
+                        method="POST" 
+                        style="display:inline;" 
+                        onsubmit="return confirm('Delete this post?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn-red">Delete</button>
+                    </form>
+                </div>
+                @endif
             </div>
-          @endforeach
-        </div>
-
-        {{-- ✅ Show arrows + counter only if more than one image --}}
-        @if($post->media->count() > 1)
-          <button class="scroll-btn left" onclick="changeMedia(this, -1)">←</button>
-          <button class="scroll-btn right" onclick="changeMedia(this, 1)">→</button>
-          <div class="media-counter">
-            <span class="current-index">1</span>/<span class="total-count">{{ $post->media->count() }}</span>
-          </div>
-        @endif
-      </div>
-    @endif
-
-    @if($isCommittee)
-      <div class="mt-2">
-        <a href="{{ route('posts.edit', [$club->id, $post->id]) }}" class="btn-green">Edit</a>
-        <form action="{{ route('posts.destroy', $post->id) }}" 
-              method="POST" 
-              style="display:inline;" 
-              onsubmit="return confirm('Delete this post?')">
-          @csrf
-          @method('DELETE')
-          <button type="submit" class="btn-red">Delete</button>
-        </form>
-      </div>
-    @endif
-  </div>
-@empty
-  <p>No posts yet for this club.</p>
-@endforelse
-
+            @empty
+            <p>No posts yet for this club.</p>
+            @endforelse
+            </div>
+</section>
 
 
 
@@ -195,7 +207,7 @@
                                                         @if($isCommittee)
                                                             <form action="{{ route('events.uploadFiles', ['club' => $club->id, 'event' => $event->id]) }}" method="POST" enctype="multipart/form-data" style="display: inline-block; margin-bottom: 5px;">
                                                                 @csrf
-                                                                <input type="file" name="event_files[]" multiple class="inline-input" />
+                                                                <input type="file" name="event_files[]" multiple class="inline-input" accept="image/*" />
                                                                 <button type="submit" class="btn-blue" style="margin-left:5px;">Upload</button>
                                                             </form>
                                                         @endif
@@ -363,7 +375,7 @@
             </div>
 
             <!-- Theme preview -->
-            @if(auth()->user()->is_admin)
+            @if($isCommittee)
                 <div id="preview-div">
                     <div id="theme-menu" style="position: relative;">
                         <div>

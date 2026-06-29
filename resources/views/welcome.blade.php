@@ -3,14 +3,13 @@
 
 @section('content')
 
-<div class="sub-header">
-    <h1>WELCOME TO MMU's CLUB & SOCIETY OFFICIAL WEBPAGE</h1>
-</div>
+<section class="body-section">
 
+<div class="post-div">
 @if (auth()->user())
     <h2>Followed Clubs</h2>
     @forelse($followedPosts as $post)
-        <div class="post-card">
+        <div class="post-card" style="background:white;">
             <h3>{{ $post->title }}</h3>
             <p>{{ $post->content }}</p>
 
@@ -36,7 +35,7 @@
                 </div>
             @endif
 
-            <small class="post-meta">Posted in: {{ $post->club->name }}</small>
+            <small class="post-meta">Posted by: {{ $post->club->name }}</small>
 
             <div style="display:flex; gap:15px; margin-top:10px;">
                 <button type="button" class="like-btn {{ $post->likedByUser ? 'liked' : '' }}" data-id="{{ $post->id }}">
@@ -62,7 +61,8 @@
 
     <h2>Other Clubs</h2>
     @forelse($otherPosts as $post)
-        <div class="post-card">
+        {{-- Same gallery + counter block --}}
+        <div class="post-card" style="background:white;">
             <h3>{{ $post->title }}</h3>
             <p>{{ $post->content }}</p>
 
@@ -105,7 +105,8 @@
 @else
     <h2>Latest Posts</h2>
     @forelse($posts as $post)
-        <div class="post-card">
+        {{-- Same gallery + counter block --}}
+        <div class="post-card" style="background:white;">
             <h3>{{ $post->title }}</h3>
             <p>{{ $post->content }}</p>
 
@@ -163,6 +164,77 @@
         </form>
     </div>
 </div>
+
+</div>
+
+<div class="event-div">
+@if (auth()->user())
+    <h2 class="settings-h2">Your Events</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse($events as $event)
+                        <div class="event-card-white">
+                            <img src="{{ asset($event->club->profile_picture) }}" class="event-profile-picture" alt="{{ $event->club->name }}">
+                            <div class="event-card-text">
+                            <h3 class="text-xl font-bold">{{ $event->title }}</h3>
+                            <p class="text-gray-600">
+                                {{ \Carbon\Carbon::parse($event->date)->format('d M Y') }}
+                                @if($event->time) at {{ $event->time }} @endif
+                            </p>
+                            <p class="text-gray-500">Location: {{ $event->location ?? 'No location set' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class=" ">
+                            <p>No events yet. Future events will appear here.</p>
+                        </div>
+                    @endforelse
+                </div>
+                
+    <h2 class="settings-h2">Other Events</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse($otherEvents as $event)
+                        <div class="event-card-white">
+                            <img src="{{ asset($event->club->profile_picture) }}" class="event-profile-picture" alt="{{ $event->club->name }}">
+                            <div class="event-card-text">
+                            <h3 class="text-xl font-bold">{{ $event->title }}</h3>
+                            <p class="text-gray-600">
+                                {{ \Carbon\Carbon::parse($event->date)->format('d M Y') }}
+                                @if($event->time) at {{ $event->time }} @endif
+                            </p>
+                            <p class="text-gray-500">Location: {{ $event->location ?? 'No location set' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class=" ">
+                            <p>No events yet. Future events will appear here.</p>
+                        </div>
+                    @endforelse
+                </div>
+@else
+    <h2 class="settings-h2">Latest Events</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @forelse($allEvents as $event)
+                        <div class="event-card-white">
+                            <img src="{{ asset($event->club->profile_picture) }}" class="event-profile-picture" alt="{{ $event->club->name }}">
+                            <div class="event-card-text">
+                            <h3 class="text-xl font-bold">{{ $event->title }}</h3>
+                            <p class="text-gray-600">
+                                {{ \Carbon\Carbon::parse($event->date)->format('d M Y') }}
+                                @if($event->time) at {{ $event->time }} @endif
+                            </p>
+                            <p class="text-gray-500">Location: {{ $event->location ?? 'No location set' }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <div class=" ">
+                            <p>No events yet. Future events will appear here.</p>
+                        </div>
+                    @endforelse
+                </div>
+@endif
+</div>
+
+</section>
 
 <!-- Scroll-to-top button -->
 <button id="scrollTopBtn" class="hidden">

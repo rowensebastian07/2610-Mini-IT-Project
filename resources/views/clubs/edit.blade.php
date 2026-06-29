@@ -222,8 +222,8 @@
         
 
             // Declaring variables for banner
-            let banner_input = document.getElementById('banner_image')
-            let banLabel = document.getElementById('banner_label')
+            let banner_input = document.getElementById('banner_image');
+            let banLabel = document.getElementById('banner_label');
 
             // Live preview for profile pic
             input_file.onchange = (e) => {

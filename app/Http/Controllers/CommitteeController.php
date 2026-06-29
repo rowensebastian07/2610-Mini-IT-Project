@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Notifications\ClubNotification;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use App\Models\CommitteeMember;
+
 class CommitteeController extends Controller
 {
     // --------------------------
@@ -17,29 +17,28 @@ class CommitteeController extends Controller
     // --------------------------
     public function index(Club $club)
     {
+        // Exclude President from committee list to avoid duplicates
         $committee = DB::table('committee_members')
             ->where('club_id', $club->id)
+            ->where('role', '!=', 'President')
             ->get();
 
+        // Fetch President separately
         $president = DB::table('committee_members')
             ->where('club_id', $club->id)
             ->where('role', 'President')
             ->first();
 
-        // Check if there is an authenticated user logged in
         $user = Auth::user();
-        
+        $remaining = 0;
+
         if ($user) {
-            // Calculate remaining attempts for logged-in user
             $searchCount = DB::table('search_logs')
                 ->where('user_id', $user->id)
                 ->whereDate('created_at', Carbon::today())
                 ->count();
 
             $remaining = max(0, 10 - $searchCount);
-        } else {
-            // Guests get 0 remaining attempts by default (or whatever fallback you prefer)
-            $remaining = 0;
         }
 
         return view('clubs.committee', compact('club', 'committee', 'president', 'remaining'));
@@ -55,6 +54,18 @@ class CommitteeController extends Controller
             'role'    => 'required|string|max:255',
             'profile_picture' => 'nullable|image',
         ]);
+
+        // Prevent duplicate President
+        if ($data['role'] === 'President') {
+            $exists = DB::table('committee_members')
+                ->where('club_id', $club->id)
+                ->where('role', 'President')
+                ->exists();
+
+            if ($exists) {
+                return back()->with('error', 'President already assigned.');
+            }
+        }
 
         $data['profile_picture'] = $request->hasFile('profile_picture')
             ? $request->file('profile_picture')->store('committee', 'public')
@@ -78,9 +89,8 @@ class CommitteeController extends Controller
             'committee'
         ));
 
-       return redirect()->route('clubs.committee', ['club' => $club->id])
-                 ->with('success', 'Invitation sent successfully!');
-
+        return redirect()->route('committee.index', ['club' => $club->id])
+                         ->with('success', 'Invitation sent successfully!');
     }
 
     // --------------------------
@@ -117,10 +127,17 @@ class CommitteeController extends Controller
             $updateData['profile_picture'] = $request->file('profile_picture')->store('committee', 'public');
         }
 
-        DB::table('committee_members')
-            ->where('id', $id)
-            ->where('club_id', $club->id)
-            ->update($updateData);
+        if ($id === 'president') {
+            DB::table('committee_members')
+                ->where('club_id', $club->id)
+                ->where('role', 'President')
+                ->update($updateData);
+        } else {
+            DB::table('committee_members')
+                ->where('id', $id)
+                ->where('club_id', $club->id)
+                ->update($updateData);
+        }
 
         return back()->with('success', 'Changes saved successfully!');
     }
@@ -130,15 +147,25 @@ class CommitteeController extends Controller
     // --------------------------
     public function destroy(Club $club, $id)
     {
-        DB::table('committee_members')
-            ->where('id', $id)
-            ->where('club_id', $club->id)
-            ->delete();
+        if ($id === 'president') {
+            DB::table('committee_members')
+                ->where('club_id', $club->id)
+                ->where('role', 'President')
+                ->delete();
+        } else {
+            DB::table('committee_members')
+                ->where('id', $id)
+                ->where('club_id', $club->id)
+                ->delete();
+        }
 
         return redirect()->route('committee.index', ['club' => $club->id])
                          ->with('success', 'Member removed successfully!');
     }
 
+    // --------------------------
+    // Update committee background
+    // --------------------------
     public function updateBackground(Request $request, Club $club)
     {
         $request->validate([
@@ -147,13 +174,15 @@ class CommitteeController extends Controller
 
         $path = $request->file('background')->store('committee_backgrounds', 'public');
 
-        // Save into clubs table
         $club->committee_background = $path;
         $club->save();
 
         return back()->with('success', 'Background updated successfully!');
     }
 
+    // --------------------------
+    // Update committee theme
+    // --------------------------
     public function updateCommitteeTheme(Request $request, Club $club)
     {
         $request->validate([
@@ -165,6 +194,4 @@ class CommitteeController extends Controller
 
         return back()->with('success', 'Committee theme updated successfully!');
     }
-
 }
-

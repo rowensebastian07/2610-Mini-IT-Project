@@ -122,4 +122,21 @@ h2, p {
     display: none;
 }
 
+#banner_label{
+        background: url("../images/mmu.png") no-repeat center;
+        background-size: cover;
+        display: inline-block;
+        width: 25rem;
+        height: 10rem;
+        text-align: center;
+    }
+
+    #banner_label input[ type = "file" ]{
+        display: none;
+    }
+
+    #banner_label:hover{
+        cursor: pointer;
+    }
+
 

@@ -10,10 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PostComment;
 use App\Events\CommentPosted;
+use App\Models\Event;
 
 class PostController extends Controller
 {
-    public function index()
+    public function index(Club $clubs)
     {
         $user = Auth::user();
         $clubIds = $user ? $user->followed_clubs ?? [] : [];
@@ -24,6 +25,10 @@ class PostController extends Controller
             ->latest()
             ->get();
 
+        $followedClubs = Club::whereIn('id', $clubIds)
+            ->with(['posts', 'events'])
+            ->get();
+    
         $otherPosts = Post::with(['club', 'media', 'comments.user'])
             ->withCount(['likes', 'comments'])
             ->whereNotIn('club_id', $clubIds)
@@ -35,7 +40,14 @@ class PostController extends Controller
             ->latest()
             ->get();
 
-        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts'));
+        $events = $followedClubs->pluck('events')->flatten();
+         
+         $otherEvents = Event::all()
+         ->whereNotIn('club_id', $clubIds);
+
+        $allEvents = Event::all();
+
+        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts', 'events','otherEvents', 'allEvents'));
     }
 
     public function create(Club $club)
@@ -50,12 +62,12 @@ class PostController extends Controller
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
-            // ✅ Only allow images
+            //  Only allow images
             'media.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp|max:51200',
         ]);
 
         $validated['user_id'] = Auth::id();
-        $validated['club_id'] = $club->id; // ✅ ensure club_id is set
+        $validated['club_id'] = $club->id;
 
         // Create the post
         $post = Post::create($validated);
@@ -109,7 +121,7 @@ class PostController extends Controller
             foreach ($request->file('media') as $file) {
                 $path = $file->store('posts', 'public');
                 $post->media()->create([
-                    'type' => 'image', // always image now
+                    'type' => 'image', 
                     'path' => $path,
                 ]);
             }

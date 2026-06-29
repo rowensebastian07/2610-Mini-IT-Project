@@ -113,8 +113,16 @@
     .club-card{
         display: flex;
         flex-wrap: wrap;
+        background-color: whitesmoke;
+        border: solid 1px black;
+        border-radius: 1rem;
+        display: flex;
+        padding: 1rem;
+        text-align: center;
+        align-items: center;
+        box-shadow: none;
         width: 400px;
-        height: 100px;
+        height: 80px;
 
     }
 
@@ -131,6 +139,7 @@
 
     .club-section{
         display: flex;
+        margin: auto 0;
         flex-direction: column;
         border: none;
         gap: 0;
@@ -139,11 +148,14 @@
         justify-content: center;
     }
 
-    .club-card,
-    .event-card {
-        background: grey;
-        border-radius: 8px;
-        padding: 20px;
+    .event-card{
+        background-color: whitesmoke;
+        border: solid 1px black;
+        border-radius: 1rem;
+        display: flex;
+        padding: 1rem;
+        text-align: center;
+        align-items: center;
         box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         transition: box-shadow 0.2s ease;
     }
@@ -272,4 +284,17 @@
 
 .tab:hover{
     cursor: pointer;
+}
+
+
+
+
+.event-card-text{
+    margin:0 auto;
+}
+
+.event-profile-picture{
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
 }

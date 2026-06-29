@@ -30,13 +30,23 @@
     <h2 id = "create-club-h2">Create Club</h2>
     <p>Fill in the details below</p>
 
+@if ($errors->any())
+    <div style="background:#fee;border:1px solid red;padding:10px;">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <div class="create-club-form">
     <form action="{{ route('create-clubs.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group-clubs">
             <label for="name">Name</label><br>
-            <input type="text" name="name" id="name">
+            <input type="text" name="name" id="name" required>
         </div>
 
         <div class="form-group-clubs">
@@ -50,6 +60,13 @@
             <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
             </label>
         </div>
+
+        <div class="form-group">
+                <label for="banner_image">Banner Image</label><br>
+                <label id="banner_label">
+                <input type="file" name="banner_image" id="banner_image" accept="image/*">
+                </label>
+            </div>
 
         <div class="form-group-clubs">
             <label for="category">Category</label><br>
@@ -96,6 +113,29 @@
             let url = URL.createObjectURL(file);
 
             picDisplay.style.background = `url(${url}) center / cover no-repeat`;
+
+            // Free up memory space (better perfomance)
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100)
+        }
+
+        // Declaring variables for banner
+            let banner_input = document.getElementById('banner_image');
+            let banLabel = document.getElementById('banner_label');
+
+
+            // Live preview for banner
+
+            banner_input.onchange = (e) => {
+
+            let file = e.target.files[0];
+
+
+            let url = URL.createObjectURL(file);
+
+            banLabel.style.background = `url(${url}) center / cover no-repeat`;
+
 
             // Free up memory space (better perfomance)
             setTimeout(() => {
