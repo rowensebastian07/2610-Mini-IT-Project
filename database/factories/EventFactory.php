@@ -2,22 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
-use App\Enums\UserStatus;
-use App\Enums\UserVerification;
+use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
- * @extends Factory<User>
+ * @extends Factory<Event>
  */
-class UserFactory extends Factory
+class EventFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = Event::class;
 
     /**
      * Define the model's default state.
@@ -27,35 +20,13 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
-
-            'is_admin' => false, // Default to regular user
-            'status' => UserStatus::ACTIVE->value,
-            'verification' => UserVerification::VERIFIED->value,
+            'club_id'     => \App\Models\Club::factory(), // link to a club
+            'title'       => $this->faker->sentence(3),
+            'date'        => $this->faker->date(),
+            'time'        => $this->faker->time(),
+            'description' => $this->faker->paragraph(),
+            'location'    => $this->faker->city(),
+            'is_passed'   => false,
         ];
-    }
-
-    /**
-     * Helper to quickly create an admin user
-     */
-    public function admin(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'is_admin' => true,
-        ]);
-    }
-
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
     }
 }
