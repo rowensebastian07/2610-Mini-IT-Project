@@ -17,11 +17,12 @@ class PostController extends Controller
 public function index()
 {
     try {
-        // Temporary fallback: empty array if user not logged in
+        // ✅ Fallback: empty array if user not logged in
         $clubIds = auth()->check()
             ? auth()->user()->clubs()->pluck('id')->toArray()
             : [];
 
+        // ✅ Fetch posts
         $followedPosts = Post::with(['club', 'media', 'comments.user'])
             ->withCount(['likes', 'comments'])
             ->whereIn('club_id', $clubIds)
@@ -38,17 +39,22 @@ public function index()
             ->latest()
             ->get();
 
-        // Combine all posts for the Blade file
+        // ✅ Combine all posts for Blade
         $posts = $followedPosts->merge($otherPosts);
+
+        // ✅ Fetch all events for Blade
+        $allEvents = Event::with('club')->latest()->get();
     } catch (\Exception $e) {
-        // Fallback: no posts if DB fails
+        // ✅ Fallback: empty collections if DB fails
         $followedPosts = collect();
         $followedClubs = collect();
         $otherPosts = collect();
         $posts = collect();
+        $allEvents = collect();
     }
 
-    return view('welcome', compact('posts', 'followedPosts', 'followedClubs', 'otherPosts'));
+    // ✅ Pass everything to welcome.blade.php
+    return view('welcome', compact('posts', 'followedPosts', 'followedClubs', 'otherPosts', 'allEvents'));
 }
 
 
