@@ -37,14 +37,18 @@ public function index()
             ->whereNotIn('club_id', $clubIds)
             ->latest()
             ->get();
+
+        // Combine all posts for the Blade file
+        $posts = $followedPosts->merge($otherPosts);
     } catch (\Exception $e) {
         // Fallback: no posts if DB fails
         $followedPosts = collect();
         $followedClubs = collect();
         $otherPosts = collect();
+        $posts = collect();
     }
 
-    return view('welcome', compact('followedPosts', 'followedClubs', 'otherPosts'));
+    return view('welcome', compact('posts', 'followedPosts', 'followedClubs', 'otherPosts'));
 }
 
 
