@@ -24,12 +24,6 @@ RUN curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/lo
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Clear Laravel caches automatically (since free tier has no shell)
-RUN php artisan config:clear && \
-    php artisan cache:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
-
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
