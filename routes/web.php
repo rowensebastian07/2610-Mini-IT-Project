@@ -38,7 +38,9 @@ Route::get('/db-test', function () {
 });
 
 // Homepage
-Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/test', function () {
+    return view('welcome');
+});
 
 Route::get('/calendar', function () {
     $events = Event::all(); 
