@@ -39,24 +39,20 @@ public function index()
             ->latest()
             ->get();
 
-        // ✅ Combine all posts for Blade
-        $posts = $followedPosts->merge($otherPosts);
+        $posts = Post::with(['club', 'media', 'comments.user'])
+            ->withCount(['likes', 'comments'])
+            ->latest()
+            ->get();
 
-        // ✅ Fetch all events for Blade
-        $allEvents = Event::with('club')->latest()->get();
-    } catch (\Exception $e) {
-        // ✅ Fallback: empty collections if DB fails
-        $followedPosts = collect();
-        $followedClubs = collect();
-        $otherPosts = collect();
-        $posts = collect();
-        $allEvents = collect();
+        $events = $followedClubs->pluck('events')->flatten();
+         
+         $otherEvents = Event::all()
+         ->whereNotIn('club_id', $clubIds);
+
+        $allEvents = Event::all();
+
+        return view('welcome', compact('clubIds', 'followedPosts', 'otherPosts', 'posts', 'events','otherEvents', 'allEvents'));
     }
-
-    // ✅ Pass everything to welcome.blade.php
-    return view('welcome', compact('posts', 'followedPosts', 'followedClubs', 'otherPosts', 'allEvents'));
-}
-
 
     public function create(Club $club)
     {
