@@ -334,23 +334,27 @@
                 <form id="contact-edit"
                       action="{{ route('clubs.updateContact', $club->id) }}"
                       method="POST"
-                      style="display:none;">
+                      style="display:none; flex-direction:column;">
                     @csrf
-                    <input type="email" name="email" value="{{ old('email', $club->email) }}" placeholder="Club Email">
-                    <input type="text" name="instagram" value="{{ old('instagram', $club->instagram) }}" placeholder="Instagram URL">
-                    <input type="text" name="website" value="{{ old('website', $club->website) }}" placeholder="Website URL">
+                    <h4>Edit Contact Details</h4>
+                    <input type="email" name="email" value="{{ old('email', $club->email) }}" placeholder="Club Email" style="margin:0.5rem 0; height:40px;">
+                    <input type="text" name="instagram" value="{{ old('instagram', $club->instagram) }}" placeholder="Instagram URL" style="margin:0.5rem 0; height:40px;">
+                    <input type="text" name="website" value="{{ old('website', $club->website) }}" placeholder="Website URL" style="margin:0.5rem 0; height:40px;">
 
-                    <button type="submit" class="btn">Save Changes</button>
+                    <button type="submit" class="btn" style="margin:1rem 0;">Save Changes</button>
                     <button type="button" class="btn logout-btn" id="cancel-contact">Cancel</button>
                 </form>
             </div>
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script>
+                var editView = document.getElementById('contact-edit');
+
                 $(document).ready(function() {
                     $('#edit-contact').on('click', function() {
                         $('#contact-view').hide();
                         $('#contact-edit').show();
+                        editView.style.display = 'flex';
                     });
 
                     $('#cancel-contact').on('click', function() {
